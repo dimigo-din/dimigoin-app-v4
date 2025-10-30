@@ -1,0 +1,30 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g mask="url(#fillMask)">
+    <rect y="26" width="32" height="6" rx="3" fill="#E83C77"/>
+    <path
+      d="M2.5 11C2.5 9.34315 3.84315 8 5.5 8V8C7.15685 8 8.5 9.34315 8.5 11L8.5 21C8.5 22.6569 7.15685 24 5.5 24V24C3.84315 24 2.5 22.6569 2.5 21L2.5 11Z"
+      fill="#E83C77"/>
+    <path
+      d="M2.5 3C2.5 1.34315 3.84315 0 5.5 0V0C7.15685 0 8.5 1.34315 8.5 3V3C8.5 4.65685 7.15685 6 5.5 6V6C3.84315 6 2.5 4.65685 2.5 3V3Z"
+      fill="#E83C77"/>
+    <path d="M20.5 3.5C15.5294 3.5 11.5 7.52944 11.5 12.5H17.5001C17.5001 10.8432 18.8432 9.50004 20.5 9.50001V3.5Z"
+          fill="#E83C77"/>
+    <path
+      d="M20.5 3.5C25.4706 3.5 29.5001 7.52945 29.5001 12.5V21C29.5001 22.6569 28.1569 24 26.5001 24C24.8432 24 23.5001 22.6569 23.5001 21V12.5C23.5001 10.8432 22.1569 9.50001 20.5 9.50001V3.5Z"
+      fill="#E83C77"/>
+    <path
+      d="M11.5 12.5H17.5001V21C17.5001 22.6569 16.1569 24 14.5001 24C12.8432 24 11.5001 22.6569 11.5001 21L11.5 12.5Z"
+      fill="#E83C77"/>
+  </g>
+  <defs>
+    <clipPath id="clip0_64_304">
+      <rect width="32" height="32" fill="white"/>
+    </clipPath>
+    <mask id="fillMask" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+      <rect x="0" y="32" width="32" height="0" fill="white">
+        <animate attributeName="height" values="0;32;32" keyTimes="0;0.8333;1" dur="1.2s" repeatCount="indefinite" />
+        <animate attributeName="y" values="32;0;0" keyTimes="0;0.8333;1" dur="1.2s" repeatCount="indefinite" />
+      </rect>
+    </mask>
+  </defs>
+</svg>
