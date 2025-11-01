@@ -7,6 +7,7 @@ import 'package:dimigoin_app_v4/app/widgets/factory94/DFSegmentControl.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'controller.dart';
@@ -102,8 +103,10 @@ class TestPage extends GetView<TestPageController> {
           DFSectionHeader(size: DFSectionHeaderSize.large, title: "오른쪽 세탁기", rightIcon: Icons.arrow_downward, trailingText: "3타임 사용 가능"),
           DFValueList(type: DFValueListType.vertical, title: "아침", subTitle: "7시 10분", content: "아침 세탁기 사용 중"),
           TextButton(
-              onPressed: () => throw Exception(),
-              child: const Text("Throw Test Exception"),
+              onPressed: () {
+                HapticFeedback.heavyImpact();
+              },
+              child: const Text("Haptic"),
           ),
         ],
         

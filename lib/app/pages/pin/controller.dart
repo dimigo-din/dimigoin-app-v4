@@ -2,6 +2,7 @@ import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:get/get.dart';
+import 'package:flutter/services.dart';
 
 class PinInputController extends GetxController {
   final pin = ''.obs;
@@ -14,6 +15,8 @@ class PinInputController extends GetxController {
   void onNumberPressed(String number) {
     if (isCheckingPin.value) return;
 
+    HapticFeedback.lightImpact();
+
     if (pin.value.length < pinLength) {
       pin.value += number;
 
@@ -25,6 +28,8 @@ class PinInputController extends GetxController {
 
   void onDeletePressed() {
     if (isCheckingPin.value) return;
+    
+    HapticFeedback.lightImpact();
 
     if (pin.value.isNotEmpty) {
       pin.value = pin.value.substring(0, pin.value.length - 1);
