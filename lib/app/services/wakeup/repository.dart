@@ -1,3 +1,4 @@
+import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -86,7 +87,13 @@ class WakeupRepository {
       await api.post(url, data: {
         'videoId': youtubeVideoId,
       });
-    } on DioException {
+    } on DioException catch (e) {
+      if (e.response?.data['code'] == 'ResourceAlreadyExists') {
+        throw ResourceAlreadyExists();
+      } else if (e.response?.data['code'] == 'Resource_NotFound') {
+        throw ResourceNotFoundException();
+      }
+
       rethrow;
     }
   }

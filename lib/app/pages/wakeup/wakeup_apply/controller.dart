@@ -1,3 +1,4 @@
+import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/wakeup/model.dart';
 import 'package:dimigoin_app_v4/app/services/wakeup/service.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
@@ -42,9 +43,17 @@ class WakeupApplyPageController extends GetxController {
       );
       Get.find<WakeupVotePageController>().fetchWakeupApplications();
       Navigator.pop(context);
+    } on ResourceAlreadyExists  {
+      DFSnackBar.error(
+        "이미 신청된 곡입니다.",
+      );
+    } on ResourceNotFoundException {
+      DFSnackBar.error(
+        "존재하지 않는 리소스입니다. 다시 시도해주세요.",
+      );
     } catch (e) {
       DFSnackBar.error(
-        "신청 중 오류가 발생했습니다.",
+        "신청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
       );
       rethrow;
     }

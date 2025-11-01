@@ -117,3 +117,9 @@ class FrigoAlreadyAppliedException implements Exception {
 
   FrigoAlreadyAppliedException({this.message});
 }
+
+class ResourceAlreadyExists implements Exception {
+  final String? message;
+
+  ResourceAlreadyExists({this.message});
+}
