@@ -17,7 +17,7 @@ class PersonalStatusWidget extends GetView<HomePageController> {
     return Container(
       padding: const EdgeInsets.all(DFSpacing.spacing400),
       decoration: BoxDecoration(
-        color: colorTheme.backgroundStandardPrimary,
+        color: colorTheme.componentsFillStandardPrimary,
         borderRadius: BorderRadius.circular(DFRadius.radius800),
         border: Border.all(
           color: colorTheme.lineOutline,

@@ -2,11 +2,17 @@ import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackbar.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../routes/routes.dart';
 
 class LoginPageController extends GetxController {
   AuthService authService = Get.find<AuthService>();
+
+  void openLoginHelpPage() {
+    final Uri url = Uri.parse('https://dimigo-din.notion.site/29e98f8027c68088ae85d049398c92bf');
+    launchUrl(url, mode: LaunchMode.externalApplication);
+  }
 
   Future<void> loginWithGoogle() async {
     try {

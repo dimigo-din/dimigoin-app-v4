@@ -1,3 +1,4 @@
+import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class PinDotIndicator extends StatelessWidget {
@@ -18,14 +19,16 @@ class PinDotIndicator extends StatelessWidget {
         pinLength,
         (index) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: _buildPinDot(index),
+          child: _buildPinDot(context, index),
         ),
       ),
     );
   }
 
-  Widget _buildPinDot(int index) {
+  Widget _buildPinDot(BuildContext context, int index) {
     final isFilled = index < filledCount;
+
+    final colorTheme = Theme.of(context).extension<DFColors>()!;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -34,7 +37,7 @@ class PinDotIndicator extends StatelessWidget {
       height: 2,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(1),
-        color: isFilled ? Colors.black : Colors.grey.withOpacity(0.3),
+        color: isFilled ? colorTheme.componentsFillInvertedTertiary : colorTheme.componentsFillStandardTertiary,
       ),
     );
   }

@@ -53,8 +53,8 @@ class DFDarkThemeColors extends DFColors {
           contentInvertedQuaternary: const Color(0x33202128),
 
           // Line
-          lineDivider: const Color(0x52797B8A),
-          lineOutline: const Color(0x3D797B8A),
+          lineDivider: const Color(0x3D797B8A),
+          lineOutline: const Color(0x29797B8A),
 
           // Components / Fill / Standard
           componentsFillStandardPrimary: const Color(0xFF131314),
@@ -67,9 +67,9 @@ class DFDarkThemeColors extends DFColors {
           componentsFillInvertedTertiary: const Color(0xFFF4F4F5),
 
           // Components / Interaction
-          componentsInteractiveHover: const Color(0x14202128),
-          componentsInteractiveFocused: const Color(0x1F202128),
-          componentsInteractivePressed: const Color(0x29202128),
+            componentsInteractiveHover: const Color(0x14FFFFFF),
+            componentsInteractiveFocused: const Color(0x1FFFFFFF),
+            componentsInteractivePressed: const Color(0x29FFFFFF),
 
           // Components / Translucent
           componentsTranslucentPrimary: const Color(0x33747B8A),
@@ -79,7 +79,7 @@ class DFDarkThemeColors extends DFColors {
           // Core / Brand
           coreBrandPrimary: const Color(0xFFE83C77),
           coreBrandSecondary: const Color(0x80E83C77),
-          coreBrandTertiary: const Color(0x33E83C77),
+          coreBrandTertiary: const Color(0x1AE83C77),
 
           // Core / Status
           coreStatusPositive: const Color(0xFF32CC58),

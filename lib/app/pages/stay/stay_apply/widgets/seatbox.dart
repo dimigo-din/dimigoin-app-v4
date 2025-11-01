@@ -146,7 +146,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
                 topLeft: Radius.circular(DFRadius.radius600),
                 topRight: Radius.circular(DFRadius.radius600),
               ),
-              color: colorTheme.backgroundStandardSecondary,
+              color: colorTheme.componentsFillStandardSecondary,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withAlpha(50),
@@ -266,16 +266,20 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
     final isMine = owner?.user.id == widget.currentUserId;
     
     Color backgroundColor;
-    Color textColor = colorTheme.contentInvertedPrimary;
+    Color textColor;
 
     if (isSelected || isMine) {
       backgroundColor = colorTheme.coreBrandPrimary;
+      textColor = colorTheme.solidWhite;
     } else if (isTaken && !isMine) {
       backgroundColor = colorTheme.componentsInteractivePressed;
+      textColor = colorTheme.contentStandardPrimary;
     } else if (!isActive) {
       backgroundColor = colorTheme.componentsInteractivePressed;
+      textColor = colorTheme.contentStandardPrimary;
     } else {
       backgroundColor = colorTheme.contentStandardSecondary;
+      textColor = colorTheme.contentInvertedPrimary;
     }
 
     final displayText = isTaken

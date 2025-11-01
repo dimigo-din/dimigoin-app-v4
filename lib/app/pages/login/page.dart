@@ -70,7 +70,7 @@ class LoginPage extends GetView<LoginPageController> {
                               Text(
                                 "디미고 구글 계정으로 로그인",
                                 style: textTheme.callout.copyWith(
-                                  color: colorTheme.contentInvertedPrimary,
+                                  color: colorTheme.solidWhite,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -85,12 +85,15 @@ class LoginPage extends GetView<LoginPageController> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       GestureDetector(
-                        onTap: () => {},
+                        onTap: () => {
+                          controller.openLoginHelpPage(),
+                        },
                         child: Text(
                           "로그인에 도움이 필요하신가요?",
                           style: textTheme.footnote.copyWith(
                             color: colorTheme.contentStandardTertiary,
                             decoration: TextDecoration.underline,
+                            decorationColor: colorTheme.contentStandardTertiary,
                           ),
                         ),
                       )
