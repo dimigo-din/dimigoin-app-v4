@@ -102,8 +102,11 @@ class WakeupRepository {
     String url = '/wakeup/history';
 
     try {
+      final nowKst = DateTime.now().add(const Duration(hours: 9));
+      final date = nowKst.toIso8601String().substring(0, 10);
+
       DFHttpResponse response = await api.get(url, queryParameters: {
-        'date': DateTime.now().toLocal().toIso8601String().substring(0, 10),
+        'date': date,
         'gender': authService.user!.gender,
       });
       return WakeupApplicationWithVote.fromJson(response.data['data']);
