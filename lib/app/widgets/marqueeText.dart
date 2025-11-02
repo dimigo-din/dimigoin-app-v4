@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marquee/marquee.dart';
 
 class MarqueeText extends StatefulWidget {
   final String text;
@@ -13,7 +14,7 @@ class MarqueeText extends StatefulWidget {
     this.style,
     this.velocity = 50.0,
     this.pauseDuration = const Duration(seconds: 3),
-    this.spacing = 50.0,
+    this.spacing = 80.0,
   });
 
   @override
@@ -25,7 +26,6 @@ class _MarqueeTextState extends State<MarqueeText>
   ScrollController? _scrollController;
   bool _isOverflowing = false;
   double _textWidth = 0;
-  bool _isScrolling = false;
 
   @override
   void initState() {
@@ -41,7 +41,6 @@ class _MarqueeTextState extends State<MarqueeText>
   void didUpdateWidget(MarqueeText oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.text != widget.text || oldWidget.style != widget.style) {
-      _isScrolling = false;
       _isOverflowing = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _checkOverflow();
@@ -68,7 +67,6 @@ class _MarqueeTextState extends State<MarqueeText>
       setState(() {
         _isOverflowing = true;
       });
-      _startScrolling();
     } else {
       setState(() {
         _isOverflowing = false;
@@ -76,39 +74,8 @@ class _MarqueeTextState extends State<MarqueeText>
     }
   }
 
-  void _startScrolling() async {
-    if (_isScrolling || !mounted) return;
-    _isScrolling = true;
-
-    // 초기 대기
-    await Future.delayed(widget.pauseDuration);
-
-    final scrollDistance = _textWidth + widget.spacing;
-    final duration = Duration(
-      milliseconds: (scrollDistance / widget.velocity * 1000).round(),
-    );
-
-    while (mounted && _isOverflowing && _isScrolling) {
-      // 스크롤 애니메이션
-      await _scrollController?.animateTo(
-        scrollDistance,
-        duration: duration,
-        curve: Curves.linear,
-      );
-
-      if (!mounted || !_isScrolling) break;
-
-      // 처음으로 점프
-      _scrollController?.jumpTo(0);
-
-      // 각 사이클 후 pause
-      await Future.delayed(widget.pauseDuration);
-    }
-  }
-
   @override
   void dispose() {
-    _isScrolling = false;
     _scrollController?.dispose();
     super.dispose();
   }
@@ -124,25 +91,14 @@ class _MarqueeTextState extends State<MarqueeText>
       );
     }
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      controller: _scrollController,
-      physics: const NeverScrollableScrollPhysics(),
-      child: Row(
-        children: List.generate(
-          3,
-          (index) => Row(
-            children: [
-              Text(
-                widget.text,
-                style: widget.style,
-                maxLines: 1,
-                overflow: TextOverflow.visible,
-              ),
-              SizedBox(width: widget.spacing),
-            ],
-          ),
-        ),
+    return SizedBox(
+      height: 30,
+        child: Marquee(
+        text: widget.text,
+        style: widget.style,
+        pauseAfterRound: widget.pauseDuration,
+        blankSpace: widget.spacing,
+        velocity: widget.velocity,
       ),
     );
   }
