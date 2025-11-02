@@ -144,19 +144,19 @@ class WakeupApplication {
   @JsonKey(name: 'video_title')
   final String videoTitle;
   @JsonKey(name: 'video_thumbnail')
-  final String videoThumbnail;
+  final String? videoThumbnail;
   @JsonKey(name: 'video_channel')
-  final String videoChannel;
-  final String week;
+  final String? videoChannel;
+  final String? week;
   final String gender;
 
   WakeupApplication({
     required this.id,
     required this.videoId,
     required this.videoTitle,
-    required this.videoThumbnail,
-    required this.videoChannel,
-    required this.week,
+    this.videoThumbnail,
+    this.videoChannel,
+    this.week,
     required this.gender,
   });
 
@@ -176,9 +176,9 @@ class WakeupApplicationWithVote extends WakeupApplication {
     required super.id,
     required super.videoId,
     required super.videoTitle,
-    required super.videoThumbnail,
-    required super.videoChannel,
-    required super.week,
+    super.videoThumbnail,
+    super.videoChannel,
+    super.week,
     required super.gender,
   });
 

@@ -9,12 +9,14 @@ class WakeupVotePageController extends GetxController {
 
   final RxList<WakeupApplicationWithVote> wakeupApplications = <WakeupApplicationWithVote>[].obs;
   final RxList<WakeupApplicationVotes> wakeupVotes = <WakeupApplicationVotes>[].obs;
+  final Rx<WakeupApplicationWithVote?> todayWakeup = Rx<WakeupApplicationWithVote?>(null);
 
   @override
   void onInit() async  {
     super.onInit();
     await fetchWakeupApplications();
     await fetchWakeupVotes();
+    await fetchTodayWakeup();
   }
 
   Future<void> fetchWakeupApplications() async {
@@ -28,6 +30,14 @@ class WakeupVotePageController extends GetxController {
       final votes = await wakeupService.getWakeupApplicationVotes();
 
       wakeupVotes.assignAll(votes);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> fetchTodayWakeup() async {
+    try {
+      todayWakeup.value = await wakeupService.getWakeupHistory();
     } catch (e) {
       rethrow;
     }

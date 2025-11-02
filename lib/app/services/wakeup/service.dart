@@ -86,4 +86,13 @@ class WakeupService extends GetxController {
       rethrow;
     }
   }
+
+  Future<WakeupApplicationWithVote?> getWakeupHistory() async {
+    try {
+      return await repository.getWakeupHistory();
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
 }

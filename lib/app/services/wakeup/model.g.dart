@@ -114,9 +114,9 @@ WakeupApplication _$WakeupApplicationFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       videoId: json['video_id'] as String,
       videoTitle: json['video_title'] as String,
-      videoThumbnail: json['video_thumbnail'] as String,
-      videoChannel: json['video_channel'] as String,
-      week: json['week'] as String,
+      videoThumbnail: json['video_thumbnail'] as String?,
+      videoChannel: json['video_channel'] as String?,
+      week: json['week'] as String?,
       gender: json['gender'] as String,
     );
 
@@ -139,9 +139,9 @@ WakeupApplicationWithVote _$WakeupApplicationWithVoteFromJson(
   id: json['id'] as String,
   videoId: json['video_id'] as String,
   videoTitle: json['video_title'] as String,
-  videoThumbnail: json['video_thumbnail'] as String,
-  videoChannel: json['video_channel'] as String,
-  week: json['week'] as String,
+  videoThumbnail: json['video_thumbnail'] as String?,
+  videoChannel: json['video_channel'] as String?,
+  week: json['week'] as String?,
   gender: json['gender'] as String,
 );
 

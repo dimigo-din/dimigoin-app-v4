@@ -32,65 +32,102 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
       resizeToAvoidBottomInset: false,
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: DFSpacing.spacing500),
-        child: SingleChildScrollView(
-          child: Obx(() =>Column(
-            children: [
-              if (controller.wakeupApplications.isEmpty)
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  child: Center(
-                    child: Text(
-                      '신청된 기상송이 없습니다',
-                      style: Theme.of(context).extension<DFTypography>()!.body.copyWith(
-                      color: Theme.of(context).extension<DFColors>()!.contentStandardSecondary,
-                      ),
-                    ),
-                  ),
-                )
-              else
-                ...(controller.wakeupApplications.toList()
-                ..sort((a, b) => b.up.compareTo(a.up)))
-                .map((application) => [
-                  WakeupItem(
-                    title: cleanText(application.videoTitle),
-                    content: cleanText(application.videoChannel),
-                    leading: GestureDetector(
+        child: Column(
+          children: [
+            Obx(() {
+              if (controller.todayWakeup.value != null) {
+                return Column(
+                  children: [
+                    GestureDetector(
                       onTap: () => {
-                        controller.launchYoutubeUrl(application.videoId)
+                        controller.launchYoutubeUrl(controller.todayWakeup.value!.videoId)
                       },
-                      child: DFAvatar(
-                        type: DFAvatarType.classroom,
-                        size: DFAvatarSize.large,
-                        fill: DFAvatarFill.image,
-                        image: Image.network(application.videoThumbnail),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
+                        child: WakeupItem(
+                          title: cleanText(controller.todayWakeup.value!.videoTitle),
+                          trailing: Text(
+                            '오늘의 기상송',
+                            style: Theme.of(context).extension<DFTypography>()!.callout.copyWith(
+                              color: Theme.of(context).extension<DFColors>()!.contentStandardSecondary,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    trailing: Column(
-                    children: [
-                      Obx(() => WakeupVoteButton(
-                        count: application.up,
-                        isUpvote: true,
-                        onPressed: () => controller.voteWakeupApplication(application.id, true),
-                        isVoted: controller.wakeupVotes.any((vote) => vote.wakeupSongApplication.id == application.id && vote.upvote == true),
-                      )),
-                      const SizedBox(height: DFSpacing.spacing100),
-                      Obx(() => WakeupVoteButton(
-                        count: application.down,
-                        isUpvote: false,
-                        onPressed: () => controller.voteWakeupApplication(application.id, false),
-                        isVoted: controller.wakeupVotes.any((vote) => vote.wakeupSongApplication.id == application.id && vote.upvote == false),
-                      )),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 5),
-                const DFDivider(
-                  size: DFDividerSize.small,
-                ),
-                const SizedBox(height: 5),
-              ]).expand((element) => element).toList(),
-            ],
-          )),
+                    const SizedBox(height: DFSpacing.spacing300),
+                    const DFDivider(
+                      size: DFDividerSize.medium,
+                    ),
+                    const SizedBox(height: DFSpacing.spacing300),
+                  ],
+                );
+              }
+              return const SizedBox.shrink();
+            }),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Obx(() =>Column(
+                  children: [
+                    if (controller.wakeupApplications.isEmpty)
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.6,
+                        child: Center(
+                          child: Text(
+                            '신청된 기상송이 없습니다',
+                            style: Theme.of(context).extension<DFTypography>()!.body.copyWith(
+                            color: Theme.of(context).extension<DFColors>()!.contentStandardSecondary,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      ...(controller.wakeupApplications.toList()
+                      ..sort((a, b) => b.up.compareTo(a.up)))
+                      .map((application) => [
+                        WakeupItem(
+                          title: cleanText(application.videoTitle),
+                          content: cleanText(application.videoChannel ?? ''),
+                          leading: GestureDetector(
+                            onTap: () => {
+                              controller.launchYoutubeUrl(application.videoId)
+                            },
+                            child: DFAvatar(
+                              type: DFAvatarType.classroom,
+                              size: DFAvatarSize.large,
+                              fill: DFAvatarFill.image,
+                              image: Image.network(application.videoThumbnail ?? ''),
+                            ),
+                          ),
+                          trailing: Column(
+                          children: [
+                            Obx(() => WakeupVoteButton(
+                              count: application.up,
+                              isUpvote: true,
+                              onPressed: () => controller.voteWakeupApplication(application.id, true),
+                              isVoted: controller.wakeupVotes.any((vote) => vote.wakeupSongApplication.id == application.id && vote.upvote == true),
+                            )),
+                            const SizedBox(height: DFSpacing.spacing100),
+                            Obx(() => WakeupVoteButton(
+                              count: application.down,
+                              isUpvote: false,
+                              onPressed: () => controller.voteWakeupApplication(application.id, false),
+                              isVoted: controller.wakeupVotes.any((vote) => vote.wakeupSongApplication.id == application.id && vote.upvote == false),
+                            )),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      const DFDivider(
+                        size: DFDividerSize.small,
+                      ),
+                      const SizedBox(height: 5),
+                    ]).expand((element) => element).toList(),
+                  ],
+                )),
+              ),
+            ),
+          ],
         )
       )
     );

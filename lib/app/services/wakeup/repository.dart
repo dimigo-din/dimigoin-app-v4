@@ -97,4 +97,18 @@ class WakeupRepository {
       rethrow;
     }
   }
+  
+  Future<WakeupApplicationWithVote?> getWakeupHistory() async {
+    String url = '/wakeup/history';
+
+    try {
+      DFHttpResponse response = await api.get(url, queryParameters: {
+        'date': DateTime.now().toLocal().toIso8601String().substring(0, 10),
+        'gender': authService.user!.gender,
+      });
+      return WakeupApplicationWithVote.fromJson(response.data['data']);
+    } on DioException {
+      rethrow;
+    }
+  }
 }

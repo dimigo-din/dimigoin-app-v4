@@ -6,6 +6,15 @@ part of 'model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+UserApply _$UserApplyFromJson(Map<String, dynamic> json) => UserApply(
+  stayApply: json['stayApply'] == null
+      ? null
+      : StayApply.fromJson(json['stayApply'] as Map<String, dynamic>),
+  laundryApply: json['laundryApply'] == null
+      ? null
+      : LaundryApply.fromJson(json['laundryApply'] as Map<String, dynamic>),
+);
+
 Map<String, dynamic> _$UserApplyToJson(UserApply instance) => <String, dynamic>{
   'stayApply': instance.stayApply,
   'laundryApply': instance.laundryApply,
