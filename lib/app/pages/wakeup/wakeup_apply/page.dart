@@ -106,6 +106,7 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
                     ...(controller.youtubeSearchResults.toList())
                     .map((video) => [
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque, 
                         onTap: () => _showApplyBottomSheet(context, video),
                         child: WakeupItem(
                           title: cleanText(video.snippet.title),
