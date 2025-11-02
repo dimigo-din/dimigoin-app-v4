@@ -12,7 +12,6 @@ class PinInputPage extends GetView<PinInputController> {
   @override
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
-    final textTheme = Theme.of(context).extension<DFTypography>()!;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -29,13 +28,7 @@ class PinInputPage extends GetView<PinInputController> {
             return Column(
               children: [
                 SizedBox(height: isSmallScreen ? 40 : 80),
-                Text(
-                  'PIN 번호를 입력하세요',
-                  style: textTheme.headline.copyWith(
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.3,
-                  ),
-                ),
+                const PinPageTitle(),
                 SizedBox(height: isSmallScreen ? 32 : 56),
                 Obx(
                   () => PinDotIndicator(
@@ -55,5 +48,45 @@ class PinInputPage extends GetView<PinInputController> {
         ),
       ),
     );
+  }
+}
+
+class PinPageTitle extends GetView<PinInputController> {
+  const PinPageTitle({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorTheme = Theme.of(context).extension<DFColors>()!;
+    final textTheme = Theme.of(context).extension<DFTypography>()!;
+
+    return Obx(() {
+      switch(controller.pinStatus.value) {
+        case PinStatus.normal:
+          return Text(
+            'PIN 번호를 입력하세요',
+            style: textTheme.headline.copyWith(
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.3,
+            ),
+          );
+        case PinStatus.wrong:
+          return Text(
+            'PIN 번호가 올바르지 않습니다.',
+            style: textTheme.headline.copyWith(
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.3,
+              color: colorTheme.coreStatusNegative,
+            ),
+          );
+        case PinStatus.checking:
+          return Text(
+            '로그인 중입니다...',
+            style: textTheme.headline.copyWith(
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.3,
+            ),
+          );
+      }
+    });
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackbar.dart';
@@ -16,15 +18,15 @@ class LoginPageController extends GetxController {
 
   Future<void> loginWithGoogle() async {
     try {
-      await authService.loginWithGoogle();
+      bool success = await authService.loginWithGoogle();
 
-      if (!authService.isLoginSuccess && !authService.isPersonalInfoRegistered) {
-        Get.offAllNamed(Routes.LOGIN);
-      } else {
+      if (success && authService.isLoginSuccess && authService.isPersonalInfoRegistered) {
         Get.offAllNamed(Routes.MAIN);
       }
     } on PersonalInformationNotRegisteredException {
       DFSnackBar.open('개인정보가 등록되지 않은 계정입니다. 디미인증에서 먼저 등록해주세요.');
+      sleep(const Duration(seconds: 2));
+      authService.openDimiAuthPage();
     } on GoogleOauthCodeInvalidException {
       DFSnackBar.open('구글 로그인 정보가 유효하지 않습니다. 다시 시도해주세요.');
     } catch (e) {

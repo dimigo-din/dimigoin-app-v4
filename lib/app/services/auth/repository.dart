@@ -113,9 +113,10 @@ class AuthRepository {
 
       return PersonalInformation.fromJson(response.data);
     } on DioException catch (e) {
-      print(e);
       if (e.response?.statusCode == 401) {
         throw WrongPasscodeException();
+      } else if (e.response?.statusCode == 404) {
+        throw PersonalInformationNotRegisteredException();
       } else {
         rethrow;
       }

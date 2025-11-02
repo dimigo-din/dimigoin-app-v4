@@ -7,6 +7,7 @@ import 'package:dimigoin_app_v4/app/routes/routes.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../auth/model.dart';
@@ -69,6 +70,11 @@ class AuthService extends GetxController {
       return null;
     }
   }
+
+  void openDimiAuthPage() {
+    final Uri url = Uri.parse('https://dimiauth.findflag.kr');
+    launchUrl(url, mode: LaunchMode.externalApplication);
+  }
   
   Future<String?> _signInWithGoogle() async {
     try {
@@ -116,8 +122,10 @@ class AuthService extends GetxController {
       if (idToken == null) return false;
 
       final token = await repository.loginWithGoogle(idToken);
-      
+
       await _handleLoginSuccess(token);
+    } on PinVerificationCancelledException {
+      return false;
     } on PersonalInformationNotRegisteredException {
       logout();
       throw PersonalInformationNotRegisteredException();
@@ -140,11 +148,11 @@ class AuthService extends GetxController {
   Future<void> _handleLoginSuccess(LoginToken token) async {
     _jwtToken.value = token;
 
-    bool isGetInfo = await Get.toNamed(Routes.PIN);
+    dynamic result = await Get.toNamed(Routes.PIN);
 
-    if (isGetInfo == true) {
+    if (result == true) {
       await AuthStorage.saveTokens(token.accessToken!, token.refreshToken!);
-      
+
       final decode = JwtDecoder.decode(token.accessToken!) as dynamic;
 
       await AuthStorage.saveUserImageURL(decode['picture'].toString());
@@ -153,7 +161,8 @@ class AuthService extends GetxController {
       _user.value?.profileUrl = decode['picture'].toString();
       _user.value?.id = decode['id'].toString();
     } else {
-      return;
+      _jwtToken.value = LoginToken();
+      throw PinVerificationCancelledException();
     }
   }
 
@@ -162,6 +171,8 @@ class AuthService extends GetxController {
       final token = await repository.loginWithPassword(email, password);
 
       await _handleLoginSuccess(token);
+    } on PinVerificationCancelledException {
+      return false;
     } on PersonalInformationNotRegisteredException {
       logout();
       throw PersonalInformationNotRegisteredException();
@@ -207,8 +218,10 @@ class AuthService extends GetxController {
       _user.value = info;
     } on WrongPasscodeException {
       throw WrongPasscodeException();
+    } on PersonalInformationNotRegisteredException {
+      throw PersonalInformationNotRegisteredException();
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }

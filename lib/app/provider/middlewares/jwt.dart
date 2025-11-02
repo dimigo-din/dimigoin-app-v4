@@ -25,7 +25,7 @@ class JWTMiddleware extends ApiMiddleware {
     final responseCode = err.response?.statusCode;
     final errorCode = err.response?.data?['code'];
 
-    if (options.path == '/auth/refresh') {
+    if (options.path == '/auth/refresh' || options.path == dotenv.env['PERSONAL_INFO_API_URL']) {
       return null;
     }
 

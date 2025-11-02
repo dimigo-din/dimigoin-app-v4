@@ -34,6 +34,12 @@ class WrongPasscodeException implements Exception {
   WrongPasscodeException({this.message});
 }
 
+class PinVerificationCancelledException implements Exception {
+  final String? message;
+
+  PinVerificationCancelledException({this.message});
+}
+
 class StayNotInApplyPeriodException implements Exception {
   final String? message;
 
