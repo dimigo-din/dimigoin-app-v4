@@ -63,3 +63,6 @@ app.*.map.json
 *.cer
 *.mobileprovision
 /ios/Runner/GoogleService-Info-Dev.plist
+
+# fastlane
+/android/google-play-secret.json
