@@ -32,11 +32,15 @@ class PushService extends GetxController {
     await requestPushPermission();
 
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
-      await repository.upsertFCMToken(fcmToken);
+      if (authService.isLoginSuccess) {
+        await repository.upsertFCMToken(fcmToken);
 
-      DateTime now = DateTime.now();
-      await repository.setTokenLastUpdatedAt(now);
-      log('FCM Token updated and sent to server at $now: $fcmToken');
+        DateTime now = DateTime.now();
+        await repository.setTokenLastUpdatedAt(now);
+        log('FCM Token updated and sent to server at $now: $fcmToken');
+      } else {
+        log('FCM Token refreshed but not sent to server (not logged in): $fcmToken');
+      }
     }).onError((err) {
       log('FCM Token update failed: $err');
     });
@@ -155,5 +159,27 @@ class PushService extends GetxController {
   Future<void> deleteFCMToken() async {
     await FirebaseMessaging.instance.deleteToken();
     await repository.deleteTokenLastUpdatedAt();
+  }
+
+  Future<void> syncTokenToServer() async {
+    if (!authService.isLoginSuccess) {
+      log('Cannot sync FCM token: User not logged in');
+      return;
+    }
+
+    try {
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        await repository.upsertFCMToken(fcmToken);
+
+        DateTime now = DateTime.now();
+        await repository.setTokenLastUpdatedAt(now);
+        log('FCM Token synced to server at $now: $fcmToken');
+      } else {
+        log('Cannot sync FCM token: Token is null');
+      }
+    } catch (e) {
+      log('Failed to sync FCM token to server: $e');
+    }
   }
 }
