@@ -1,4 +1,4 @@
-name: Deploy Playstore
+name: Deploy Playstore Beta
 
 on:
   workflow_call:
