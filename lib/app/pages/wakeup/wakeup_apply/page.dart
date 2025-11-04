@@ -7,7 +7,7 @@ import 'package:dimigoin_app_v4/app/widgets/factory94/DFAvatar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFDivider.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFInputField.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
-import 'package:dimigoin_app_v4/app/widgets/factory94/DFbutton.dart';
+import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
 import 'package:flutter/material.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:get/get.dart';

@@ -2,7 +2,7 @@ import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/services/laundry/model.dart';
 import 'package:dimigoin_app_v4/app/services/laundry/service.dart';
-import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackbar.dart';
+import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:get/get.dart';
 
 class LaundryPageController extends GetxController {
