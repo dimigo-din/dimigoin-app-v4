@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/routes/routes.dart';
+import 'package:dimigoin_app_v4/app/services/push/service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:get/get.dart';
@@ -160,6 +161,13 @@ class AuthService extends GetxController {
 
       _user.value?.profileUrl = decode['picture'].toString();
       _user.value?.id = decode['id'].toString();
+
+      try {
+        final pushService = Get.find<PushService>();
+        await pushService.syncTokenToServer();
+      } catch (e) {
+        log('Failed to sync FCM token after login: $e');
+      }
     } else {
       _jwtToken.value = LoginToken();
       throw PinVerificationCancelledException();
