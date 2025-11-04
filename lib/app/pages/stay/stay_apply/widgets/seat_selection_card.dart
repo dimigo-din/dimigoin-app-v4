@@ -1,5 +1,5 @@
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
-import 'package:dimigoin_app_v4/app/widgets/factory94/DFbutton.dart';
+import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
 import 'package:flutter/material.dart';
 
 class SeatSelectionCard extends StatelessWidget {
