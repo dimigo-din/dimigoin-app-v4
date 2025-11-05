@@ -13,38 +13,40 @@ class PinInputPage extends GetView<PinInputController> {
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: colorTheme.backgroundStandardSecondary,
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isSmallScreen = constraints.maxHeight < 600;
-            return Column(
-              children: [
-                SizedBox(height: isSmallScreen ? 40 : 80),
-                const PinPageTitle(),
-                SizedBox(height: isSmallScreen ? 32 : 56),
-                Obx(
-                  () => PinDotIndicator(
-                    pinLength: controller.pinLength,
-                    filledCount: controller.pin.value.length,
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: colorTheme.backgroundStandardSecondary,
+        appBar: AppBar(
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isSmallScreen = constraints.maxHeight < 600;
+              return Column(
+                children: [
+                  SizedBox(height: isSmallScreen ? 40 : 80),
+                  const PinPageTitle(),
+                  SizedBox(height: isSmallScreen ? 32 : 56),
+                  Obx(
+                    () => PinDotIndicator(
+                      pinLength: controller.pinLength,
+                      filledCount: controller.pin.value.length,
+                    ),
                   ),
-                ),
-                const Spacer(),
-                PinKeypadGrid(
-                  onNumberPressed: controller.onNumberPressed,
-                  onDeletePressed: controller.onDeletePressed,
-                ),
-                SizedBox(height: isSmallScreen ? 24 : 40),
-              ],
-            );
-          },
+                  const Spacer(),
+                  PinKeypadGrid(
+                    onNumberPressed: controller.onNumberPressed,
+                    onDeletePressed: controller.onDeletePressed,
+                  ),
+                  SizedBox(height: isSmallScreen ? 24 : 40),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

@@ -54,40 +54,42 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        toolbarHeight: 80,
-        elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: DFSpacing.spacing550,
-            vertical: DFSpacing.spacing400,
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          toolbarHeight: 80,
+          elevation: 0,
+          title: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: DFSpacing.spacing550,
+              vertical: DFSpacing.spacing400,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.asset(
+                  'assets/images/dimigoin_icon.png',
+                  height: 35,
+                )
+              ],
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.asset(
-                'assets/images/dimigoin_icon.png',
-                height: 35,
-              )
-            ],
+        ),
+        body: Obx(
+          () => IndexedStack(
+            index: controller.currentIndex.value,
+            children: pages.map((set) => set.page).toList(),
           ),
         ),
-      ),
-      body: Obx(
-        () => IndexedStack(
-          index: controller.currentIndex.value,
-          children: pages.map((set) => set.page).toList(),
+        bottomNavigationBar: Obx(
+          () => BottomNavBar(
+            items: navItems,
+            currentIndex: controller.currentIndex.value,
+            onTap: controller.changePage,
+          ),
         ),
-      ),
-      bottomNavigationBar: Obx(
-        () => BottomNavBar(
-          items: navItems,
-          currentIndex: controller.currentIndex.value,
-          onTap: controller.changePage,
-        ),
-      ),
+      )
     );
   }
 }

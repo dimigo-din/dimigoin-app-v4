@@ -1,4 +1,5 @@
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
+import 'package:dimigoin_app_v4/app/pages/home/controller.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/services/laundry/model.dart';
 import 'package:dimigoin_app_v4/app/services/laundry/service.dart';
@@ -80,6 +81,7 @@ class LaundryPageController extends GetxController {
       DFSnackBar.info("세탁 신청 중입니다...");
       await laundryService.applyLaundry(timeId, machineId);
       await fetchLaundryApplications();
+      Get.find<HomePageController>().getUserApply();
       DFSnackBar.success("세탁 신청이 완료되었습니다.");
     } on LaundryApplyIsAfterEightAMException {
       DFSnackBar.error("세탁 신청은 오전 8시 이후에만 가능합니다.");
@@ -105,6 +107,7 @@ class LaundryPageController extends GetxController {
       DFSnackBar.info("세탁 신청 취소 중입니다...");
       await laundryService.deleteLaundryApplication(applyId);
       await fetchLaundryApplications();
+      Get.find<HomePageController>().getUserApply();
       DFSnackBar.success("세탁 신청이 취소되었습니다.");
     } catch (e) {
       DFSnackBar.error("세탁 신청 취소 중 오류가 발생했습니다.");
