@@ -33,12 +33,26 @@ jobs:
 
       - name: add .env file
         run: echo "${{ secrets.ENV }}" > env/.env
+
+      - name: Check environment
+        run: |
+          echo "Android app directory:"
+          ls -la android/app/ | grep -E "dimigoin-keystore.jks|google-services.json"
+          echo ""
+          echo "Android directory:"
+          ls -la android/ | grep -E "key.properties|google-play-secret.json"
+          echo ""
+          echo "Firebase options:"
+          ls -la lib/firebase_options.dart
+          echo ""
+          echo "ENV directory:"
+          ls -la env/
       
       - name: Setup Java to compile the Android project
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: 21.0
+          java-version: 17
 
       - name: Install flutter sdk
         uses: subosito/flutter-action@v2.16.0

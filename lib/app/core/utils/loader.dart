@@ -19,23 +19,27 @@ class AppLoader {
     WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
     FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-    setPathUrlStrategy();
+    try {
+      setPathUrlStrategy();
 
-    await dotenv.load(fileName: "env/.env", isOptional: true);
+      await dotenv.load(fileName: "env/.env");
 
-    Get.put<ApiProvider>(ProdApiProvider());
-    final authService = Get.put(AuthService());
-    await authService.initComplete;
-    Get.put(PushService());
+      Get.put<ApiProvider>(ProdApiProvider());
+      final authService = Get.put(AuthService());
+      await authService.initComplete;
+      Get.put(PushService());
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    if (!kIsWeb) {
-      if (Platform.isAndroid) {
-        await FlutterDisplayMode.setHighRefreshRate();
+      if (!kIsWeb) {
+        if (Platform.isAndroid) {
+          await FlutterDisplayMode.setHighRefreshRate();
+        }
       }
-    }
 
-    FlutterNativeSplash.remove();
+      FlutterNativeSplash.remove();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

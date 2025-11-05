@@ -39,24 +39,29 @@ class AuthService extends GetxController {
   Future<void> onInit() async {
     super.onInit();
 
-    _jwtToken.value = LoginToken(
-      accessToken: await AuthStorage.getAccessToken(),
-      refreshToken: await AuthStorage.getRefreshToken(),
-    );
+    try {
+      _jwtToken.value = LoginToken(
+        accessToken: await AuthStorage.getAccessToken(),
+        refreshToken: await AuthStorage.getRefreshToken(),
+      );
 
-    _user.value = await AuthStorage.getPersonalInformation();
+      _user.value = await AuthStorage.getPersonalInformation();
 
-    await initialize();
-
-    if (!_initCompleter.isCompleted) {
-      _initCompleter.complete();
+      await initialize();
+    } catch (e) {
+      log('AuthService initialization failed: $e');
+      rethrow;
+    } finally {
+      if (!_initCompleter.isCompleted) {
+        _initCompleter.complete();
+      }
     }
   }
 
   Future<void> initialize() async {
     final GoogleSignIn signIn = GoogleSignIn.instance;
     await signIn.initialize(
-      clientId: dotenv.env['GOOGLE_CLIENT_ID'], 
+      clientId: dotenv.env['GOOGLE_CLIENT_ID'],
       serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID']
     );
   }

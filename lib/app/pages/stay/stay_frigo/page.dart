@@ -3,7 +3,7 @@ import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFInputField.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFOptionPicker.dart';
-import 'package:dimigoin_app_v4/app/widgets/factory94/DFbutton.dart';
+import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

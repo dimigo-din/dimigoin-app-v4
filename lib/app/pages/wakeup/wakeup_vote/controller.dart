@@ -1,6 +1,6 @@
 import 'package:dimigoin_app_v4/app/services/wakeup/model.dart';
 import 'package:dimigoin_app_v4/app/services/wakeup/service.dart';
-import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackbar.dart';
+import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 
