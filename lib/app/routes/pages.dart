@@ -49,7 +49,7 @@ class AppPages {
       name: Routes.MAIN,
       page: () => MainPage(),
       middlewares: [LoginMiddleware()],
-      transition: Transition.cupertino,
+      transition: Transition.noTransition,
     ),
     GetPage(
       name: Routes.PIN,

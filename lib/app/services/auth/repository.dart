@@ -19,7 +19,7 @@ class AuthRepository {
 
     DFHttpResponse response = await api.get(url);
 
-    Pong pong = Pong.fromJson(response.data);
+    Pong pong = Pong.fromJson(response.data['data']);
 
     return pong;
   }
@@ -33,7 +33,7 @@ class AuthRepository {
         'password': password,
       });
 
-      LoginToken loginToken = LoginToken.fromJson(response.data);
+      LoginToken loginToken = LoginToken.fromJson(response.data['data']);
 
       return loginToken;
     } on DioException catch (e) {
