@@ -16,7 +16,7 @@ class StayOutingPage extends GetView<StayPageController> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Padding(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           top: DFSpacing.spacing300,
           bottom: DFSpacing.spacing500,
         ),
