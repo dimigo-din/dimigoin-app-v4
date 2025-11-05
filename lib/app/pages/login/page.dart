@@ -19,6 +19,7 @@ class LoginPage extends GetView<LoginPageController> {
     final textTheme = Theme.of(context).extension<DFTypography>()!;
 
     return SafeArea(
+      top: false,
       child: Scaffold(
         body: Stack(
           children: [
