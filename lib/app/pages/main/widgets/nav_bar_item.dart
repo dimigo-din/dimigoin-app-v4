@@ -50,6 +50,8 @@ class NavBarItem extends StatelessWidget {
                       : colorTheme.coreBrandSecondary,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ],
           ),
