@@ -120,35 +120,38 @@ class _DFAnimatedBottomSheetState extends State<DFAnimatedBottomSheet>
       duration: const Duration(milliseconds: 50),
       curve: Curves.easeOut,
       padding: EdgeInsets.only(bottom: bottomInset),
-      child: Container(
-        height: widget.height,
-        padding: const EdgeInsets.only(top: 24),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: widget.padding ??
-                const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
+      child: SafeArea(
+        top: false,
+        child: Container(
+          height: widget.height,
+          padding: const EdgeInsets.only(top: 24),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Padding(
+              padding: widget.padding ??
+                  const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                ),
-                ...List.generate(
-                  widget.children.length,
-                  (index) => StaggeredAnimationItem(
-                    index: index,
-                    animation: _animation,
-                    child: widget.children[index],
+                  ...List.generate(
+                    widget.children.length,
+                    (index) => StaggeredAnimationItem(
+                      index: index,
+                      animation: _animation,
+                      child: widget.children[index],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
