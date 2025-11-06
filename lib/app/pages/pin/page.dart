@@ -14,6 +14,7 @@ class PinInputPage extends GetView<PinInputController> {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
 
     return SafeArea(
+      top: false,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: colorTheme.backgroundStandardSecondary,
@@ -23,6 +24,7 @@ class PinInputPage extends GetView<PinInputController> {
           backgroundColor: Colors.transparent,
         ),
         body: SafeArea(
+          top: false,
           child: LayoutBuilder(
             builder: (context, constraints) {
               final isSmallScreen = constraints.maxHeight < 600;

@@ -19,6 +19,7 @@ class PWLoginPage extends GetView<PWLoginPageController> {
     final textTheme = Theme.of(context).extension<DFTypography>()!;
 
     return SafeArea(
+      top: false,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(

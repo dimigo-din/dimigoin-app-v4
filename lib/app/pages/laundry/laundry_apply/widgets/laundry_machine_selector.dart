@@ -1,6 +1,7 @@
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/services/laundry/model.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFHeader.dart';
+import 'package:dimigoin_app_v4/app/widgets/gestureDetector.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller.dart';
@@ -35,8 +36,8 @@ class LaundryMachineSelector extends StatelessWidget {
             ? machines[selectedIndex].name
             : "사용 가능 기기 없음";
 
-        return GestureDetector(
-          onTap: hasMachine ? onTap : null,
+        return DFGestureDetectorWithOpacityInteraction(
+          onTap: onTap,
           child: DFSectionHeader(
             size: DFSectionHeaderSize.large,
             title: selectedMachineName,

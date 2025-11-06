@@ -142,14 +142,16 @@ class TimeTableWidget extends GetView<HomePageController> {
                                 ? colorTheme.coreBrandTertiary
                                 : Colors.transparent,
                           ),
-                          child: Center(
+                            child: Center(
                             child: Text(
                               subject.content.split('\n')[0],
                               style: textTheme.callout.copyWith(
-                                color: subject.temp
-                                    ? colorTheme.contentStandardSecondary
-                                    : colorTheme.contentStandardPrimary,
+                              color: subject.temp
+                                ? colorTheme.contentStandardSecondary
+                                : colorTheme.contentStandardPrimary,
                               ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                           ),
                         );
