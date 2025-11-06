@@ -1,5 +1,6 @@
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFHeader.dart';
+import 'package:dimigoin_app_v4/app/widgets/gestureDetector.dart';
 import 'package:flutter/material.dart';
 
 class StayScheduleSelector extends StatelessWidget {
@@ -14,7 +15,7 @@ class StayScheduleSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return DFGestureDetectorWithOpacityInteraction(
       onTap: onTap,
       child: Padding(
         padding: EdgeInsets.only(left: DFSpacing.spacing100),
