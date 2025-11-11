@@ -167,16 +167,16 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
                   children: [
                     if(widget.isApplied == false) ...[
                       DFButton(
-                        label: "선택하기",
-                        theme: DFButtonTheme.accent,
-                        onPressed: _selectedSeat != null ? _onConfirmPressed : null,
-                      ),
-                      const SizedBox(width: 8),
-                      DFButton(
                         label: "미선택",
                         theme: DFButtonTheme.accent,
                         style: DFButtonStyle.secondary,
                         onPressed: _onNoSeatPressed,
+                      ),
+                      const SizedBox(width: 8),
+                      DFButton(
+                        label: "선택하기",
+                        theme: DFButtonTheme.accent,
+                        onPressed: _selectedSeat != null ? _onConfirmPressed : null,
                       ),
                     ]
                   ],
