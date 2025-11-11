@@ -44,11 +44,15 @@ class StayPageController extends GetxController {
   final RxInt selectedFrigoTimingIndex = 0.obs;
   final RxString frigoReason = ''.obs;
 
-  bool get isApplied => stayApplyList.firstWhereOrNull(
-    (application) =>
-        application.stay?.id ==
-        stayList[selectedStayIndex.value].id,
-  ) == null;
+  final RxBool isApplied = false.obs;
+
+  void updateIsApplied() {
+    final currentStayId = stayList[selectedStayIndex.value].id;
+    
+    isApplied.value = stayApplyList.firstWhereOrNull(
+      (application) => application.stay?.id == currentStayId,
+    ) == null;
+  }
 
   void resetOutingForm() {
     outingFrom.value = null;
@@ -107,6 +111,8 @@ class StayPageController extends GetxController {
       selectedSeat.value = '';
       noSeatReason.value = '';
     }
+
+    updateIsApplied();
 
     await fetchCurrentStayOutings();
   }

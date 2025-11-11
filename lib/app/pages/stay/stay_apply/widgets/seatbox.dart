@@ -99,18 +99,24 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
   }
 
   void _onSeatTapped(String seat) {
+    if (widget.isApplied) return;
+
     setState(() {
       _selectedSeat = seat;
     });
   }
 
   void _onConfirmPressed() {
+    if (widget.isApplied) return;
+
     if (_selectedSeat != null) {
       widget.onSeatConfirmed(_selectedSeat!);
     }
   }
 
   void _onNoSeatPressed() {
+    if (widget.isApplied) return;
+    
     setState(() {
       _selectedSeat = null;
     });

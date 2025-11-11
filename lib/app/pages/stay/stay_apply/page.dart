@@ -30,7 +30,7 @@ class StayApplyPage extends GetView<StayPageController> {
             currentUserGrade: authService.user!.userGrade.toString(),
             currentUserGender: authService.user!.gender.toString(),
             currentUserId: authService.user!.id.toString(),
-            isApplied: controller.isApplied,
+            isApplied: controller.isApplied.value,
             onSeatConfirmed: (seat) {
               controller.selectedSeat.value = seat;
               Navigator.pop(context);
@@ -113,7 +113,7 @@ class StayApplyPage extends GetView<StayPageController> {
               
               return SizedBox(
                 width: double.infinity,
-                child: controller.isApplied
+                child: controller.isApplied.value == false
                   ? DFButton(
                     onPressed: () => controller.addStayApplication(),
                     label: "잔류 신청",
