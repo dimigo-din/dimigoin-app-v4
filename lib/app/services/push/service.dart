@@ -28,16 +28,12 @@ class PushService extends GetxController {
   }
 
   Future<void> initialize() async {
-    // 알림 권한 요청
     await requestPushPermission();
 
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
       if (authService.isLoginSuccess) {
         await repository.upsertFCMToken(fcmToken);
-
-        DateTime now = DateTime.now();
-        await repository.setTokenLastUpdatedAt(now);
-        log('FCM Token updated and sent to server at $now: $fcmToken');
+        log('FCM Token updated and sent to server: $fcmToken');
       } else {
         log('FCM Token refreshed but not sent to server (not logged in): $fcmToken');
       }
@@ -48,14 +44,9 @@ class PushService extends GetxController {
     await repository.init();
     await _initLocalNotification();
 
-    checkTokenUpToDate().then((isUpToDate) async {
-      if (!isUpToDate) {
-        await deleteFCMToken();
-        await generateFCMToken();
-      } else {
-        log('FCM Token is up to date; no need to resend.');
-      }
-    });
+    if (authService.isLoginSuccess) {
+      await syncTokenToServer();
+    }
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
@@ -120,45 +111,23 @@ class PushService extends GetxController {
     );
 
     await flutterLocalNotificationsPlugin.show(
-      0,
+      message.hashCode,
       message.notification?.title ?? '알림',
       message.notification?.body ?? '메시지가 도착했습니다.',
       notificationDetails,
     );
   }
 
-  Future<bool> checkTokenUpToDate() async {
-    try {
-      DateTime? lastUpdatedAt = await repository.getTokenLastUpdatedAt();
-      if (lastUpdatedAt == null) {
-        return false;
-      }
-
-      final now = DateTime.now();
-      final difference = now.difference(lastUpdatedAt);
-
-      if (difference.inDays >= 5) {
-        return false;
-      }
-
-      return true;
-    } catch (e) {
-      log(e.toString());
-      return false;
-    }
-  }
-
   Future<void> requestPushPermission() async {
     await FirebaseMessaging.instance.requestPermission();
   }
 
-  Future<void> generateFCMToken() async {
-    await FirebaseMessaging.instance.getToken();
+  Future<String?> getFCMToken() async {
+    return await FirebaseMessaging.instance.getToken();
   }
 
   Future<void> deleteFCMToken() async {
     await FirebaseMessaging.instance.deleteToken();
-    await repository.deleteTokenLastUpdatedAt();
   }
 
   Future<void> syncTokenToServer() async {
@@ -171,10 +140,7 @@ class PushService extends GetxController {
       String? fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken != null) {
         await repository.upsertFCMToken(fcmToken);
-
-        DateTime now = DateTime.now();
-        await repository.setTokenLastUpdatedAt(now);
-        log('FCM Token synced to server at $now: $fcmToken');
+        log('FCM Token synced to server: $fcmToken');
       } else {
         log('Cannot sync FCM token: Token is null');
       }
