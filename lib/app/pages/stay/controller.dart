@@ -51,7 +51,7 @@ class StayPageController extends GetxController {
     
     isApplied.value = stayApplyList.firstWhereOrNull(
       (application) => application.stay?.id == currentStayId,
-    ) == null;
+    ) != null;
   }
 
   void resetOutingForm() {
