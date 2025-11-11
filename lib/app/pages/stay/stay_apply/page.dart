@@ -30,6 +30,7 @@ class StayApplyPage extends GetView<StayPageController> {
             currentUserGrade: authService.user!.userGrade.toString(),
             currentUserGender: authService.user!.gender.toString(),
             currentUserId: authService.user!.id.toString(),
+            isApplied: controller.isApplied,
             onSeatConfirmed: (seat) {
               controller.selectedSeat.value = seat;
               Navigator.pop(context);
@@ -109,30 +110,24 @@ class StayApplyPage extends GetView<StayPageController> {
               if (controller.stayList.isEmpty) {
                 return const SizedBox();
               }
-
-              final isApplied = controller.stayApplyList.firstWhereOrNull(
-                (application) =>
-                    application.stay?.id ==
-                    controller.stayList[controller.selectedStayIndex.value].id,
-              ) == null;
-
+              
               return SizedBox(
                 width: double.infinity,
-                child: isApplied
-                    ? DFButton(
-                        onPressed: () => controller.addStayApplication(),
-                        label: "잔류 신청",
-                        size: DFButtonSize.large,
-                        theme: DFButtonTheme.accent,
-                        style: DFButtonStyle.primary,
-                      )
-                    : DFButton(
-                        onPressed: () => controller.deleteStayApplication(),
-                        label: "잔류 신청 취소",
-                        size: DFButtonSize.large,
-                        theme: DFButtonTheme.accent,
-                        style: DFButtonStyle.secondary,
-                      ),
+                child: controller.isApplied
+                  ? DFButton(
+                    onPressed: () => controller.addStayApplication(),
+                    label: "잔류 신청",
+                    size: DFButtonSize.large,
+                    theme: DFButtonTheme.accent,
+                    style: DFButtonStyle.primary,
+                  )
+                  : DFButton(
+                    onPressed: () => controller.deleteStayApplication(),
+                    label: "잔류 신청 취소",
+                    size: DFButtonSize.large,
+                    theme: DFButtonTheme.accent,
+                    style: DFButtonStyle.secondary,
+                  ),
               );
             }),
           ],

@@ -44,6 +44,12 @@ class StayPageController extends GetxController {
   final RxInt selectedFrigoTimingIndex = 0.obs;
   final RxString frigoReason = ''.obs;
 
+  bool get isApplied => stayApplyList.firstWhereOrNull(
+    (application) =>
+        application.stay?.id ==
+        stayList[selectedStayIndex.value].id,
+  ) == null;
+
   void resetOutingForm() {
     outingFrom.value = null;
     outingTo.value = null;
