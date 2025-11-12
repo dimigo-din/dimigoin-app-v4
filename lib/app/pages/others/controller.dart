@@ -5,9 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 class OthersPageController extends GetxController {
   final AuthService authService = Get.find<AuthService>();
 
-  Future<void> logout() async {
-    await authService.logout();
-    Get.offAllNamed('/login');
+  Future<void> openSettingPage() async {
+    Get.toNamed('/setting');
   }
 
   Future<void> launchMenuUrl(String url) async {

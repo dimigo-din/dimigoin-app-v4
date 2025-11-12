@@ -15,8 +15,11 @@ import '../pages/main/page.dart';
 import '../pages/login/pw/binding.dart';
 import '../pages/login/pw/page.dart';
 
-import 'package:dimigoin_app_v4/app/pages/pin/page.dart';
-import 'package:dimigoin_app_v4/app/pages/pin/binding.dart';
+import '../pages/pin/page.dart';
+import '../pages/pin/binding.dart';
+
+import '../pages/setting/binding.dart';
+import '../pages/setting/page.dart';
 
 import 'routes.dart';
 
@@ -57,6 +60,13 @@ class AppPages {
       binding: PinInputPageBinding(),
       middlewares: [LoginMiddleware()],
       transition: Transition.cupertino,
-    )
+    ),
+    GetPage(
+      name: Routes.SETTING,
+      page: () => SettingPage(),
+      binding: SettingPageBinding(),
+      middlewares: [LoginMiddleware()],
+      transition: Transition.cupertino,
+    ),
   ];
 }

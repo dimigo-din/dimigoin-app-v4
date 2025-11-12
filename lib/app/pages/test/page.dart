@@ -1,6 +1,7 @@
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFAnimatedBottomSheet.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFAvatar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFChip.dart';
+import 'package:dimigoin_app_v4/app/widgets/factory94/DFControl.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFHeader.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFInputField.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSegmentControl.dart';
@@ -108,6 +109,11 @@ class TestPage extends GetView<TestPageController> {
               },
               child: const Text("Haptic"),
           ),
+          Obx(() => DFControl(
+            type: DFControlType.toggle,
+            status: controller.checkToggle.value,
+            onTap: () => controller.checkToggle.value = !controller.checkToggle.value,
+          )),
         ],
         
       ),

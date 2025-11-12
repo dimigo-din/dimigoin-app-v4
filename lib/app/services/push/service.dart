@@ -148,4 +148,12 @@ class PushService extends GetxController {
       log('Failed to sync FCM token to server: $e');
     }
   }
+
+  Future<List<String>> getSubscribedTopics() async {
+    return await repository.getSubscribedTopics();
+  }
+
+  Future<void> updateSubscribedTopics(List<String> topics) async {
+    await repository.updateSubscribedTopics(topics);
+  }
 }
