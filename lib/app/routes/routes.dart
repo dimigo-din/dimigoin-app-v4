@@ -12,4 +12,5 @@ class Routes {
   static const OTHERS = '/others';
   static const MAIN = '/main';
   static const PIN = '/pin';
+  static const SETTING = '/setting';
 }

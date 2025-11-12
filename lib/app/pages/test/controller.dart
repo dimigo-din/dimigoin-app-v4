@@ -1,3 +1,5 @@
 import 'package:get/get.dart';
 
-class TestPageController extends GetxController {}
+class TestPageController extends GetxController {
+  RxBool checkToggle = false.obs;
+}

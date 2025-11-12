@@ -50,4 +50,42 @@ class PushRepository {
     await pushBox?.delete('token_last_updated_at');
   }
 
+  Future<void> updateSubscribedTopics(List<String> topics) async {
+    await init();
+
+    String url = '/student/push/subscribe-topics';
+
+    try {
+      await api.post(url, data: {
+        'topics': topics,
+      });
+
+      await pushBox?.put('subscribed_topics', topics);
+    } on DioException {
+      rethrow;
+    }
+  }
+
+  Future<List<String>> getSubscribedTopics() async {
+    await init();
+
+    final topics = pushBox?.get('subscribed_topics');
+
+    String url = '/student/push/subscribe-topics';
+
+    try {
+      final response = await api.get(url);
+      final serverTopics = List<String>.from(response.data['topics'] ?? []);
+
+      await pushBox?.put('subscribed_topics', serverTopics);
+      return serverTopics;
+    } on DioException {
+      if (topics != null) {
+        return List<String>.from(topics);
+      } else {
+        rethrow;
+      }
+    }
+  }
+
 }

@@ -38,11 +38,13 @@ class StayOutingPage extends GetView<StayPageController> {
 
             // 외출 목록
             Expanded(
-              child: Obx(() => Column(
-                children: _buildFilteredOutingList(),
+              child: Obx(() => SingleChildScrollView(
+                child: Column(
+                  children: _buildFilteredOutingList(),
+                ),
               )),
             ),
-            const SizedBox(height: DFSpacing.spacing600),
+            const SizedBox(height: DFSpacing.spacing300),
 
             // 외출 추가 버튼
             SizedBox(

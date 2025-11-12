@@ -63,8 +63,8 @@ class OthersPage extends GetView<OthersPageController> {
                 ),
                 trailing: DFIconButton(
                   theme: DFIconButtonTheme.grayscale,
-                  icon: const Icon(Icons.logout),
-                  onPressed: controller.logout,
+                  icon: const Icon(Icons.settings),
+                  onPressed: controller.openSettingPage,
                 ),
               )),
             ),
@@ -73,11 +73,6 @@ class OthersPage extends GetView<OthersPageController> {
               title: "DIN에 문의하기",
               onTap: () => controller.launchMenuUrl("https://pf.kakao.com/_fxhZen/chat"),
             ),      
-            const SizedBox(height: 5),
-            _othersPageItem(
-              title: "개인정보 처리방침",
-              onTap: () => controller.launchMenuUrl("https://dimigo-din.notion.site/25f98f8027c680a79e3ecf1e0cb6c6ff?source=copy_link"),
-            ),
             const Spacer(),
             const Padding(
               padding: EdgeInsets.only(bottom: DFSpacing.spacing400),
