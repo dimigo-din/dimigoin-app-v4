@@ -92,11 +92,26 @@ class StayApplyPage extends GetView<StayPageController> {
                       child: DFInputField(
                         title: "좌석 미선택 사유",
                         inputs: [
-                          DFInput(
-                            placeholder: "좌석 미선택 사유를 입력하세요",
-                            type: DFInputType.normal,
-                            onChanged: (value) => controller.noSeatReason.value = value,
-                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: DFInput(
+                                  controller: controller.noSeatReason,
+                                  placeholder: "좌석 미선택 사유를 입력하세요",
+                                  type: DFInputType.normal,
+                                ),
+                              ),
+                              const SizedBox(width: DFSpacing.spacing200),
+                              DFButton(
+                                label: "교실잔류",
+                                theme: DFButtonTheme.grayscale,
+                                style: DFButtonStyle.secondary,
+                                onPressed: () {
+                                  controller.noSeatReason.text = "교실잔류";
+                                },
+                              ),
+                            ],
+                          )
                         ],
                       ),
                     );

@@ -31,7 +31,7 @@ class StayPageController extends GetxController {
   final RxInt selectedStayOutingDay = 0.obs;
 
   final RxString selectedSeat = ''.obs;
-  final RxString noSeatReason = ''.obs;
+  final noSeatReason = TextEditingController();
 
   final Rx<TimeOfDay?> outingFrom = Rxn<TimeOfDay>();
   final Rx<TimeOfDay?> outingTo = Rxn<TimeOfDay>();
@@ -88,13 +88,18 @@ class StayPageController extends GetxController {
     await fetchStayList();
   }
 
-  Future<void> fetchStayList() async {
+  Future<void> fetchStayList([int? index]) async {
     final stays = await stayService.getStay();
-    selectedStayIndex.value = 0;
+
+    
     stayList.assignAll(stays);
 
-    if(stayList.isNotEmpty) {
-      selectStay(stayList[0]);
+    if (stayList.isNotEmpty) {
+      if (index != null && index < stays.length) {
+        selectStay(stayList[index]);
+      } else {
+        selectStay(stayList[0]);
+      }
     }
   }
 
@@ -109,7 +114,7 @@ class StayPageController extends GetxController {
       selectedSeat.value = application.staySeat;
     } else {
       selectedSeat.value = '';
-      noSeatReason.value = '';
+      noSeatReason.text = '';
     }
 
     updateIsApplied();
@@ -123,7 +128,7 @@ class StayPageController extends GetxController {
   }
 
   Future<void> addStayApplication() async {
-    if(selectedSeat.value == '' && noSeatReason.value.isEmpty) {
+    if(selectedSeat.value == '' && noSeatReason.text.isEmpty) {
       DFSnackBar.info("잔류 좌석을 선택해주세요.");
       return;
     }
@@ -134,10 +139,10 @@ class StayPageController extends GetxController {
         selectedStay.value!.id,
         selectedSeat.value,
         [],
-        noSeatReason: noSeatReason.value,
+        noSeatReason: noSeatReason.text,
       );
       await fetchStayApply();
-      await fetchStayList();
+      await fetchStayList(selectedStayIndex.value);
       Get.find<HomePageController>().getUserApply();
       DFSnackBar.success("잔류 신청이 완료되었습니다.");
     } on StayNotInApplyPeriodException {
@@ -173,6 +178,8 @@ class StayPageController extends GetxController {
     try {
       DFSnackBar.info("잔류 신청 취소 중입니다...");
       await stayService.deleteStayApplication(currentStayApply.id);
+      await fetchStayApply();
+      await fetchStayList(selectedStayIndex.value);
       await fetchCurrentStayOutings();
       Get.find<HomePageController>().getUserApply();
       DFSnackBar.success("잔류 신청이 취소되었습니다.");
