@@ -30,6 +30,7 @@ class StayApplyPage extends GetView<StayPageController> {
             currentUserGrade: authService.user!.userGrade.toString(),
             currentUserGender: authService.user!.gender.toString(),
             currentUserId: authService.user!.id.toString(),
+            isApplied: controller.isApplied.value,
             onSeatConfirmed: (seat) {
               controller.selectedSeat.value = seat;
               Navigator.pop(context);
@@ -91,11 +92,26 @@ class StayApplyPage extends GetView<StayPageController> {
                       child: DFInputField(
                         title: "좌석 미선택 사유",
                         inputs: [
-                          DFInput(
-                            placeholder: "좌석 미선택 사유를 입력하세요",
-                            type: DFInputType.normal,
-                            onChanged: (value) => controller.noSeatReason.value = value,
-                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: DFInput(
+                                  controller: controller.noSeatReason,
+                                  placeholder: "좌석 미선택 사유를 입력하세요",
+                                  type: DFInputType.normal,
+                                ),
+                              ),
+                              const SizedBox(width: DFSpacing.spacing200),
+                              DFButton(
+                                label: "교실잔류",
+                                theme: DFButtonTheme.grayscale,
+                                style: DFButtonStyle.secondary,
+                                onPressed: () {
+                                  controller.noSeatReason.text = "교실잔류";
+                                },
+                              ),
+                            ],
+                          )
                         ],
                       ),
                     );
@@ -109,30 +125,24 @@ class StayApplyPage extends GetView<StayPageController> {
               if (controller.stayList.isEmpty) {
                 return const SizedBox();
               }
-
-              final isApplied = controller.stayApplyList.firstWhereOrNull(
-                (application) =>
-                    application.stay?.id ==
-                    controller.stayList[controller.selectedStayIndex.value].id,
-              ) == null;
-
+              
               return SizedBox(
                 width: double.infinity,
-                child: isApplied
-                    ? DFButton(
-                        onPressed: () => controller.addStayApplication(),
-                        label: "잔류 신청",
-                        size: DFButtonSize.large,
-                        theme: DFButtonTheme.accent,
-                        style: DFButtonStyle.primary,
-                      )
-                    : DFButton(
-                        onPressed: () => controller.deleteStayApplication(),
-                        label: "잔류 신청 취소",
-                        size: DFButtonSize.large,
-                        theme: DFButtonTheme.accent,
-                        style: DFButtonStyle.secondary,
-                      ),
+                child: controller.isApplied.value == false
+                  ? DFButton(
+                    onPressed: () => controller.addStayApplication(),
+                    label: "잔류 신청",
+                    size: DFButtonSize.large,
+                    theme: DFButtonTheme.accent,
+                    style: DFButtonStyle.primary,
+                  )
+                  : DFButton(
+                    onPressed: () => controller.deleteStayApplication(),
+                    label: "잔류 신청 취소",
+                    size: DFButtonSize.large,
+                    theme: DFButtonTheme.accent,
+                    style: DFButtonStyle.secondary,
+                  ),
               );
             }),
           ],

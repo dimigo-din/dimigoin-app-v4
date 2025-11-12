@@ -69,6 +69,7 @@ class SeatSelectionWidget extends StatefulWidget {
   final String currentUserGrade;
   final String currentUserGender;
   final String currentUserId;
+  final bool isApplied;
   final Function(String) onSeatConfirmed;
   final VoidCallback? onNoSeatSelected;
 
@@ -79,6 +80,7 @@ class SeatSelectionWidget extends StatefulWidget {
     required this.currentUserGrade,
     required this.currentUserGender,
     required this.currentUserId,
+    required this.isApplied,
     required this.onSeatConfirmed,
     this.onNoSeatSelected,
   }) : super(key: key);
@@ -97,18 +99,24 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
   }
 
   void _onSeatTapped(String seat) {
+    if (widget.isApplied) return;
+
     setState(() {
       _selectedSeat = seat;
     });
   }
 
   void _onConfirmPressed() {
+    if (widget.isApplied) return;
+
     if (_selectedSeat != null) {
       widget.onSeatConfirmed(_selectedSeat!);
     }
   }
 
   void _onNoSeatPressed() {
+    if (widget.isApplied) return;
+    
     setState(() {
       _selectedSeat = null;
     });
@@ -163,18 +171,20 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
                 subTitle: '내가 선택한 좌석',
                 trailing: Row(
                   children: [
-                    DFButton(
-                      label: "선택하기",
-                      theme: DFButtonTheme.accent,
-                      onPressed: _selectedSeat != null ? _onConfirmPressed : null,
-                    ),
-                    const SizedBox(width: 8),
-                    DFButton(
-                      label: "미선택",
-                      theme: DFButtonTheme.accent,
-                      style: DFButtonStyle.secondary,
-                      onPressed: _onNoSeatPressed,
-                    ),
+                    if(widget.isApplied == false) ...[
+                      DFButton(
+                        label: "미선택",
+                        theme: DFButtonTheme.accent,
+                        style: DFButtonStyle.secondary,
+                        onPressed: _onNoSeatPressed,
+                      ),
+                      const SizedBox(width: 8),
+                      DFButton(
+                        label: "선택하기",
+                        theme: DFButtonTheme.accent,
+                        onPressed: _selectedSeat != null ? _onConfirmPressed : null,
+                      ),
+                    ]
                   ],
                 )
               ),

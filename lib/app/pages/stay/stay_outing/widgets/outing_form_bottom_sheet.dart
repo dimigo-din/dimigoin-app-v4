@@ -41,163 +41,165 @@ class OutingFormBottomSheet extends StatelessWidget {
     DFAnimatedBottomSheet.show(
       context: context,
       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24),
-      children: [
-        OutingFormBottomSheet(
-          isEditing: isEditing,
-          outing: outing,
-          selectedDate: selectedDate,
-        ),
-      ],
+      children: OutingFormBottomSheet(
+        isEditing: isEditing,
+        outing: outing,
+        selectedDate: selectedDate,
+      )._buildChildren(context),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      children: _buildChildren(context),
+    );
+  }
+
+  List<Widget> _buildChildren(BuildContext context) {
     final controller = Get.find<StayPageController>();
     final colorTheme = Theme.of(context).extension<DFColors>()!;
     final textTheme = Theme.of(context).extension<DFTypography>()!;
 
-    return Column(
-      children: [
-        // 신청 시간
-        Obx(() => DFInputField(
-          title: "신청 시간",
-          inputs: [
-            Row(
-              children: [
-                Expanded(
-                  child: DFInput(
-                    key: ValueKey(controller.outingFrom.value.toString()),
-                    initialTime: controller.outingFrom.value,
-                    placeholder: "시작 시간",
-                    type: DFInputType.normal,
-                    mode: DFInputMode.time,
-                    onTimeChanged: (t) => controller.outingFrom.value = t,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
-                  child: Text(
-                    "~",
-                    style: textTheme.headline.copyWith(
-                      color: colorTheme.contentStandardSecondary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: DFInput(
-                    key: ValueKey(controller.outingTo.value.toString()),
-                    initialTime: controller.outingTo.value,
-                    placeholder: "종료 시간",
-                    type: DFInputType.normal,
-                    mode: DFInputMode.time,
-                    onTimeChanged: (t) => controller.outingTo.value = t,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: DFSpacing.spacing400),
-          ],
-        )),
-
-        // 신청 사유
-        DFInputField(
-          title: "신청 사유",
-          inputs: [
-            DFInput(
-              controller: controller.outingReasonTEC,
-              placeholder: "신청 사유를 입력하세요",
-              type: DFInputType.normal,
-            ),
-            const SizedBox(height: DFSpacing.spacing400),
-          ],
-        ),
-
-        // 급식 취소
-        Obx(() => DFInputField(
-          title: "급식 취소",
-          inputs: [
-            Row(
-              children: [
-                Expanded(
-                  child: DFOption(
-                    label: "아침",
-                    activated: controller.breakfastCancel.value,
-                    onTap: () => controller.breakfastCancel.toggle(),
-                  ),
-                ),
-                const SizedBox(width: DFSpacing.spacing200),
-                Expanded(
-                  child: DFOption(
-                    label: "점심",
-                    activated: controller.lunchCancel.value,
-                    onTap: () => controller.lunchCancel.toggle(),
-                  ),
-                ),
-                const SizedBox(width: DFSpacing.spacing200),
-                Expanded(
-                  child: DFOption(
-                    label: "저녁",
-                    activated: controller.dinnerCancel.value,
-                    onTap: () => controller.dinnerCancel.toggle(),
-                  ),
-                ),
-                const SizedBox(height: DFSpacing.spacing400),
-              ],
-            ),
-            const SizedBox(height: DFSpacing.spacing400),
-          ],
-        )),
-
-        // 자기계발외출 버튼
-        if (controller.selectedStay.value?.outingDay?.contains(
-          DateFormat("yyyy-MM-dd").format(selectedDate),
-        ) ?? false) ...[
-          Column(
+    return [
+      // 신청 시간
+      Obx(() => DFInputField(
+        title: "신청 시간",
+        inputs: [
+          Row(
             children: [
-              SizedBox(
-                width: double.infinity,
-                child: DFButton(
-                  label: "자기 계발 외출",
-                  size: DFButtonSize.large,
-                  theme: DFButtonTheme.grayscale,
-                  style: DFButtonStyle.secondary,
-                  onPressed: controller.applyOutingPreset,
+              Expanded(
+                child: DFInput(
+                  key: ValueKey(controller.outingFrom.value.toString()),
+                  initialTime: controller.outingFrom.value,
+                  placeholder: "시작 시간",
+                  type: DFInputType.normal,
+                  mode: DFInputMode.time,
+                  onTimeChanged: (t) => controller.outingFrom.value = t,
                 ),
               ),
-              const SizedBox(height: DFSpacing.spacing200),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
+                child: Text(
+                  "~",
+                  style: textTheme.headline.copyWith(
+                    color: colorTheme.contentStandardSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: DFInput(
+                  key: ValueKey(controller.outingTo.value.toString()),
+                  initialTime: controller.outingTo.value,
+                  placeholder: "종료 시간",
+                  type: DFInputType.normal,
+                  mode: DFInputMode.time,
+                  onTimeChanged: (t) => controller.outingTo.value = t,
+                ),
+              ),
             ],
           ),
+          const SizedBox(height: DFSpacing.spacing400),
         ],
+      )),
 
-        // 하단 버튼
-        Row(
-          children: [
-            Expanded(
-              child: DFButton(
-                label: isEditing ? "수정하기" : "신청하기",
-                size: DFButtonSize.large,
-                theme: DFButtonTheme.accent,
-                onPressed: () => _handleSubmit(context, controller),
-              ),
-            ),
-            if (isEditing) ...[
-              const SizedBox(width: DFSpacing.spacing200),
+      // 신청 사유
+      DFInputField(
+        title: "신청 사유",
+        inputs: [
+          DFInput(
+            controller: controller.outingReasonTEC,
+            placeholder: "신청 사유를 입력하세요",
+            type: DFInputType.normal,
+          ),
+          const SizedBox(height: DFSpacing.spacing400),
+        ],
+      ),
+
+      // 급식 취소
+      Obx(() => DFInputField(
+        title: "급식 취소",
+        inputs: [
+          Row(
+            children: [
               Expanded(
-                child: DFButton(
-                  label: "삭제하기",
-                  size: DFButtonSize.large,
-                  theme: DFButtonTheme.negative,
-                  style: DFButtonStyle.secondary,
-                  onPressed: () => _handleDelete(context, controller),
+                child: DFOption(
+                  label: "아침",
+                  activated: controller.breakfastCancel.value,
+                  onTap: () => controller.breakfastCancel.toggle(),
                 ),
               ),
+              const SizedBox(width: DFSpacing.spacing200),
+              Expanded(
+                child: DFOption(
+                  label: "점심",
+                  activated: controller.lunchCancel.value,
+                  onTap: () => controller.lunchCancel.toggle(),
+                ),
+              ),
+              const SizedBox(width: DFSpacing.spacing200),
+              Expanded(
+                child: DFOption(
+                  label: "저녁",
+                  activated: controller.dinnerCancel.value,
+                  onTap: () => controller.dinnerCancel.toggle(),
+                ),
+              ),
+              const SizedBox(height: DFSpacing.spacing400),
             ],
+          ),
+          const SizedBox(height: DFSpacing.spacing400),
+        ],
+      )),
+
+      // 자기계발외출 버튼
+      if (controller.selectedStay.value?.outingDay?.contains(
+        DateFormat("yyyy-MM-dd").format(selectedDate),
+      ) ?? false) ...[
+        Column(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              child: DFButton(
+                label: "자기 계발 외출",
+                size: DFButtonSize.large,
+                theme: DFButtonTheme.grayscale,
+                style: DFButtonStyle.secondary,
+                onPressed: controller.applyOutingPreset,
+              ),
+            ),
+            const SizedBox(height: DFSpacing.spacing200),
           ],
         ),
       ],
-    );
+
+      // 하단 버튼
+      Row(
+        children: [
+          Expanded(
+            child: DFButton(
+              label: isEditing ? "수정하기" : "신청하기",
+              size: DFButtonSize.large,
+              theme: DFButtonTheme.accent,
+              onPressed: () => _handleSubmit(context, controller),
+            ),
+          ),
+          if (isEditing) ...[
+            const SizedBox(width: DFSpacing.spacing200),
+            Expanded(
+              child: DFButton(
+                label: "삭제하기",
+                size: DFButtonSize.large,
+                theme: DFButtonTheme.negative,
+                style: DFButtonStyle.secondary,
+                onPressed: () => _handleDelete(context, controller),
+              ),
+            ),
+          ],
+        ],
+      ),
+    ];
   }
 
   Future<void> _handleSubmit(BuildContext context, StayPageController controller) async {

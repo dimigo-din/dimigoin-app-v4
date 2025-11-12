@@ -33,8 +33,8 @@ class DFDarkThemeColors extends DFColors {
           solidTranslucentWhite: const Color(0x33FFFFFF),
 
           // Background / Standard
-          backgroundStandardPrimary: const Color(0xFF000000),
-          backgroundStandardSecondary: const Color(0xFF09090A),
+          backgroundStandardPrimary: const Color(0xFF1e1e1e),
+          backgroundStandardSecondary: const Color(0xFF1b1b1d),
 
           // Background / Inverted
           backgroundInvertedPrimary: const Color(0xFFFFFFFF),
@@ -57,9 +57,9 @@ class DFDarkThemeColors extends DFColors {
           lineOutline: const Color(0x29797B8A),
 
           // Components / Fill / Standard
-          componentsFillStandardPrimary: const Color(0xFF131314),
-          componentsFillStandardSecondary: const Color(0xFF161617),
-          componentsFillStandardTertiary: const Color(0xFF1B1B1D),
+          componentsFillStandardPrimary: const Color(0xFF232323),
+          componentsFillStandardSecondary: const Color(0xFF282828),
+          componentsFillStandardTertiary: const Color(0xFF2d2d2d),
 
           // Components / Fill / Inverted
           componentsFillInvertedPrimary: const Color(0xFFFEFEFF),
