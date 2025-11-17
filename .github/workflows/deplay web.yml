@@ -19,6 +19,15 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Add Firebase Options
+        run: echo "${{ secrets.FIREBASE_OPTIONS }}" > lib/firebase_options.dart
+
+      - name: make env directory
+        run: mkdir env
+
+      - name: add .env file
+        run: echo "${{ secrets.ENV }}" > env/.env
+
       - name: Build Web
         run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
 
