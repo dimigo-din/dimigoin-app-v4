@@ -48,6 +48,26 @@ void main() async {
       darkTheme: darkThemeData,
       initialRoute: kReleaseMode ? Routes.MAIN : Routes.TEST,
       getPages: AppPages.pages,
+      builder: (context, child) {
+        if (kIsWeb) {
+          return Container(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? darkThemeData.canvasColor
+                : lightThemeData.canvasColor,
+            child: Center(
+              child: ClipRect(
+                child: Container(
+                  constraints: const BoxConstraints(
+                    maxWidth: 480,
+                  ),
+                  child: child,
+                ),
+              ),
+            ),
+          );
+        }
+        return child ?? const SizedBox.shrink();
+      },
     ),
   );
 }

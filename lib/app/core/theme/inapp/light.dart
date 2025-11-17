@@ -31,6 +31,7 @@ final ThemeData lightThemeData = ThemeData(
   cupertinoOverrideTheme:
       CupertinoThemeData(primaryColor: _lightTheme.colors.coreBrandPrimary),
   scaffoldBackgroundColor: _lightTheme.colors.backgroundStandardSecondary,
+  canvasColor: _lightTheme.colors.solidWhite,
   extensions: [_lightTheme.colors, _lightTheme.textStyle],
   cardColor: _lightTheme.colors.componentsFillStandardPrimary,
 );

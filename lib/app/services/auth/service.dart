@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/routes/routes.dart';
@@ -61,9 +62,9 @@ class AuthService extends GetxController {
   Future<void> initialize() async {
     final GoogleSignIn signIn = GoogleSignIn.instance;
     await signIn.initialize(
-      clientId: dotenv.env['GOOGLE_CLIENT_ID'],
-      serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID']
-    );
+    clientId: dotenv.env['GOOGLE_CLIENT_ID'],
+    serverClientId: kIsWeb ? null : dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
+  );
   }
 
   Future<Pong?> ping() async {
