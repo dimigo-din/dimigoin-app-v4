@@ -29,10 +29,10 @@ jobs:
         run: echo "${{ secrets.ENV }}" > env/.env
 
       - name: Build Web
-        run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+        run: flutter build web --release
 
       - name: Install Vercel CLI
         run: npm install -g vercel
 
       - name: Deploy to Vercel
-        run: vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }} --cwd ./build/web
+        run: vercel deploy --prod --yes --token ${{ secrets.VERCEL_TOKEN }} --cwd ./build/web
