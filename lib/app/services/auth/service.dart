@@ -7,6 +7,7 @@ import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/routes/routes.dart';
 import 'package:dimigoin_app_v4/app/services/push/service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -60,11 +61,13 @@ class AuthService extends GetxController {
   }
 
   Future<void> initialize() async {
-    final GoogleSignIn signIn = GoogleSignIn.instance;
-    await signIn.initialize(
-    clientId: dotenv.env['GOOGLE_CLIENT_ID'],
-    serverClientId: kIsWeb ? null : dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
-  );
+    if (!kIsWeb) {
+      final GoogleSignIn signIn = GoogleSignIn.instance;
+      await signIn.initialize(
+        clientId: dotenv.env['GOOGLE_CLIENT_ID'],
+        serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
+      );
+    }
   }
 
   Future<Pong?> ping() async {
@@ -85,41 +88,67 @@ class AuthService extends GetxController {
   
   Future<String?> _signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? account = await GoogleSignIn.instance.authenticate();
-      
-      if (account == null) {
-        return null;
-      }
-      
-      final GoogleSignInAuthentication auth = await account.authentication;
-      final String? idToken = auth.idToken;
-      
-      if (idToken == null) {
-        throw Exception('idToken을 가져올 수 없습니다');
-      }
+      if (kIsWeb) {
+        // 웹에서는 Firebase Auth 사용
+        final GoogleAuthProvider googleProvider = GoogleAuthProvider();
 
-      return idToken;
+        final UserCredential userCredential = await FirebaseAuth.instance.signInWithPopup(googleProvider);
+
+        final String? idToken = await userCredential.user?.getIdToken();
+
+        if (idToken == null) {
+          throw Exception('idToken을 가져올 수 없습니다');
+        }
+
+        return idToken;
+      } else {
+        final GoogleSignInAccount? account = await GoogleSignIn.instance.authenticate();
+
+        if (account == null) {
+          return null;
+        }
+
+        final GoogleSignInAuthentication auth = await account.authentication;
+        final String? idToken = auth.idToken;
+
+        if (idToken == null) {
+          throw Exception('idToken을 가져올 수 없습니다');
+        }
+
+        return idToken;
+      }
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) {
         return null;
       }
+      rethrow;
+    } on FirebaseAuthException catch (e) {
+      log('Firebase Auth Error: ${e.code} - ${e.message}');
+      if (e.code == 'popup-closed-by-user') {
+        return null;
+      }
+      rethrow;
     } catch (e) {
       log(e.toString());
-      return null;
+      rethrow;
     }
-    return null;
   }
 
   Future<void> _clearGoogleSignInInfo() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn.instance;
-    try {
-      if (Platform.isAndroid) {
-        await googleSignIn.signOut();
-      } else {
+    if (kIsWeb) {
+      await FirebaseAuth.instance.signOut();
+    } else {
+      // 모바일 앱에서는 google_sign_in 로그아웃
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+      try {
+        if (Platform.isAndroid) {
+          await googleSignIn.signOut();
+        } else {
+          await googleSignIn.disconnect();
+        }
+      } on Exception {
         await googleSignIn.disconnect();
       }
-    } on Exception {
-      await googleSignIn.disconnect();
     }
   }
 
