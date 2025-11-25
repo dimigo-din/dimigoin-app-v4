@@ -27,13 +27,13 @@ class DFSnackBar {
       _active!.complete();
     }
 
-    if (Get.isSnackbarOpen) {
-      try {
+    try {
+      if (Get.isSnackbarOpen) {
         Get.closeAllSnackbars();
-      } catch (e) {
-        // LateInitializationError 무시
+        await Future.delayed(const Duration(milliseconds: 100));
       }
-      await Future.delayed(const Duration(milliseconds: 350));
+    } catch (e) {
+      await Future.delayed(const Duration(milliseconds: 100));
     }
 
     if (currentId != _requestId) {
