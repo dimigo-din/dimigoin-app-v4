@@ -8,6 +8,9 @@ jobs:
   deploy-playstore:
     name: Deploy Playstore
     runs-on: ubuntu-latest
+    environment: 
+      name: production
+    
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
