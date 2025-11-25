@@ -9,8 +9,6 @@ class ProdApiProvider extends ApiProvider {
   ProdApiProvider() {
     dio.options.baseUrl = baseUrl;
 
-    print('✅ API baseUrl loaded: $baseUrl');
-
     middlewares.add(LogMiddleware());
     middlewares.add(JWTMiddleware());
   }

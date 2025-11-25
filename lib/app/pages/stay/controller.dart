@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/pages/home/controller.dart';
 import 'package:dimigoin_app_v4/app/services/frigo/model.dart';
@@ -215,7 +217,7 @@ class StayPageController extends GetxController {
       currentStayOutings.assignAll(outings);
     } catch (e) {
       currentStayOutings.clear();
-      print('Error fetching stay outings: $e');
+      log('Error fetching stay outings: $e');
     }
   }
 
@@ -301,7 +303,7 @@ class StayPageController extends GetxController {
       selectedFrigoTimingIndex.value = frigoTiming.indexOf(application.timing.toString());
     } catch (e) {
       frigoApplication.value = null;
-      print('Error fetching frigo application: $e');
+      log('Error fetching frigo application: $e');
       return;
     }
   }
