@@ -38,4 +38,4 @@ jobs:
         run: npm install -g vercel
 
       - name: Deploy to Vercel
-        run: vercel deploy --yes --token ${{ secrets.VERCEL_TOKEN }} --cwd ./build/web
+        run: vercel deploy --target=preview --yes --token ${{ secrets.VERCEL_TOKEN }} --cwd ./build/web
