@@ -51,7 +51,7 @@ class AuthRepository {
     String url = '/auth/login/google';
 
     try {
-      final redirectUri = '${Uri.base.scheme}://${Uri.base.host}${Uri.base.hasPort ? ':${Uri.base.port}' : ''}/login';
+      final redirectUri = '${Uri.base.scheme}://${Uri.base.host}${Uri.base.hasPort ? ':${Uri.base.port}' : ''}/#/login';
       DFHttpResponse response = await api.get(url, queryParameters: {
         'redirect_uri': redirectUri,
       });
@@ -68,7 +68,7 @@ class AuthRepository {
     String url = '/auth/login/google/callback';
 
     try {
-      final redirectUri = '${Uri.base.scheme}://${Uri.base.host}${Uri.base.hasPort ? ':${Uri.base.port}' : ''}/login';
+      final redirectUri = '${Uri.base.scheme}://${Uri.base.host}${Uri.base.hasPort ? ':${Uri.base.port}' : ''}/#/login';
       DFHttpResponse response = await api.post(url, data: {
         'code': code,
         'redirect_uri': redirectUri,

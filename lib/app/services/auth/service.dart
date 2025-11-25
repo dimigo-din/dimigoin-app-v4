@@ -44,20 +44,15 @@ class AuthService extends GetxController {
       final accessToken = await AuthStorage.getAccessToken();
       final refreshToken = await AuthStorage.getRefreshToken();
 
-      log('AuthService.onInit - accessToken: ${accessToken?.substring(0, 20)}...');
-      log('AuthService.onInit - refreshToken: ${refreshToken?.substring(0, 20)}...');
-
       _jwtToken.value = LoginToken(
         accessToken: accessToken,
         refreshToken: refreshToken,
       );
 
       _user.value = await AuthStorage.getPersonalInformation();
-      log('AuthService.onInit - user: ${_user.value?.name}');
 
       await initialize();
     } catch (e) {
-      log('AuthService initialization failed: $e');
       rethrow;
     } finally {
       if (!_initCompleter.isCompleted) {
