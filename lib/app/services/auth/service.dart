@@ -140,7 +140,7 @@ class AuthService extends GetxController {
       final redirectUri = await repository.getGoogleOAuthUrl();
       final Uri oauthUri = Uri.parse(redirectUri);
 
-      return await launchUrl(oauthUri, mode: LaunchMode.inAppBrowserView);
+      return await launchUrl(oauthUri, mode: LaunchMode.platformDefault, webOnlyWindowName: '_self');
     } on Exception catch (e) {
       log(e.toString());
       rethrow;
