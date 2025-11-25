@@ -1,4 +1,4 @@
-name: Deploy Web
+name: Deploy Web Beta
 
 on:
   workflow_call:
