@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFAnimatedBottomSheet.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFAvatar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFChip.dart';
@@ -83,7 +85,7 @@ class TestPage extends GetView<TestPageController> {
             ],
             initialIndex: 0,
             onChanged: (index) {
-              print("Selected segment index: $index");
+              log("Selected segment index: $index");
             },
           ),
           ElevatedButton(
