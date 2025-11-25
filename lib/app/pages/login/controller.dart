@@ -74,7 +74,7 @@ class LoginPageController extends GetxController {
 
       isLoginProcessing.value = true;
 
-      DFSnackBar.open('로그인 중...');
+      DFSnackBar.open('로그인 중입니다...');
 
       await authService.loginWithGoogleCallback(code);
 

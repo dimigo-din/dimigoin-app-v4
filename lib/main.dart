@@ -49,6 +49,12 @@ void main() async {
       initialRoute: kReleaseMode ? Routes.MAIN : Routes.TEST,
       getPages: AppPages.pages,
       builder: (context, child) {
+        final app = Overlay(
+          initialEntries: [
+            OverlayEntry(builder: (_) => child!),
+          ],
+        );
+
         if (kIsWeb) {
           return Container(
             color: Theme.of(context).brightness == Brightness.dark
@@ -57,16 +63,15 @@ void main() async {
             child: Center(
               child: ClipRect(
                 child: Container(
-                  constraints: const BoxConstraints(
-                    maxWidth: 480,
-                  ),
-                  child: child,
+                  constraints: const BoxConstraints(maxWidth: 480),
+                  child: app, // ← Overlay 유지
                 ),
               ),
             ),
           );
         }
-        return child ?? const SizedBox.shrink();
+
+        return app;
       },
     ),
   );
