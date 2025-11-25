@@ -34,11 +34,8 @@ class HomePageController extends GetxController {
           await _userService.getTimeline(userGrade, userClass);
 
       timetable.value = fetchedTimetable;
-
-      // Handle the retrieved timetable as needed
-      print('Timetable retrieved: ${timetable.value}');
     } catch (e) {
-      print('Error retrieving timetable: $e');
+      log('Error retrieving timetable: $e');
     }
   }
 
@@ -49,9 +46,9 @@ class HomePageController extends GetxController {
       stayApply.value = userApply.stayApply;
       laundryApply.value = userApply.laundryApply;
 
-      print('User apply retrieved: Stay - ${stayApply.value?.toJson()}, Laundry - ${laundryApply.value?.toJson()}');
+      log('User apply retrieved: Stay - ${stayApply.value?.toJson()}, Laundry - ${laundryApply.value?.toJson()}');
     } catch (e) {
-      print('Error retrieving user apply: $e');
+      log('Error retrieving user apply: $e');
     }
   }
   

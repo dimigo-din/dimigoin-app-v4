@@ -23,7 +23,7 @@ class PushService extends GetxController {
     try {
       await initialize();
     } catch (e) {
-      print('Firebase initialization error: $e');
+      log('Firebase initialization error: $e');
     }
   }
 

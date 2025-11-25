@@ -83,7 +83,7 @@ class TestPage extends GetView<TestPageController> {
             ],
             initialIndex: 0,
             onChanged: (index) {
-              print("Selected segment index: $index");
+              log("Selected segment index: $index");
             },
           ),
           ElevatedButton(

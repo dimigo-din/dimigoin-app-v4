@@ -8,7 +8,7 @@ class LogMiddleware extends ApiMiddleware {
   Future<Response> handle(RequestOptions options, Future<Response> Function(RequestOptions) next) async {
     final response = await next(options);
     
-    print(
+    log(
       '${options.method}[${response.statusCode}] => PATH: ${options.path}',
     );
     
@@ -18,7 +18,7 @@ class LogMiddleware extends ApiMiddleware {
   @override
   Future<Response?> onError(DioException e, RequestOptions options) async {
     if (e.response != null) {
-      print(
+      log(
         '${options.method}[${e.response!.statusCode}] => PATH: ${options.path}',
       );
     }

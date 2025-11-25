@@ -41,7 +41,7 @@ class LaundryPageController extends GetxController {
       await filterLaundryMachines();
       await fetchLaundryApplications();
     } catch (e) {
-      print('Error fetching laundry timeline: $e');
+      log('Error fetching laundry timeline: $e');
     }
   }
 
@@ -72,7 +72,7 @@ class LaundryPageController extends GetxController {
       final applications = await laundryService.getLaundryApplications();
       laundryApplications.value = applications;
     } catch (e) {
-      print('Error fetching laundry applications: $e');
+      log('Error fetching laundry applications: $e');
     }
   }
 
@@ -97,7 +97,7 @@ class LaundryPageController extends GetxController {
       rethrow;
     } catch (e) {
       DFSnackBar.error("세탁 신청 중 오류가 발생했습니다.");
-      print('Error adding laundry application: $e');
+      log('Error adding laundry application: $e');
       rethrow;
     }
   }
@@ -111,7 +111,7 @@ class LaundryPageController extends GetxController {
       DFSnackBar.success("세탁 신청이 취소되었습니다.");
     } catch (e) {
       DFSnackBar.error("세탁 신청 취소 중 오류가 발생했습니다.");
-      print('Error removing laundry application: $e');
+      log('Error removing laundry application: $e');
       rethrow;
     }
   }
