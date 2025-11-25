@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/routes/routes.dart';
@@ -40,16 +41,18 @@ class AuthService extends GetxController {
     super.onInit();
 
     try {
+      final accessToken = await AuthStorage.getAccessToken();
+      final refreshToken = await AuthStorage.getRefreshToken();
+
       _jwtToken.value = LoginToken(
-        accessToken: await AuthStorage.getAccessToken(),
-        refreshToken: await AuthStorage.getRefreshToken(),
+        accessToken: accessToken,
+        refreshToken: refreshToken,
       );
 
       _user.value = await AuthStorage.getPersonalInformation();
 
       await initialize();
     } catch (e) {
-      log('AuthService initialization failed: $e');
       rethrow;
     } finally {
       if (!_initCompleter.isCompleted) {
@@ -59,11 +62,13 @@ class AuthService extends GetxController {
   }
 
   Future<void> initialize() async {
-    final GoogleSignIn signIn = GoogleSignIn.instance;
-    await signIn.initialize(
-      clientId: dotenv.env['GOOGLE_CLIENT_ID'],
-      serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID']
-    );
+    if (!kIsWeb) {
+      final GoogleSignIn signIn = GoogleSignIn.instance;
+      await signIn.initialize(
+        clientId: dotenv.env['GOOGLE_CLIENT_ID'],
+        serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
+      );
+    }
   }
 
   Future<Pong?> ping() async {
@@ -123,11 +128,31 @@ class AuthService extends GetxController {
   }
 
   Future<bool> loginWithGoogle() async {
+    if (kIsWeb) {
+      return await loginWithGoogleWeb();
+    } else {
+      return await loginWithGoogleApp();
+    }
+  }
+
+  Future<bool> loginWithGoogleWeb() async {
+    try {
+      final redirectUri = await repository.getGoogleOAuthUrl();
+      final Uri oauthUri = Uri.parse(redirectUri);
+
+      return await launchUrl(oauthUri, mode: LaunchMode.platformDefault, webOnlyWindowName: '_self');
+    } on Exception catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<bool> loginWithGoogleApp() async {
     try {
       final idToken = await _signInWithGoogle();
       if (idToken == null) return false;
 
-      final token = await repository.loginWithGoogle(idToken);
+      final token = await repository.loginWithGoogleApp(idToken);
 
       await _handleLoginSuccess(token);
     } on PinVerificationCancelledException {
@@ -149,6 +174,21 @@ class AuthService extends GetxController {
 
     _clearGoogleSignInInfo();
     return true;
+  }
+
+  Future<void> loginWithGoogleCallback(String code) async {
+    try {
+      final token = await repository.loginWithGoogleWeb(code);
+
+      await _handleLoginSuccess(token);
+    } on PersonalInformationNotRegisteredException {
+      throw PersonalInformationNotRegisteredException();
+    } on GoogleOauthCodeInvalidException {
+      throw GoogleOauthCodeInvalidException();
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
   }
 
   Future<void> _handleLoginSuccess(LoginToken token) async {
@@ -204,7 +244,11 @@ class AuthService extends GetxController {
   Future<void> logout() async {
     await AuthStorage.clear();
     _jwtToken.value = LoginToken();
-    _clearGoogleSignInInfo();
+    _user.value = null;
+
+    if (!kIsWeb) {
+      await _clearGoogleSignInInfo();
+    }
   }
 
   Future<void> refreshToken() async {

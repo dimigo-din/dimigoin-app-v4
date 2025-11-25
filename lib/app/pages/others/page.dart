@@ -3,6 +3,7 @@ import 'package:dimigoin_app_v4/app/widgets/factory94/DFAvatar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFIconButton.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
 import 'package:dimigoin_app_v4/app/widgets/gestureDetector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -58,7 +59,7 @@ class OthersPage extends GetView<OthersPageController> {
                 leading: DFAvatar(
                   type: DFAvatarType.person,
                   size: DFAvatarSize.large,
-                  fill: DFAvatarFill.image,
+                  fill: kIsWeb ? DFAvatarFill.icon : DFAvatarFill.image,
                   image: Image.network(authService.user?.profileUrl ?? ''),
                 ),
                 trailing: DFIconButton(

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
@@ -62,8 +60,8 @@ class PinInputController extends GetxController {
     } on PersonalInformationNotRegisteredException {
       pinStatus.value = PinStatus.normal;
       clearPin();
-      DFSnackBar.open('개인정보가 등록되지 않은 계정입니다. 디미인증에서 먼저 등록해주세요.');
-      sleep(const Duration(seconds: 2));
+      await DFSnackBar.open('개인정보가 등록되지 않은 계정입니다. 디미인증에서 먼저 등록해주세요.');
+      await Future.delayed(const Duration(seconds: 2));
       authService.openDimiAuthPage();
     } catch (e) {
       pinStatus.value = PinStatus.normal;

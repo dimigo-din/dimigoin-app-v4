@@ -1,0 +1,41 @@
+name: Deploy Web
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          ref: 'beta'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Add Firebase Options  
+        run: echo "${{ secrets.FIREBASE_OPTIONS }}" > lib/firebase_options.dart
+
+      - name: make env directory
+        run: mkdir env
+
+      - name: add .env file
+        run: echo "${{ secrets.ENV }}" > env/.env
+
+      - name: Build Web
+        run: flutter build web --release
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Deploy to Vercel
+        run: vercel deploy --yes --token ${{ secrets.VERCEL_TOKEN }} --cwd ./build/web
