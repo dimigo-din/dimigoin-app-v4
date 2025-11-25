@@ -8,8 +8,7 @@ jobs:
   deploy-playstore-beta:
     name: Deploy Playstore Beta
     runs-on: ubuntu-latest
-    environment: 
-      name: beta
+    environment: beta
 
     steps:
       - name: Clone repository
