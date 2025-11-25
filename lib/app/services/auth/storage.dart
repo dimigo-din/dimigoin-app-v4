@@ -2,7 +2,12 @@ import 'package:dimigoin_app_v4/app/services/auth/model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthStorage {
-  static const _storage = FlutterSecureStorage();
+  static const _storage = FlutterSecureStorage(
+    webOptions: WebOptions(
+      dbName: 'dimigoin_db',
+      publicKey: 'dimigoin_public_key',
+    ),
+  );
 
   static const _keyAccessToken = 'access_token';
   static const _keyRefreshToken = 'refresh_token';

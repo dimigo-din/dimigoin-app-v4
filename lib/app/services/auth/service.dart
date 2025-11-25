@@ -7,7 +7,6 @@ import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/routes/routes.dart';
 import 'package:dimigoin_app_v4/app/services/push/service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -42,12 +41,19 @@ class AuthService extends GetxController {
     super.onInit();
 
     try {
+      final accessToken = await AuthStorage.getAccessToken();
+      final refreshToken = await AuthStorage.getRefreshToken();
+
+      log('AuthService.onInit - accessToken: ${accessToken?.substring(0, 20)}...');
+      log('AuthService.onInit - refreshToken: ${refreshToken?.substring(0, 20)}...');
+
       _jwtToken.value = LoginToken(
-        accessToken: await AuthStorage.getAccessToken(),
-        refreshToken: await AuthStorage.getRefreshToken(),
+        accessToken: accessToken,
+        refreshToken: refreshToken,
       );
 
       _user.value = await AuthStorage.getPersonalInformation();
+      log('AuthService.onInit - user: ${_user.value?.name}');
 
       await initialize();
     } catch (e) {
@@ -88,76 +94,70 @@ class AuthService extends GetxController {
   
   Future<String?> _signInWithGoogle() async {
     try {
-      if (kIsWeb) {
-        // 웹에서는 Firebase Auth 사용
-        final GoogleAuthProvider googleProvider = GoogleAuthProvider();
-
-        final UserCredential userCredential = await FirebaseAuth.instance.signInWithPopup(googleProvider);
-
-        final String? idToken = await userCredential.user?.getIdToken();
-
-        if (idToken == null) {
-          throw Exception('idToken을 가져올 수 없습니다');
-        }
-
-        return idToken;
-      } else {
-        final GoogleSignInAccount? account = await GoogleSignIn.instance.authenticate();
-
-        if (account == null) {
-          return null;
-        }
-
-        final GoogleSignInAuthentication auth = await account.authentication;
-        final String? idToken = auth.idToken;
-
-        if (idToken == null) {
-          throw Exception('idToken을 가져올 수 없습니다');
-        }
-
-        return idToken;
+      final GoogleSignInAccount? account = await GoogleSignIn.instance.authenticate();
+      
+      if (account == null) {
+        return null;
       }
+      
+      final GoogleSignInAuthentication auth = await account.authentication;
+      final String? idToken = auth.idToken;
+      
+      if (idToken == null) {
+        throw Exception('idToken을 가져올 수 없습니다');
+      }
+
+      return idToken;
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) {
         return null;
       }
-      rethrow;
-    } on FirebaseAuthException catch (e) {
-      log('Firebase Auth Error: ${e.code} - ${e.message}');
-      if (e.code == 'popup-closed-by-user') {
-        return null;
-      }
-      rethrow;
     } catch (e) {
+      log(e.toString());
+      return null;
+    }
+    return null;
+  }
+
+  Future<void> _clearGoogleSignInInfo() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+    try {
+      if (Platform.isAndroid) {
+        await googleSignIn.signOut();
+      } else {
+        await googleSignIn.disconnect();
+      }
+    } on Exception {
+      await googleSignIn.disconnect();
+    }
+  }
+
+  Future<bool> loginWithGoogle() async {
+    if (kIsWeb) {
+      return await loginWithGoogleWeb();
+    } else {
+      return await loginWithGoogleApp();
+    }
+  }
+
+  Future<bool> loginWithGoogleWeb() async {
+    try {
+      final redirectUri = await repository.getGoogleOAuthUrl();
+      final Uri oauthUri = Uri.parse(redirectUri);
+
+      return await launchUrl(oauthUri, mode: LaunchMode.inAppBrowserView);
+    } on Exception catch (e) {
       log(e.toString());
       rethrow;
     }
   }
 
-  Future<void> _clearGoogleSignInInfo() async {
-    if (kIsWeb) {
-      await FirebaseAuth.instance.signOut();
-    } else {
-      // 모바일 앱에서는 google_sign_in 로그아웃
-      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
-      try {
-        if (Platform.isAndroid) {
-          await googleSignIn.signOut();
-        } else {
-          await googleSignIn.disconnect();
-        }
-      } on Exception {
-        await googleSignIn.disconnect();
-      }
-    }
-  }
-
-  Future<bool> loginWithGoogle() async {
+  Future<bool> loginWithGoogleApp() async {
     try {
       final idToken = await _signInWithGoogle();
       if (idToken == null) return false;
 
-      final token = await repository.loginWithGoogle(idToken);
+      final token = await repository.loginWithGoogleApp(idToken);
 
       await _handleLoginSuccess(token);
     } on PinVerificationCancelledException {
@@ -179,6 +179,21 @@ class AuthService extends GetxController {
 
     _clearGoogleSignInInfo();
     return true;
+  }
+
+  Future<void> loginWithGoogleCallback(String code) async {
+    try {
+      final token = await repository.loginWithGoogleWeb(code);
+
+      await _handleLoginSuccess(token);
+    } on PersonalInformationNotRegisteredException {
+      throw PersonalInformationNotRegisteredException();
+    } on GoogleOauthCodeInvalidException {
+      throw GoogleOauthCodeInvalidException();
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
   }
 
   Future<void> _handleLoginSuccess(LoginToken token) async {
@@ -234,7 +249,11 @@ class AuthService extends GetxController {
   Future<void> logout() async {
     await AuthStorage.clear();
     _jwtToken.value = LoginToken();
-    _clearGoogleSignInInfo();
+    _user.value = null;
+
+    if (!kIsWeb) {
+      await _clearGoogleSignInInfo();
+    }
   }
 
   Future<void> refreshToken() async {
