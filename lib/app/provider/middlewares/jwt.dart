@@ -12,7 +12,10 @@ class JWTMiddleware extends ApiMiddleware {
   static Future<void>? _refreshFuture;
 
   @override
-  Future<Response> handle(RequestOptions options, Future<Response> Function(RequestOptions) next) {
+  Future<Response> handle(RequestOptions options, Future<Response> Function(RequestOptions) next) async {
+    // AuthService 초기화 완료를 기다림
+    await _authService.initComplete;
+
     final token = _authService.jwtToken.accessToken;
     if (token != null && options.headers['Authorization'] == null) {
       options.headers['Authorization'] = 'Bearer $token';

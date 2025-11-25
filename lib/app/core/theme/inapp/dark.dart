@@ -26,6 +26,7 @@ ThemeData darkThemeData = ThemeData(
   cupertinoOverrideTheme:
       CupertinoThemeData(primaryColor: _darkTheme.colors.coreBrandPrimary),
   scaffoldBackgroundColor: _darkTheme.colors.backgroundStandardSecondary,
+  canvasColor: _darkTheme.colors.solidBlack,
   extensions: [_darkTheme.colors, _darkTheme.textStyle],
   cardColor: _darkTheme.colors.componentsFillStandardPrimary,
 );

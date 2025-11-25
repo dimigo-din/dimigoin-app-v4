@@ -47,7 +47,48 @@ class AuthRepository {
     }
   }
 
-  Future<LoginToken> loginWithGoogle(String idToken) async {
+  Future<String> getGoogleOAuthUrl() async {
+    String url = '/auth/login/google';
+
+    try {
+      final redirectUri = '${Uri.base.scheme}://${Uri.base.host}${Uri.base.hasPort ? ':${Uri.base.port}' : ''}/login';
+      DFHttpResponse response = await api.get(url, queryParameters: {
+        'redirect_uri': redirectUri,
+      });
+
+      String oauthUrl = response.data['data'];
+
+      return oauthUrl;
+    } on DioException {
+      rethrow;
+    }
+  }
+
+  Future<LoginToken> loginWithGoogleWeb(String code) async {
+    String url = '/auth/login/google/callback';
+
+    try {
+      final redirectUri = '${Uri.base.scheme}://${Uri.base.host}${Uri.base.hasPort ? ':${Uri.base.port}' : ''}/login';
+      DFHttpResponse response = await api.post(url, data: {
+        'code': code,
+        'redirect_uri': redirectUri,
+      });
+
+      LoginToken loginToken = LoginToken.fromJson(response.data['data']);
+
+      return loginToken;
+    } on DioException catch (e) {
+      if (e.response?.data['code'] == 'PersonalInformation_NotRegistered') {
+        throw PersonalInformationNotRegisteredException();
+      } else if (e.response?.data['code'] == 'GoogleOauthCode_Invalid') {
+        throw GoogleOauthCodeInvalidException();
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  Future<LoginToken> loginWithGoogleApp(String idToken) async {
     String url = '/auth/login/google/callback/app';
 
     try {

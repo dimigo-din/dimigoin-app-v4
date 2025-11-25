@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
@@ -25,12 +26,14 @@ import 'routes.dart';
 
 class AppPages {
   static final pages = [
-    GetPage(
-      name: Routes.TEST,
-      page: () => const TestPage(),
-      binding: TestPageBinding(),
-      transition: Transition.cupertino,
-    ),
+    if (kDebugMode) ...[
+      GetPage(
+        name: Routes.TEST,
+        page: () => const TestPage(),
+        binding: TestPageBinding(),
+        transition: Transition.cupertino,
+      ),
+    ],
     GetPage(
       name: Routes.LICENSE,
       page: () => const LicensePage(),

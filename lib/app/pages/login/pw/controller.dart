@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:get/get.dart';
@@ -23,7 +21,7 @@ class PWLoginPageController extends GetxController {
       }
     } on PersonalInformationNotRegisteredException {
       DFSnackBar.error('개인정보가 등록되지 않은 계정입니다. 디미인증에서 먼저 등록해주세요.');
-      sleep(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2));
       authService.openDimiAuthPage();
     } on GoogleOauthCodeInvalidException {
       DFSnackBar.error('구글 로그인 정보가 유효하지 않습니다. 다시 시도해주세요.');

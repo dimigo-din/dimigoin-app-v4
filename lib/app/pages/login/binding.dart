@@ -5,6 +5,6 @@ import 'controller.dart';
 class LoginPageBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => LoginPageController());
+    Get.put(LoginPageController());
   }
 }

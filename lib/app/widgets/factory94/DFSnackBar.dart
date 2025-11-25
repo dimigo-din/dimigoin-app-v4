@@ -27,13 +27,15 @@ class DFSnackBar {
       _active!.complete();
     }
 
-    if (Get.isSnackbarOpen) {
-      try {
+    // 기존 스낵바를 안전하게 닫기
+    try {
+      if (Get.isSnackbarOpen) {
         Get.closeAllSnackbars();
-      } catch (e) {
-        // LateInitializationError 무시
+        await Future.delayed(const Duration(milliseconds: 300));
       }
-      await Future.delayed(const Duration(milliseconds: 350));
+    } catch (e) {
+      // GetX 내부 오류 무시
+      await Future.delayed(const Duration(milliseconds: 300));
     }
 
     if (currentId != _requestId) {
@@ -57,55 +59,93 @@ class DFSnackBar {
     final outline = colorTheme?.lineOutline ?? const Color(0x14000000);
     final body = textTheme?.body ?? const TextStyle(fontSize: 14, height: 1.35);
 
-    Get.rawSnackbar(
-      messageText: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: DFSpacing.spacing550,
-          vertical: DFSpacing.spacing300,
-        ),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(DFRadius.radiusCircle),
-          border: Border.all(color: outline, width: 1),
-          boxShadow: const [
-            BoxShadow(
-              color: Color.fromRGBO(32, 33, 40, 0.06),
-              blurRadius: 24,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (leading != null) ...[
-              leading,
-              const SizedBox(width: DFSpacing.spacing300),
-            ],
-            Flexible(
-              child: Text(
-                content,
-                style: body.copyWith(color: fg, fontWeight: FontWeight.w500),
+    // rawSnackbar 호출을 try-catch로 감싸기
+    try {
+      Get.rawSnackbar(
+        messageText: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: DFSpacing.spacing550,
+            vertical: DFSpacing.spacing300,
+          ),
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(DFRadius.radiusCircle),
+            border: Border.all(color: outline, width: 1),
+            boxShadow: const [
+              BoxShadow(
+                color: Color.fromRGBO(32, 33, 40, 0.06),
+                blurRadius: 24,
+                offset: Offset(0, 4),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (leading != null) ...[
+                leading,
+                const SizedBox(width: DFSpacing.spacing300),
+              ],
+              Flexible(
+                child: Text(
+                  content,
+                  style: body.copyWith(color: fg, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      backgroundColor: Colors.transparent,
-      snackPosition: SnackPosition.TOP,
-      padding: EdgeInsets.zero,
-      margin: const EdgeInsets.symmetric(
-        horizontal: DFSpacing.spacing400,
-        vertical: DFSpacing.spacing400,
-      ),
-      duration: duration,
-      animationDuration: const Duration(milliseconds: 200),
-      borderRadius: DFRadius.radiusCircle,
-      boxShadows: const [],
-    );
+        backgroundColor: Colors.transparent,
+        snackPosition: SnackPosition.TOP,
+        padding: EdgeInsets.zero,
+        margin: const EdgeInsets.symmetric(
+          horizontal: DFSpacing.spacing400,
+          vertical: DFSpacing.spacing400,
+        ),
+        duration: duration,
+        animationDuration: const Duration(milliseconds: 200),
+        borderRadius: DFRadius.radiusCircle,
+        boxShadows: const [],
+        isDismissible: false, // 추가: 사용자가 임의로 닫지 못하게
+        dismissDirection: DismissDirection.none, // 추가: 스와이프 닫기 방지
+      );
+      
+      // 스낵바가 성공적으로 생성된 후 짧은 대기
+      await Future.delayed(const Duration(milliseconds: 50));
+    } catch (e) {
+      // GetX 내부 오류 발생 시 completer 정리
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+      _active = null;
+      return;
+    }
 
-    _autoCloseTimer = Timer(duration + const Duration(milliseconds: 250), () {
+    // ID가 변경되었는지 다시 확인
+    if (currentId != _requestId) {
+      try {
+        if (Get.isSnackbarOpen) {
+          Get.closeAllSnackbars();
+        }
+      } catch (e) {
+        // 무시
+      }
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+      return;
+    }
+
+    _autoCloseTimer = Timer(duration + const Duration(milliseconds: 300), () {
       if (currentId == _requestId) {
+        try {
+          if (Get.isSnackbarOpen) {
+            Get.closeAllSnackbars();
+          }
+        } catch (e) {
+          // GetX 내부 오류 무시
+        }
+        
         if (!completer.isCompleted) {
           completer.complete();
         }
