@@ -102,7 +102,7 @@ class WakeupRepository {
     String url = '/wakeup/history';
 
     try {
-      final nowKst = DateTime.now().add(const Duration(hours: 9));
+      final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
       final date = nowKst.toIso8601String().substring(0, 10);
 
       DFHttpResponse response = await api.get(url, queryParameters: {
