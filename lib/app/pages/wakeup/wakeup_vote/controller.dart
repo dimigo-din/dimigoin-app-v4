@@ -39,7 +39,7 @@ class WakeupVotePageController extends GetxController {
     try {
       todayWakeup.value = await wakeupService.getWakeupHistory();
     } catch (e) {
-      rethrow;
+      return;
     }
   }
 
