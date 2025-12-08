@@ -1,7 +1,10 @@
+import 'package:dimigoin_app_v4/app/provider/model/response.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+
+import './model.dart';
 
 import '../../provider/api_interface.dart';
 
@@ -23,11 +26,12 @@ class PushRepository {
     }
   }
 
-  Future<void> upsertFCMToken(String fcmToken) async {
-    String url = '/student/push/fcm-token';
+  Future<void> upsertFCMToken(String deviceId, String fcmToken) async {
+    String url = '/student/push/subscribe';
 
     try {
       await api.put(url, data: {
+        'deviceId': deviceId,
         'token': fcmToken,
       });
     } on DioException {
@@ -50,42 +54,44 @@ class PushRepository {
     await pushBox?.delete('token_last_updated_at');
   }
 
-  Future<void> updateSubscribedTopics(List<String> topics) async {
-    await init();
-
-    String url = '/student/push/subscribe-topics';
+  Future<List<NotificationSubject>> getSubjects() async {
+    String url = '/student/push/subjects';
 
     try {
-      await api.post(url, data: {
-        'topics': topics,
-      });
+      DFHttpResponse response = await api.get(url);
 
-      await pushBox?.put('subscribed_topics', topics);
+      return List<NotificationSubject>.from(
+        (response.data['data'] as List).map((item) => NotificationSubject.fromJson(Map<String, dynamic>.from(item)))
+      );
     } on DioException {
       rethrow;
     }
   }
 
-  Future<List<String>> getSubscribedTopics() async {
-    await init();
-
-    final topics = pushBox?.get('subscribed_topics');
-
-    String url = '/student/push/subscribe-topics';
+  Future<List<String>> getSubscribedSubjects(String deviceId) async {
+    String url = '/student/push/subjects/subscribed';
 
     try {
-      final response = await api.get(url);
-      final serverTopics = List<String>.from(response.data['topics'] ?? []);
+      DFHttpResponse response = await api.get(url, queryParameters: {
+        'deviceId': deviceId,
+      });
 
-      await pushBox?.put('subscribed_topics', serverTopics);
-      return serverTopics;
+      return List<String>.from(response.data['data']);
     } on DioException {
-      if (topics != null) {
-        return List<String>.from(topics);
-      } else {
-        rethrow;
-      }
+      rethrow;
     }
   }
 
+  Future<void> updateSubscribedSubjects(String deviceId, List<String> subjects) async {
+    String url = '/student/push/subjects/subscribed';
+
+    try {
+      await api.post(url, data: {
+        'deviceId': deviceId,
+        'subjects': subjects,
+      });
+    } on DioException {
+      rethrow;
+    }
+  }
 }

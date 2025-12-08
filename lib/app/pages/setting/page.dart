@@ -5,6 +5,7 @@ import 'package:dimigoin_app_v4/app/widgets/appBar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFControl.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFDivider.dart';
 import 'package:dimigoin_app_v4/app/widgets/gestureDetector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'controller.dart';
@@ -27,47 +28,21 @@ class SettingPage extends GetView<SettingController> {
         body: ListView(
           physics: const ClampingScrollPhysics(),
           children: [
-            const MenuHeader(
-              title: "알림 설정",
+            Visibility(
+              visible: kIsWeb == false,
+              child: Column(
+                children: [
+                  const MenuHeader(
+                    title: "알림 설정",
+                  ),
+                  Column(
+                    children: _buildNotificationSetting(),
+                  ),
+                  const SizedBox(height: DFSpacing.spacing300),
+                  const DFDivider(size: DFDividerSize.medium),
+                ],
+              )
             ),
-            MenuItem(
-              title: "학교 정보 알림",
-              trailing: Obx(() => DFControl(
-                type: DFControlType.toggle,
-                status: controller.noti_general.value,
-                onTap: () => controller.noti_general.value = !controller.noti_general.value,
-                disabled: controller.isLoadNotiSetting.value == false,
-              )),
-            ),
-            MenuItem(
-              title: "세탁 알림",
-              trailing: Obx(() => DFControl(
-                type: DFControlType.toggle,
-                status: controller.noti_laundry.value,
-                onTap: () => controller.noti_laundry.value = !controller.noti_laundry.value,
-                disabled: controller.isLoadNotiSetting.value == false,
-              )),
-            ),
-            MenuItem(
-              title: "잔류 신청 알림",
-              trailing: Obx(() => DFControl(
-                type: DFControlType.toggle,
-                status: controller.noti_stay.value,
-                onTap: () => controller.noti_stay.value = !controller.noti_stay.value,
-                disabled: controller.isLoadNotiSetting.value == false,
-              )),
-            ),
-            MenuItem(
-              title: "오늘의 기상곡 알림",
-              trailing: Obx(() => DFControl(
-                type: DFControlType.toggle,
-                status: controller.noti_wakeup.value,
-                onTap: () => controller.noti_wakeup.value = !controller.noti_wakeup.value,
-                disabled: controller.isLoadNotiSetting.value == false,
-              )),
-            ),
-            const SizedBox(height: DFSpacing.spacing300),
-            const DFDivider(size: DFDividerSize.medium),
             const MenuHeader(
               title: "앱 정보"
             ),
@@ -108,6 +83,23 @@ class SettingPage extends GetView<SettingController> {
         ),
       ),
     );
+  }
+
+  List<Widget> _buildNotificationSetting() {
+    return controller.notificationSubjects.map((noti) {
+      return MenuItem(
+        title: noti.description,
+        trailing: Obx(() {
+          final subscribed = controller.notificationSubscribedSubject.contains(noti.id);
+          return DFControl(
+            type: DFControlType.toggle,
+            status: subscribed,
+            onTap: () => controller.updateNotificationSettings(noti),
+            disabled: controller.isLoadNotiSetting.value == false,
+          );
+        }),
+      );
+    }).toList();
   }
 }
 
@@ -187,6 +179,7 @@ class MenuHeader extends StatelessWidget {
     final textTheme = Theme.of(context).extension<DFTypography>()!;
 
     return Container(
+      alignment: Alignment.centerLeft,
       padding: const EdgeInsets.only(
         left: DFSpacing.spacing500,
         top: DFSpacing.spacing800,

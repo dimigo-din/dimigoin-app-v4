@@ -40,6 +40,12 @@ class PinVerificationCancelledException implements Exception {
   PinVerificationCancelledException({this.message});
 }
 
+class IdTokenNullException implements Exception {
+  final String? message;
+
+  IdTokenNullException({this.message});
+}
+
 class StayNotInApplyPeriodException implements Exception {
   final String? message;
 
@@ -128,4 +134,10 @@ class ResourceAlreadyExists implements Exception {
   final String? message;
 
   ResourceAlreadyExists({this.message});
+}
+
+class PushDeviceIDNullException implements Exception {
+  final String? message;
+
+  PushDeviceIDNullException({this.message});
 }
