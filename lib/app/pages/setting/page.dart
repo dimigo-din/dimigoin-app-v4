@@ -179,6 +179,7 @@ class MenuHeader extends StatelessWidget {
     final textTheme = Theme.of(context).extension<DFTypography>()!;
 
     return Container(
+      alignment: Alignment.centerLeft,
       padding: const EdgeInsets.only(
         left: DFSpacing.spacing500,
         top: DFSpacing.spacing800,
