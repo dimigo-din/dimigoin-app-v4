@@ -85,6 +85,10 @@ class StayApplyPage extends GetView<StayPageController> {
 
                   // 좌석 미선택 사유 입력
                   Obx(() {
+                    if (controller.stayList.isEmpty) {
+                      return const SizedBox();
+                    }
+
                     final showReason = controller.selectedSeat.value == '';
                     return Visibility(
                       visible: showReason,
