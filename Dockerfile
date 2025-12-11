@@ -18,6 +18,8 @@ RUN curl -L "https://storage.googleapis.com/flutter_infra_release/releases/stabl
 
 ENV PATH="/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
+RUN git config --global --add safe.directory /opt/flutter
+
 RUN flutter config --enable-web
 
 WORKDIR /app
