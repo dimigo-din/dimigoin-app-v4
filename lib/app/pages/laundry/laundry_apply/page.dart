@@ -32,11 +32,14 @@ class LaundryApplyPage extends GetView<LaundryPageController> {
             const SizedBox(height: 16),
 
             Expanded(
-              child: SingleChildScrollView(
-                child: Obx(() => Column(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await controller.fetchLaundryApplications();
+                },
+                child: Obx(() => ListView(
                   children: _buildTimeSlotList(),
                 )),
-              ),
+              )
             ),
           ],
         ),

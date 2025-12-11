@@ -1,7 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
+import 'package:dimigoin_app_v4/app/services/push/model.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
@@ -17,6 +22,8 @@ class PushService extends GetxController {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
+  final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
+
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -28,11 +35,22 @@ class PushService extends GetxController {
   }
 
   Future<void> initialize() async {
+    // web 미지원
+    if (kIsWeb) {
+      return;
+    }
+
     await requestPushPermission();
 
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
       if (authService.isLoginSuccess) {
-        await repository.upsertFCMToken(fcmToken);
+        String? deviceId = await getDeviceId();
+        if (deviceId == null) {
+          log('FCM Token refreshed but device ID is null: $fcmToken');
+          return;
+        }
+
+        await repository.upsertFCMToken(deviceId, fcmToken);
         log('FCM Token updated and sent to server: $fcmToken');
       } else {
         log('FCM Token refreshed but not sent to server (not logged in): $fcmToken');
@@ -41,7 +59,6 @@ class PushService extends GetxController {
       log('FCM Token update failed: $err');
     });
 
-    await repository.init();
     await _initLocalNotification();
 
     if (authService.isLoginSuccess) {
@@ -131,6 +148,11 @@ class PushService extends GetxController {
   }
 
   Future<void> syncTokenToServer() async {
+    // web 미지원
+    if (kIsWeb) {
+      return;
+    }
+
     if (!authService.isLoginSuccess) {
       log('Cannot sync FCM token: User not logged in');
       return;
@@ -139,7 +161,13 @@ class PushService extends GetxController {
     try {
       String? fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken != null) {
-        await repository.upsertFCMToken(fcmToken);
+        String? deviceId = await getDeviceId();
+        if (deviceId == null) {
+          log('Cannot sync FCM token: Device ID is null');
+          return;
+        }
+
+        await repository.upsertFCMToken(deviceId, fcmToken);
         log('FCM Token synced to server: $fcmToken');
       } else {
         log('Cannot sync FCM token: Token is null');
@@ -149,11 +177,63 @@ class PushService extends GetxController {
     }
   }
 
-  Future<List<String>> getSubscribedTopics() async {
-    return await repository.getSubscribedTopics();
+  Future<List<NotificationSubject>> getSubjects() async {
+    try {
+      final response = await repository.getSubjects();
+      return response;
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
   }
 
-  Future<void> updateSubscribedTopics(List<String> topics) async {
-    await repository.updateSubscribedTopics(topics);
+  Future<List<String>> getSubscribedSubjects() async {
+    try {
+      String? deviceId = await getDeviceId();
+      if (deviceId == null) {
+        throw PushDeviceIDNullException();
+      }
+
+      return await repository.getSubscribedSubjects(deviceId);
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
   }
+
+  Future<void> updateSubscribedSubjects(List<String> subjects) async {
+    try {
+      String? deviceId = await getDeviceId();
+      if (deviceId == null) {
+        throw PushDeviceIDNullException();
+      }
+
+      await repository.updateSubscribedSubjects(deviceId, subjects);
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<String?> getDeviceId() async {
+    try {
+      if (kIsWeb) {
+        // Web
+        final webInfo = await _deviceInfo.webBrowserInfo;
+        return '${webInfo.userAgent}_${webInfo.vendor}';
+      } else if (Platform.isAndroid) {
+        // Android
+        final androidInfo = await _deviceInfo.androidInfo;
+        return androidInfo.id;
+      } else if (Platform.isIOS) {
+        // iOS
+        final iosInfo = await _deviceInfo.iosInfo;
+        return iosInfo.identifierForVendor;
+      }
+    } catch (e) {
+      return null;
+    }
+    return null;
+  }
+
 }

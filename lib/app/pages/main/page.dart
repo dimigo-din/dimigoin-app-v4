@@ -1,5 +1,6 @@
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'package:dimigoin_app_v4/app/pages/home/page.dart';
@@ -18,7 +19,11 @@ import 'widgets/bottom_nav_bar.dart';
 
 class MainPageController extends GetxController {
   RxInt currentIndex = 0.obs;
-  void changePage(int index) => currentIndex.value = index;
+  void changePage(int index) {
+    HapticFeedback.lightImpact();
+
+    currentIndex.value = index;
+  }
 
   @override
   void onInit() {

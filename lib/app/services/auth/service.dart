@@ -99,7 +99,7 @@ class AuthService extends GetxController {
       final String? idToken = auth.idToken;
       
       if (idToken == null) {
-        throw Exception('idToken을 가져올 수 없습니다');
+        throw IdTokenNullException();
       }
 
       return idToken;
