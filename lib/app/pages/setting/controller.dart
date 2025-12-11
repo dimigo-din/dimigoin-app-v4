@@ -3,6 +3,7 @@ import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/services/push/model.dart';
 import 'package:dimigoin_app_v4/app/services/push/service.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -42,6 +43,10 @@ class SettingController extends GetxController {
   }
 
   Future<void> loadNotificationSettings() async {
+    if(kIsWeb) {
+      return;
+    }
+
     try {
       notificationSubjects.value = await pushService.getSubjects();
       notificationSubscribedSubject.value = await pushService.getSubscribedSubjects();
