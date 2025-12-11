@@ -96,6 +96,10 @@ class StayOutingPage extends GetView<StayPageController> {
     bool isEditing,
     dynamic outing,
   ) {
+    if(controller.selectedStay.value == null){
+      return;
+    }
+
     final days = OutingDateUtils.getOutingDays(
       controller.selectedStay.value!,
     );

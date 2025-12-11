@@ -37,7 +37,7 @@ class LaundryMachineSelector extends StatelessWidget {
             : "사용 가능 기기 없음";
 
         return DFGestureDetectorWithOpacityInteraction(
-          onTap: onTap,
+          onTap: hasMachine ? onTap : null,
           child: DFSectionHeader(
             size: DFSectionHeaderSize.large,
             title: selectedMachineName,
