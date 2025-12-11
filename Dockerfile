@@ -18,24 +18,26 @@ RUN curl -L "https://storage.googleapis.com/flutter_infra_release/releases/stabl
 
 ENV PATH="/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
+RUN git config --global --add safe.directory /opt/flutter
+
 RUN flutter config --enable-web
 
 WORKDIR /app
 
-ARG DIMIGOIN-FLUTTER-FIREBASE
-ARG DIMIGOIN-FLUTTER-ENV
-
-RUN mkdir env
-RUN echo -n "$DIMIGOIN-FLUTTER-FIREBASE" > lib/firebase_options.dart; echo -n "$DIMIGOIN-FLUTTER-ENV" > env/.env
+ARG DIMIGOIN_FLUTTER_FIREBASE
+ARG DIMIGOIN_FLUTTER_ENV
 
 COPY pubspec.yaml pubspec.lock ./
 RUN flutter pub get
 
 COPY . .
 
-RUN flutter build web --release \
-    --web-renderer html \
-    --no-tree-shake-icons
+RUN mkdir env
+
+RUN echo -n "$DIMIGOIN_FLUTTER_FIREBASE" | base64 -d > lib/firebase_options.dart
+RUN echo -n "$DIMIGOIN_FLUTTER_ENV" | base64 -d > env/.env
+
+RUN flutter build web --release
 
 FROM nginx:1.27.2-alpine-slim
 
@@ -105,5 +107,5 @@ RUN set -x \
     && if [ -f "/etc/apk/keys/abuild-key.rsa.pub" ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi \
     && apk add --no-cache curl ca-certificates
 
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/build/web /usr/share/nginx/html/
