@@ -24,11 +24,11 @@ RUN flutter config --enable-web
 
 WORKDIR /app
 
-ARG DIMIGOIN-FLUTTER-FIREBASE
-ARG DIMIGOIN-FLUTTER-ENV
+ARG DIMIGOIN_FLUTTER_FIREBASE
+ARG DIMIGOIN_FLUTTER_ENV
 
 RUN mkdir env
-RUN echo -n "$DIMIGOIN-FLUTTER-FIREBASE" > lib/firebase_options.dart; echo -n "$DIMIGOIN-FLUTTER-ENV" > env/.env
+RUN echo -n "$DIMIGOIN_FLUTTER_FIREBASE" > lib/firebase_options.dart; echo -n "$DIMIGOIN_FLUTTER_ENV" > env/.env
 
 COPY pubspec.yaml pubspec.lock ./
 RUN flutter pub get
