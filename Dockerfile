@@ -35,9 +35,7 @@ RUN flutter pub get
 
 COPY . .
 
-RUN flutter build web --release \
-    --web-renderer html \
-    --no-tree-shake-icons
+RUN flutter build web --release
 
 FROM nginx:1.27.2-alpine-slim
 
