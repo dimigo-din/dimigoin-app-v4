@@ -29,8 +29,8 @@ ARG DIMIGOIN_FLUTTER_ENV
 
 RUN mkdir env
 
-RUN echo -n "$DIMIGOIN_FLUTTER_FIREBASE" | base64 -d => lib/firebase_options.dart
-RUN echo -n "$DIMIGOIN_FLUTTER_ENV" | base64 -d => env/.env
+RUN echo -n "$DIMIGOIN_FLUTTER_FIREBASE" | base64 -d > lib/firebase_options.dart
+RUN echo -n "$DIMIGOIN_FLUTTER_ENV" | base64 -d > env/.env
 
 COPY pubspec.yaml pubspec.lock ./
 RUN flutter pub get
