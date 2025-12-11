@@ -17,3 +17,21 @@ class NotificationSubject {
 
   Map<String, dynamic> toJson() => _$NotificationSubjectToJson(this);
 }
+
+@JsonSerializable()
+class SubscribedNotificationSubject {
+  final String id;
+  final String name;
+  final String identifier;
+
+  SubscribedNotificationSubject({
+    required this.id,
+    required this.name,
+    required this.identifier,
+  });
+
+  factory SubscribedNotificationSubject.fromJson(Map<String, dynamic> json) =>
+      _$SubscribedNotificationSubjectFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SubscribedNotificationSubjectToJson(this);
+}

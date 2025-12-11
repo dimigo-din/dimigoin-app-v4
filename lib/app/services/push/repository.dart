@@ -60,9 +60,13 @@ class PushRepository {
     try {
       DFHttpResponse response = await api.get(url);
 
-      return List<NotificationSubject>.from(
-        (response.data['data'] as List).map((item) => NotificationSubject.fromJson(Map<String, dynamic>.from(item)))
-      );
+      return (response.data['data'] as Map<String, dynamic>)
+          .entries
+          .map((entry) => NotificationSubject(
+                id: entry.key,
+                description: entry.value,
+              ))
+          .toList();
     } on DioException {
       rethrow;
     }
@@ -76,9 +80,15 @@ class PushRepository {
         'deviceId': deviceId,
       });
 
-      return List<String>.from(response.data['data']);
-    } on DioException {
-      rethrow;
+      return (response.data['data'] as List)
+          .map((e) => SubscribedNotificationSubject.fromJson(e).identifier)
+          .toList();
+    } on DioException catch (e) {
+      if(e.response?.data['code'] == 'Resource_NotFound'){
+        return [];
+      }else {
+        rethrow;
+      }
     }
   }
 
@@ -86,7 +96,7 @@ class PushRepository {
     String url = '/student/push/subjects/subscribed';
 
     try {
-      await api.post(url, data: {
+      await api.patch(url, data: {
         'deviceId': deviceId,
         'subjects': subjects,
       });
