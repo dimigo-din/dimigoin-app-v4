@@ -23,100 +23,102 @@ class LoginPage extends GetView<LoginPageController> {
       child: Scaffold(
         body: Stack(
           children: [
-            SafeArea(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: DFSpacing.spacing900),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset('assets/images/dimigoin_icon.png', width: 30, height: 30),
-                        SizedBox(width: DFSpacing.spacing200),
-                        Text(
-                          '디미고인',
-                          style: textTheme.headline.copyWith(
-                            color: colorTheme.contentStandardPrimary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    DFGestureDetectorWithOpacityInteraction(
-                      onTap: () => {},
-                      onLongPress: () => {Get.toNamed(Routes.PW_LOGIN)},
-                      child: DFGestureDetectorWithScaleInteraction(
-                        onTap: () => {controller.loginWithGoogle()},
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: DFSpacing.spacing200,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorTheme.coreBrandPrimary,
-                            border: Border(
-                              bottom: BorderSide(
-                                color: colorTheme.lineOutline,
-                              ),
-                            ),
-                            borderRadius: BorderRadius.circular(DFRadius.radius300),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(DFSpacing.spacing200),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset('assets/icons/google.svg'  , width: 24, height: 24),
-                                SizedBox(width: DFSpacing.spacing300),
-                                Text(
-                                  "디미고 구글 계정으로 로그인",
-                                  style: textTheme.callout.copyWith(
-                                    color: colorTheme.solidWhite,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: DFSpacing.spacing900),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/images/dimigoin_icon.png', width: 30, height: 30),
+                      const SizedBox(width: DFSpacing.spacing200),
+                      Text(
+                        '디미고인',
+                        style: textTheme.headline.copyWith(
+                          color: colorTheme.contentStandardPrimary,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: () => {
-                            controller.openLoginHelpPage(),
-                          },
-                          child: Text(
-                            "로그인에 도움이 필요하신가요?",
-                            style: textTheme.footnote.copyWith(
-                              color: colorTheme.contentStandardTertiary,
-                              decoration: TextDecoration.underline,
-                              decorationColor: colorTheme.contentStandardTertiary,
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  DFGestureDetectorWithOpacityInteraction(
+                    onTap: () => {},
+                    onLongPress: () => {Get.toNamed(Routes.PW_LOGIN)},
+                    child: DFGestureDetectorWithScaleInteraction(
+                      onTap: () => {controller.loginWithGoogle()},
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: DFSpacing.spacing200,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorTheme.coreBrandPrimary,
+                          border: Border(
+                            bottom: BorderSide(
+                              color: colorTheme.lineOutline,
                             ),
                           ),
+                          borderRadius: BorderRadius.circular(DFRadius.radius300),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(DFSpacing.spacing200),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/icons/google.svg'  , width: 24, height: 24),
+                              const SizedBox(width: DFSpacing.spacing300),
+                              Text(
+                                "디미고 구글 계정으로 로그인",
+                                style: textTheme.callout.copyWith(
+                                  color: colorTheme.solidWhite,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         )
-                      ],
-                    )
-                  ],
-                ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () => {
+                          controller.openLoginHelpPage(),
+                        },
+                        child: Text(
+                          "로그인에 도움이 필요하신가요?",
+                          style: textTheme.footnote.copyWith(
+                            color: colorTheme.contentStandardTertiary,
+                            decoration: TextDecoration.underline,
+                            decorationColor: colorTheme.contentStandardTertiary,
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SvgPicture.asset(
-                'assets/images/schoolscenery.svg',
-                width: double.infinity,
-                height: 80,
-                fit: BoxFit.fitWidth,
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                child: SvgPicture.asset(
+                  'assets/images/schoolscenery.svg',
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.bottomCenter,
+                ),
               ),
             ),
           ],
         ),
-      )
+      ),
     );
   }
 }
