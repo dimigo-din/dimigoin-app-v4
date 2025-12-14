@@ -24,6 +24,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 void main() async {
+  // Initializes the binding between the Flutter framework and the Flutter engine.
+  // This binding includes access to the Window widget, which represents the host
+  // platform's window. The Window widget provides access to platform-specific
+  // features like the device pixel ratio, padding, view configuration, and
+  // platform brightness. This must be called before using any plugins or
+  // platform channels.
   WidgetsFlutterBinding.ensureInitialized(); 
   await Hive.initFlutter();
   await Firebase.initializeApp(

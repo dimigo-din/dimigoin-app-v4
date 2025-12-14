@@ -16,6 +16,10 @@ import '../../provider/api_interface.dart';
 
 class AppLoader {
   Future<void> load() async {
+    // Initializes the binding between the Flutter framework and the Flutter engine.
+    // The WidgetsBinding provides access to the Window widget, which represents
+    // the host platform's window and its properties (device metrics, padding, etc.).
+    // This binding is required before using any platform channels or plugins.
     WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
     FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
