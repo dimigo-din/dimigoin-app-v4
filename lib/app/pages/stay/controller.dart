@@ -66,8 +66,8 @@ class StayPageController extends GetxController {
   }
 
   void initOutingForm(Outing o) {
-    outingFrom.value = o.from != null ? TimeOfDay.fromDateTime(DateTime.parse(o.from!).toLocal()) : null;
-    outingTo.value = o.to != null ? TimeOfDay.fromDateTime(DateTime.parse(o.to!).toLocal()) : null;
+    outingFrom.value = o.from != null ? TimeOfDay.fromDateTime(DateTime.parse(o.from!)) : null;
+    outingTo.value = o.to != null ? TimeOfDay.fromDateTime(DateTime.parse(o.to!)) : null;
     outingReasonTEC.text = o.reason ?? '';
     breakfastCancel.value = o.breakfastCancel ?? false;
     lunchCancel.value = o.lunchCancel ?? false;
