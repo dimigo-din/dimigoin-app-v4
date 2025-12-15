@@ -4,5 +4,3 @@
         <strong>DIMIGOIN</strong>
     </p>
 </p>
-
-this is test
