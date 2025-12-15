@@ -228,8 +228,8 @@ class OutingFormBottomSheet extends StatelessWidget {
 
     final newOuting = Outing(
       id: outing?.id,
-      from: fromDateTime.toIso8601String(),
-      to: toDateTime.toIso8601String(),
+      from: fromDateTime.toUtc().toIso8601String(),
+      to: toDateTime.toUtc().toIso8601String(),
       reason: controller.outingReasonTEC.text,
       breakfastCancel: controller.breakfastCancel.value,
       lunchCancel: controller.lunchCancel.value,

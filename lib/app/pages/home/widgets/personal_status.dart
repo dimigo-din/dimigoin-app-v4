@@ -85,7 +85,7 @@ class PersonalStatusWidget extends GetView<HomePageController> {
                           .where((outing) {
                             if (outing.from == null) return false;
                             try {
-                              return DateTime.parse(outing.from!).isAfter(now);
+                              return DateTime.parse(outing.from!).toLocal().isAfter(now);
                             } catch (e) {
                               return false;
                             }
@@ -93,7 +93,7 @@ class PersonalStatusWidget extends GetView<HomePageController> {
                           .toList()
                         ..sort((a, b) {
                           try {
-                            return DateTime.parse(a.from!).compareTo(DateTime.parse(b.from!));
+                            return DateTime.parse(a.from!).toLocal().compareTo(DateTime.parse(b.from!).toLocal());
                           } catch (e) {
                             return 0;
                           }

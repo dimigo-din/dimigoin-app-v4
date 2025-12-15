@@ -34,8 +34,8 @@ class OutingListItem extends StatelessWidget {
   String _formatTimeRange() {
     if (outing.from == null || outing.to == null) return "";
 
-    final from = DateTime.parse(outing.from!);
-    final to = DateTime.parse(outing.to!);
+    final from = DateTime.parse(outing.from!).toLocal();
+    final to = DateTime.parse(outing.to!).toLocal();
 
     return "${DateFormat.Hm().format(from)} ~ ${DateFormat.Hm().format(to)}";
   }
