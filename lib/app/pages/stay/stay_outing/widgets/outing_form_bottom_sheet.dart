@@ -12,6 +12,15 @@ import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import '../../controller.dart';
 
+String _toIso8601StringWithOffset(DateTime dateTime) {
+  final isoString = dateTime.toIso8601String();
+  final offset = dateTime.timeZoneOffset;
+  final hours = offset.inHours;
+  final minutes = offset.inMinutes.remainder(60).abs();
+  final offsetStr = '${hours >= 0 ? '+' : '-'}${hours.abs().toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
+  return '$isoString$offsetStr';
+}
+
 class OutingFormBottomSheet extends StatelessWidget {
   final bool isEditing;
   final Outing? outing;
@@ -228,8 +237,8 @@ class OutingFormBottomSheet extends StatelessWidget {
 
     final newOuting = Outing(
       id: outing?.id,
-      from: fromDateTime.toUtc().toIso8601String(),
-      to: toDateTime.toUtc().toIso8601String(),
+      from: _toIso8601StringWithOffset(fromDateTime),
+      to: _toIso8601StringWithOffset(toDateTime),
       reason: controller.outingReasonTEC.text,
       breakfastCancel: controller.breakfastCancel.value,
       lunchCancel: controller.lunchCancel.value,
