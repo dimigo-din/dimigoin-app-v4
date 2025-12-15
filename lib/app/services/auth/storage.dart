@@ -5,6 +5,7 @@ class AuthStorage {
   static const _storage = FlutterSecureStorage(
     webOptions: WebOptions(
       dbName: 'dimigoin_db',
+      publicKey: 'dimigoin_public_key',
     ),
   );
 
