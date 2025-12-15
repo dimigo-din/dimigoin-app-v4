@@ -49,18 +49,26 @@ class JWTMiddleware extends ApiMiddleware {
         }
 
         final dio = Dio(BaseOptions(baseUrl: dotenv.env['API_BASE_URL']!));
-        final retryResponse = await dio.request(
-          options.path,
-          data: options.data,
-          queryParameters: options.queryParameters,
-          options: Options(
-            method: options.method,
-            headers: options.headers,
-          ),
-        );
+        try {
+          final retryResponse = await dio.request(
+            options.path,
+            data: options.data,
+            queryParameters: options.queryParameters,
+            options: Options(
+              method: options.method,
+              headers: options.headers,
+            ),
+          );
 
-        print('[JWTMiddleware] Retry request successful');
-        return retryResponse;
+          print('[JWTMiddleware] Retry request successful');
+          return retryResponse;
+        } on DioException catch (retryErr) {
+          if (retryErr.response?.statusCode != 401) {
+            print('[JWTMiddleware] Retry failed with ${retryErr.response?.statusCode}, passing through');
+            rethrow;
+          }
+          rethrow;
+        }
       } catch (e) {
         print('[JWTMiddleware] ERROR: Token refresh failed: $e');
         print('[JWTMiddleware] Logging out and redirecting to login');
