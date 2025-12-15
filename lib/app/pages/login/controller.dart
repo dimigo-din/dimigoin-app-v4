@@ -8,8 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:developer' as developer;
 
-import '../../routes/routes.dart';
-
 class LoginPageController extends GetxController {
   AuthService authService = Get.find<AuthService>();
 
@@ -40,11 +38,7 @@ class LoginPageController extends GetxController {
     try {
       isLoginProcessing.value = true;
 
-      bool success = await authService.loginWithGoogle();
-
-      if (success && authService.isLoginSuccess && authService.isPersonalInfoRegistered) {
-        Get.offAllNamed(Routes.MAIN);
-      }
+      await authService.loginWithGoogle();
     } on PersonalInformationNotRegisteredException {
       DFSnackBar.open('개인정보가 등록되지 않은 계정입니다. 디미인증에서 먼저 등록해주세요.');
       await Future.delayed(const Duration(seconds: 2));
@@ -77,10 +71,6 @@ class LoginPageController extends GetxController {
       DFSnackBar.open('로그인 중입니다...');
 
       await authService.loginWithGoogleCallback(code);
-
-      if (authService.isLoginSuccess && authService.isPersonalInfoRegistered) {
-        Get.offAllNamed(Routes.MAIN);
-      }
     } on PersonalInformationNotRegisteredException {
       DFSnackBar.open('개인정보가 등록되지 않은 계정입니다. 디미인증에서 먼저 등록해주세요.');
       await Future.delayed(const Duration(seconds: 2));
