@@ -44,15 +44,45 @@ class AuthService extends GetxController {
       final accessToken = await AuthStorage.getAccessToken();
       final refreshToken = await AuthStorage.getRefreshToken();
 
+      // Debug: Log token status on app start
+      log('[AuthService] onInit - Access token exists: ${accessToken != null}');
+      log('[AuthService] onInit - Refresh token exists: ${refreshToken != null}');
+
+      if (accessToken != null) {
+        try {
+          final isExpired = JwtDecoder.isExpired(accessToken);
+          final expiryDate = JwtDecoder.getExpirationDate(accessToken);
+          final now = DateTime.now();
+          log('[AuthService] onInit - Access token expired: $isExpired');
+          log('[AuthService] onInit - Access token expires at: $expiryDate (${expiryDate.difference(now).inMinutes} minutes remaining)');
+        } catch (e) {
+          log('[AuthService] onInit - Failed to decode access token: $e');
+        }
+      }
+
+      if (refreshToken != null) {
+        try {
+          final isExpired = JwtDecoder.isExpired(refreshToken);
+          final expiryDate = JwtDecoder.getExpirationDate(refreshToken);
+          final now = DateTime.now();
+          log('[AuthService] onInit - Refresh token expired: $isExpired');
+          log('[AuthService] onInit - Refresh token expires at: $expiryDate (${expiryDate.difference(now).inHours} hours remaining)');
+        } catch (e) {
+          log('[AuthService] onInit - Failed to decode refresh token: $e');
+        }
+      }
+
       _jwtToken.value = LoginToken(
         accessToken: accessToken,
         refreshToken: refreshToken,
       );
 
       _user.value = await AuthStorage.getPersonalInformation();
+      log('[AuthService] onInit - Personal information loaded: ${_user.value != null}');
 
       await initialize();
     } catch (e) {
+      log('[AuthService] onInit - Error: $e');
       rethrow;
     } finally {
       if (!_initCompleter.isCompleted) {
@@ -255,15 +285,31 @@ class AuthService extends GetxController {
 
   Future<void> refreshToken() async {
     try {
+      log('[AuthService] refreshToken - Starting token refresh...');
+
       if (jwtToken.refreshToken == null) {
+        log('[AuthService] refreshToken - ERROR: No refresh token available');
         throw Exception('No refresh token available');
       }
 
       final token = await repository.refreshToken(jwtToken.refreshToken!);
       _jwtToken.value = token;
       await AuthStorage.saveTokens(token.accessToken!, token.refreshToken!);
+
+      log('[AuthService] refreshToken - Token refresh successful');
+
+      // Log new token expiry
+      if (token.accessToken != null) {
+        try {
+          final expiryDate = JwtDecoder.getExpirationDate(token.accessToken!);
+          final now = DateTime.now();
+          log('[AuthService] refreshToken - New access token expires at: $expiryDate (${expiryDate.difference(now).inMinutes} minutes)');
+        } catch (e) {
+          log('[AuthService] refreshToken - Failed to decode new token: $e');
+        }
+      }
     } catch (e) {
-      log(e.toString());
+      log('[AuthService] refreshToken - ERROR: $e');
       rethrow;
     }
   }

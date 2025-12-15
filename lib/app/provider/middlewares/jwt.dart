@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' hide Response;
@@ -33,14 +34,21 @@ class JWTMiddleware extends ApiMiddleware {
     }
 
     if (responseCode == 401 || errorCode == 'ERR_TOKEN_EXPIRED') {
+      log('[JWTMiddleware] 401 error detected for ${options.path}');
+      log('[JWTMiddleware] Error code: $errorCode, Status: $responseCode');
+
       try {
+        log('[JWTMiddleware] Attempting token refresh...');
         await _performRefreshWithLock();
 
         final newToken = _authService.jwtToken.accessToken;
         if (newToken != null) {
+          log('[JWTMiddleware] Token refreshed successfully, retrying request');
           options.headers['Authorization'] = 'Bearer $newToken';
+        } else {
+          log('[JWTMiddleware] ERROR: New token is null after refresh');
         }
-        
+
         final dio = Dio(BaseOptions(baseUrl: dotenv.env['API_BASE_URL']!));
         final retryResponse = await dio.request(
           options.path,
@@ -51,9 +59,12 @@ class JWTMiddleware extends ApiMiddleware {
             headers: options.headers,
           ),
         );
-        
+
+        log('[JWTMiddleware] Retry request successful');
         return retryResponse;
-      } catch (_) {
+      } catch (e) {
+        log('[JWTMiddleware] ERROR: Token refresh failed: $e');
+        log('[JWTMiddleware] Logging out and redirecting to login');
         await _authService.logout();
         Get.offAllNamed(Routes.LOGIN);
         return null;
@@ -65,17 +76,22 @@ class JWTMiddleware extends ApiMiddleware {
 
   Future<void> _performRefreshWithLock() async {
     if (_refreshFuture != null) {
+      log('[JWTMiddleware] Refresh already in progress, waiting...');
       await _refreshFuture;
+      log('[JWTMiddleware] Refresh completed by another request');
       return;
     }
 
+    log('[JWTMiddleware] Starting new refresh operation');
     final completer = Completer<void>();
     _refreshFuture = completer.future;
 
     try {
       await _authService.refreshToken();
       completer.complete();
+      log('[JWTMiddleware] Refresh operation completed successfully');
     } catch (e) {
+      log('[JWTMiddleware] Refresh operation failed: $e');
       completer.completeError(e);
       rethrow;
     } finally {
