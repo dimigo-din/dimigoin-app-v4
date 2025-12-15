@@ -13,12 +13,20 @@ import 'package:get/get.dart';
 import '../../controller.dart';
 
 String _toIso8601StringWithOffset(DateTime dateTime) {
-  final isoString = dateTime.toIso8601String();
   final offset = dateTime.timeZoneOffset;
   final hours = offset.inHours;
   final minutes = offset.inMinutes.remainder(60).abs();
   final offsetStr = '${hours >= 0 ? '+' : '-'}${hours.abs().toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
-  return '$isoString$offsetStr';
+
+  // DateTime을 로컬 시간으로 포맷하고 timezone offset 추가
+  final year = dateTime.year.toString().padLeft(4, '0');
+  final month = dateTime.month.toString().padLeft(2, '0');
+  final day = dateTime.day.toString().padLeft(2, '0');
+  final hour = dateTime.hour.toString().padLeft(2, '0');
+  final minute = dateTime.minute.toString().padLeft(2, '0');
+  final second = dateTime.second.toString().padLeft(2, '0');
+
+  return '$year-$month-${day}T$hour:$minute:$second$offsetStr';
 }
 
 class OutingFormBottomSheet extends StatelessWidget {
