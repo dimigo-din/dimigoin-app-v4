@@ -64,12 +64,16 @@ class JWTMiddleware extends ApiMiddleware {
           return retryResponse;
         } on DioException catch (retryErr) {
           if (retryErr.response?.statusCode != 401) {
-            print('[JWTMiddleware] Retry failed with ${retryErr.response?.statusCode}, passing through');
-            rethrow;
+            // 401이 아닌 에러(404, 500 등)는 토큰 문제가 아니므로 그냥 전달
+            print('[JWTMiddleware] Retry failed with ${retryErr.response?.statusCode}, passing through (non-auth error)');
+            return null;
           }
-          rethrow;
+          // 재시도해도 401이면 토큰 리프레시 실패로 간주
+          print('[JWTMiddleware] Retry still returned 401, token refresh failed');
+          throw retryErr;
         }
       } catch (e) {
+        // 토큰 리프레시 자체가 실패한 경우에만 로그아웃
         print('[JWTMiddleware] ERROR: Token refresh failed: $e');
         print('[JWTMiddleware] Logging out and redirecting to login');
         await _authService.logout();
