@@ -14,21 +14,6 @@ class AuthRepository {
 
   AuthRepository({ApiProvider? api}) : api = api ?? Get.find<ApiProvider>();
 
-  void _logTokenFormat(String context, LoginToken token) {
-    print('[$context] AccessToken length: ${token.accessToken?.length ?? 0}');
-    print('[$context] RefreshToken length: ${token.refreshToken?.length ?? 0}');
-
-    if (token.refreshToken != null) {
-      final parts = token.refreshToken!.split('.');
-      print('[$context] RefreshToken parts count: ${parts.length} (JWT should have 3)');
-      if (parts.length == 3) {
-        print('[$context] RefreshToken is JWT format');
-      } else {
-        print('[$context] RefreshToken is NOT JWT format (opaque token)');
-      }
-    }
-  }
-
   Future<Pong> getPong() async {
     String url = '/auth/ping';
 
@@ -91,8 +76,6 @@ class AuthRepository {
 
       LoginToken loginToken = LoginToken.fromJson(response.data['data']);
 
-      _logTokenFormat('loginWithGoogleWeb', loginToken);
-
       return loginToken;
     } on DioException catch (e) {
       if (e.response?.data['code'] == 'PersonalInformation_NotRegistered') {
@@ -136,8 +119,6 @@ class AuthRepository {
       });
 
       LoginToken loginToken = LoginToken.fromJson(response.data['data']);
-
-      _logTokenFormat('refreshToken', loginToken);
 
       return loginToken;
     } on DioException {
