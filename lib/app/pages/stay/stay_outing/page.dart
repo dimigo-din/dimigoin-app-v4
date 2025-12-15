@@ -77,7 +77,7 @@ class StayOutingPage extends GetView<StayPageController> {
         .where((outing) {
           if (outing.from == null) return false;
 
-          final outingDate = DateTime.parse(outing.from!);
+          final outingDate = DateTime.parse(outing.from!).toLocal();
           return OutingDateUtils.isSameDay(outingDate, selectedDay);
         })
         .map((outing) => OutingListItem(
