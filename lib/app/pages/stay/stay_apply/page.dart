@@ -61,12 +61,12 @@ class StayApplyPage extends GetView<StayPageController> {
                     title: controller.stayList.isEmpty
                         ? "잔류 일정 없음"
                         : controller.stayList[controller.selectedStayIndex.value].name,
-                    onTap: () => StaySelectionBottomSheet.show(
+                    onTap: () => controller.stayList.isNotEmpty ? StaySelectionBottomSheet.show(
                       context: context,
                       stayList: controller.stayList,
                       selectedStayIndex: controller.selectedStayIndex.value,
                       onStaySelected: controller.selectStay,
-                    ),
+                    ) : null,
                   )),
                   const SizedBox(height: DFSpacing.spacing600),
 
@@ -85,6 +85,10 @@ class StayApplyPage extends GetView<StayPageController> {
 
                   // 좌석 미선택 사유 입력
                   Obx(() {
+                    if (controller.stayList.isEmpty) {
+                      return const SizedBox();
+                    }
+
                     final showReason = controller.selectedSeat.value == '';
                     return Visibility(
                       visible: showReason,

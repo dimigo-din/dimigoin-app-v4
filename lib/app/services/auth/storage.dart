@@ -54,11 +54,14 @@ class AuthStorage {
   }
 
   static Future<PersonalInformation?> getPersonalInformation() async {
-    final name = await _storage.read(key: _keyPersonalInformationName);
-    final number = await _storage.read(key: _keyPersonalInformationNumber);
-    final gender = await _storage.read(key: _keyPersonalInformationGender);
-    final profileUrl = await _storage.read(key: _keyUserImageURL);
-    final id = await _storage.read(key: _keyPersonalInformationId);
+    // Read all values at once to avoid timing issues on web (IndexedDB)
+    final allValues = await _storage.readAll();
+
+    final name = allValues[_keyPersonalInformationName];
+    final number = allValues[_keyPersonalInformationNumber];
+    final gender = allValues[_keyPersonalInformationGender];
+    final profileUrl = allValues[_keyUserImageURL];
+    final id = allValues[_keyPersonalInformationId];
 
     if (name != null && number != null && gender != null && profileUrl != null && id != null) {
       return PersonalInformation(

@@ -213,6 +213,8 @@ class AuthService extends GetxController {
       } catch (e) {
         log('Failed to sync FCM token after login: $e');
       }
+
+      Get.offAllNamed(Routes.MAIN);
     } else {
       _jwtToken.value = LoginToken();
       throw PinVerificationCancelledException();
@@ -261,7 +263,6 @@ class AuthService extends GetxController {
       _jwtToken.value = token;
       await AuthStorage.saveTokens(token.accessToken!, token.refreshToken!);
     } catch (e) {
-      log(e.toString());
       rethrow;
     }
   }
@@ -270,7 +271,7 @@ class AuthService extends GetxController {
     try {
       final info = await repository.getPersonalInformation(passcode);
 
-      AuthStorage.savePersonalInformation(info);
+      await AuthStorage.savePersonalInformation(info);
 
       _user.value = info;
     } on WrongPasscodeException {

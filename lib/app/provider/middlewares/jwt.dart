@@ -40,20 +40,27 @@ class JWTMiddleware extends ApiMiddleware {
         if (newToken != null) {
           options.headers['Authorization'] = 'Bearer $newToken';
         }
-        
+
         final dio = Dio(BaseOptions(baseUrl: dotenv.env['API_BASE_URL']!));
-        final retryResponse = await dio.request(
-          options.path,
-          data: options.data,
-          queryParameters: options.queryParameters,
-          options: Options(
-            method: options.method,
-            headers: options.headers,
-          ),
-        );
-        
-        return retryResponse;
-      } catch (_) {
+        try {
+          final retryResponse = await dio.request(
+            options.path,
+            data: options.data,
+            queryParameters: options.queryParameters,
+            options: Options(
+              method: options.method,
+              headers: options.headers,
+            ),
+          );
+
+          return retryResponse;
+        } on DioException catch (retryErr) {
+          if (retryErr.response?.statusCode != 401) {
+            return null;
+          }
+          throw retryErr;
+        }
+      } catch (e) {
         await _authService.logout();
         Get.offAllNamed(Routes.LOGIN);
         return null;

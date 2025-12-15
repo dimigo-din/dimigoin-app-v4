@@ -35,9 +35,9 @@ class SettingPage extends GetView<SettingController> {
                   const MenuHeader(
                     title: "알림 설정",
                   ),
-                  Column(
+                  Obx(() => Column(
                     children: _buildNotificationSetting(),
-                  ),
+                  )),
                   const SizedBox(height: DFSpacing.spacing300),
                   const DFDivider(size: DFDividerSize.medium),
                 ],

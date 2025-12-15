@@ -36,9 +36,9 @@ class LaundryApplyPage extends GetView<LaundryPageController> {
                 onRefresh: () async {
                   await controller.fetchLaundryApplications();
                 },
-                child: ListView(
+                child: Obx(() => ListView(
                   children: _buildTimeSlotList(),
-                ),
+                )),
               )
             ),
           ],
