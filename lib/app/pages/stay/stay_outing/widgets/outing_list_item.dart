@@ -1,6 +1,7 @@
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/services/stay/model.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
+import 'package:dimigoin_app_v4/app/pages/stay/stay_outing/utils/outing_date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -34,8 +35,8 @@ class OutingListItem extends StatelessWidget {
   String _formatTimeRange() {
     if (outing.from == null || outing.to == null) return "";
 
-    final from = DateTime.parse(outing.from!);
-    final to = DateTime.parse(outing.to!);
+    final from = OutingDateUtils.parseServerDateTime(outing.from!);
+    final to = OutingDateUtils.parseServerDateTime(outing.to!);
 
     return "${DateFormat.Hm().format(from)} ~ ${DateFormat.Hm().format(to)}";
   }

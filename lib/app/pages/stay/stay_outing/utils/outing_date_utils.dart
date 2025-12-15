@@ -1,6 +1,18 @@
 import 'package:dimigoin_app_v4/app/services/stay/model.dart';
 
 class OutingDateUtils {
+  static DateTime parseServerDateTime(String dateTimeString) {
+    final hasTimezone = dateTimeString.contains('+') ||
+                       dateTimeString.contains('Z') ||
+                       dateTimeString.endsWith('z');
+
+    if (hasTimezone) {
+      return DateTime.parse(dateTimeString).toLocal();
+    } else {
+      return DateTime.parse('${dateTimeString}Z').toLocal();
+    }
+  }
+
   /// Stay 기간 동안의 모든 날짜 목록을 반환합니다.
   static List<DateTime> getOutingDays(Stay stay) {
     final from = DateTime.parse(stay.stayFrom);
