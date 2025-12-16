@@ -9,7 +9,18 @@ class OutingDateUtils {
     if (hasTimezone) {
       return DateTime.parse(dateTimeString).toLocal();
     } else {
-      return DateTime.parse('${dateTimeString}Z').toLocal();
+      final utcTime = DateTime.parse('${dateTimeString}Z');
+      final kstTime = utcTime.add(const Duration(hours: 9));
+      return DateTime(
+        kstTime.year,
+        kstTime.month,
+        kstTime.day,
+        kstTime.hour,
+        kstTime.minute,
+        kstTime.second,
+        kstTime.millisecond,
+        kstTime.microsecond,
+      );
     }
   }
 
