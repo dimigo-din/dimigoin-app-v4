@@ -2,6 +2,7 @@ import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:dimigoin_app_v4/app/pages/home/controller.dart';
+import 'package:dimigoin_app_v4/app/pages/stay/stay_outing/utils/outing_date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -100,7 +101,7 @@ class PersonalStatusWidget extends GetView<HomePageController> {
                         });
 
                         return Text(
-                          upcomingOutings.isEmpty ? '없음' : DateFormat.Hm().format(DateTime.parse(upcomingOutings.first.from!)),
+                          upcomingOutings.isEmpty ? '없음' : DateFormat.Hm().format(OutingDateUtils.parseServerDateTime(upcomingOutings.first.from!)),
                           style: textTheme.headline.copyWith(
                             color: upcomingOutings.isEmpty ? colorTheme.coreBrandSecondary : colorTheme.coreBrandPrimary,
                           ),

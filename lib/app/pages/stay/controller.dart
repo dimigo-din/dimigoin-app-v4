@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/pages/home/controller.dart';
+import 'package:dimigoin_app_v4/app/pages/stay/stay_outing/utils/outing_date_utils.dart';
 import 'package:dimigoin_app_v4/app/services/frigo/model.dart';
 import 'package:dimigoin_app_v4/app/services/frigo/service.dart';
 import 'package:dimigoin_app_v4/app/services/stay/model.dart';
@@ -66,8 +67,8 @@ class StayPageController extends GetxController {
   }
 
   void initOutingForm(Outing o) {
-    outingFrom.value = o.from != null ? TimeOfDay.fromDateTime(DateTime.parse(o.from!)) : null;
-    outingTo.value = o.to != null ? TimeOfDay.fromDateTime(DateTime.parse(o.to!)) : null;
+    outingFrom.value = o.from != null ? TimeOfDay.fromDateTime(OutingDateUtils.parseServerDateTime(o.from!)) : null;
+    outingTo.value = o.to != null ? TimeOfDay.fromDateTime(OutingDateUtils.parseServerDateTime(o.to!)) : null;
     outingReasonTEC.text = o.reason ?? '';
     breakfastCancel.value = o.breakfastCancel ?? false;
     lunchCancel.value = o.lunchCancel ?? false;
