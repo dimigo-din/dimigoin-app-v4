@@ -58,7 +58,7 @@ jobs:
           working-directory: ios
       
       - name: Deploy to TestFlight
-        run: fastlane beta
+        run: bundle exec fastlane beta
         working-directory: ./ios
         env:
           APPSTORECONNECT_API_KEY_ID: ${{ secrets.APPSTORECONNECT_API_KEY_ID }}

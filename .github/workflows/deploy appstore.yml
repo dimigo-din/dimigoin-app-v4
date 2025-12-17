@@ -58,7 +58,7 @@ jobs:
           working-directory: ios
       
       - name: Deploy to App Store
-        run: fastlane prod
+        run: bundle exec fastlane prod
         working-directory: ./ios
         env:
           APPSTORECONNECT_API_KEY_ID: ${{ secrets.APPSTORECONNECT_API_KEY_ID }}
