@@ -20,7 +20,7 @@ platform :ios do
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      xcargs: "CODE_SIGN_STYLE=Automatic",
+      xcargs: "CODE_SIGN_STYLE=Automatic -allowProvisioningUpdates",
       clean: true
     )
 
@@ -45,7 +45,7 @@ platform :ios do
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      xcargs: "CODE_SIGN_STYLE=Automatic",
+      xcargs: "CODE_SIGN_STYLE=Automatic -allowProvisioningUpdates",
       clean: true
     )
 
