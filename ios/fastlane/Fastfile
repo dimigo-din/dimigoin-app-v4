@@ -1,7 +1,8 @@
+opt_out_usage
 default_platform(:ios)
 
 platform :ios do
-  desc "Deploy to TestFlight"
+  desc "Build & upload a beta build to TestFlight"
   lane :beta do
     setup_ci if ENV['CI']
 
@@ -13,27 +14,20 @@ platform :ios do
 
     match(
       type: "appstore",
-      readonly: ENV["CI"]
+      readonly: true
     )
 
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      export_method: "app-store",
-      xcargs: "CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=8U8W5R5884 CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER='match AppStore com.din.dimigoin'",
-      export_options: {
-        provisioningProfiles: {
-          "com.din.dimigoin" => "match AppStore com.din.dimigoin"
-        }
-      }
+      xcargs: "CODE_SIGN_STYLE=Automatic",
+      clean: true
     )
 
-    upload_to_testflight(
-      skip_waiting_for_build_processing: true
-    )
+    upload_to_testflight
   end
 
-  desc "Deploy to App Store"
+  desc "Build & upload a production build to App Store"
   lane :prod do
     setup_ci if ENV['CI']
 
@@ -45,29 +39,24 @@ platform :ios do
 
     match(
       type: "appstore",
-      readonly: ENV["CI"]
+      readonly: true
     )
 
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      export_method: "app-store",
-      xcargs: "CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=8U8W5R5884 CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER='match AppStore com.din.dimigoin'",
-      export_options: {
-        provisioningProfiles: {
-          "com.din.dimigoin" => "match AppStore com.din.dimigoin"
-        }
-      }
+      xcargs: "CODE_SIGN_STYLE=Automatic",
+      clean: true
     )
 
     upload_to_app_store(
       force: true,
       automatic_release: false,
       submit_for_review: true,
-      submission_information: { add_id_info_uses_idfa: false },
-      precheck_include_in_app_purchases: false,
-      skip_screenshots: true,
-      reject_if_possible: true
+      submission_information: {
+        add_id_info_uses_idfa: false
+      },
+      precheck_include_in_app_purchases: false
     )
   end
 end
