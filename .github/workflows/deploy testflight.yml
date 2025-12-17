@@ -14,7 +14,7 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v4
         with:
-          ref: 'main'
+          ref: 'beta'
       
       - name: Add Google Service Info
         run: echo "${{ secrets.IOS_GOOGLE_SERVICE_INFO }}" | base64 --decode > ios/Runner/GoogleService-Info.plist
