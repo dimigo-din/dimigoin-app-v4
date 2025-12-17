@@ -4,8 +4,6 @@ storage_mode("git")
 
 type("appstore") # The default type, can be: appstore, adhoc, enterprise or development
 
-git_basic_authorization(ENV["GIT_TOKEN"])
-
 app_identifier(["com.din.dimigoin"])
 username("jeonhee77@daum.net") # Your Apple Developer Portal username
 team_id("8U8W5R5884")
