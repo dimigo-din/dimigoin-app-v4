@@ -23,7 +23,8 @@ platform :ios do
       export_options: {
         signingStyle: "automatic",
         provisioningProfiles: {}
-      }
+      },
+      xcargs: "-allowProvisioningUpdates"
     )
     
     upload_to_testflight(
@@ -53,7 +54,8 @@ platform :ios do
       export_options: {
         signingStyle: "automatic",
         provisioningProfiles: {}
-      }
+      },
+      xcargs: "-allowProvisioningUpdates"
     )
     
     upload_to_app_store(
