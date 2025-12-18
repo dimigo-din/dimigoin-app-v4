@@ -5,7 +5,7 @@
 # For more information about the Appfile, see:
 #     https://docs.fastlane.tools/advanced/#appfile
 
-app_identifier("com.dimigo.dimigoin")
+app_identifier("com.din.dimigoin")
 apple_id("jeonhee77@daum.net")
 team_id("8U8W5R5884")
 itc_team_id("128376089")
