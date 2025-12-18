@@ -28,21 +28,25 @@ class SettingPage extends GetView<SettingController> {
         body: ListView(
           physics: const ClampingScrollPhysics(),
           children: [
-            Visibility(
-              visible: kIsWeb == false,
-              child: Column(
+            Column(
+              children: [
+              Visibility(
+                visible: kIsWeb == false,
+                child: Column(
                 children: [
                   const MenuHeader(
-                    title: "알림 설정",
+                  title: "알림 설정",
                   ),
                   Obx(() => Column(
-                    children: _buildNotificationSetting(),
+                  children: _buildNotificationSetting(),
                   )),
                   const SizedBox(height: DFSpacing.spacing300),
-                  const DFDivider(size: DFDividerSize.medium),
                 ],
-              )
+                ),
+              ),
+              ],
             ),
+            if (kIsWeb == false) const DFDivider(size: DFDividerSize.medium),
             const MenuHeader(
               title: "앱 정보"
             ),
