@@ -2,8 +2,7 @@ opt_out_usage
 default_platform(:ios)
 
 platform :ios do
-  desc "Build & upload a beta build to TestFlight"
-  lane :beta do
+  before_all do
     setup_ci if ENV['CI']
 
     app_store_connect_api_key(
@@ -11,52 +10,50 @@ platform :ios do
       issuer_id: ENV["APPSTORECONNECT_API_ISSUER_ID"],
       key_content: ENV["APPSTORECONNECT_API_KEY"]
     )
-
-    match(
-      type: "appstore",
-      readonly: true
-    )
-
-    build_app(
-      workspace: "Runner.xcworkspace",
-      scheme: "Runner",
-      xcargs: "CODE_SIGN_STYLE=Automatic -allowProvisioningUpdates",
-      clean: true
-    )
-
-    upload_to_testflight
   end
 
-  desc "Build & upload a production build to App Store"
-  lane :prod do
-    setup_ci if ENV['CI']
-
-    app_store_connect_api_key(
-      key_id: ENV["APPSTORECONNECT_API_KEY_ID"],
-      issuer_id: ENV["APPSTORECONNECT_API_ISSUER_ID"],
-      key_content: ENV["APPSTORECONNECT_API_KEY"]
-    )
-
+  desc "Deploy beta build to TestFlight"
+  lane :beta do
     match(
       type: "appstore",
-      readonly: true
+      readonly: ENV['CI']
     )
 
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      xcargs: "CODE_SIGN_STYLE=Automatic -allowProvisioningUpdates",
-      clean: true
+      export_method: "app-store",
+      xcargs: "-allowProvisioningUpdates"
+    )
+
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Deploy production build to App Store"
+  lane :prod do
+    match(
+      type: "appstore",
+      readonly: ENV['CI']
+    )
+
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      xcargs: "-allowProvisioningUpdates"
     )
 
     upload_to_app_store(
       force: true,
-      automatic_release: false,
       submit_for_review: true,
+      automatic_release: false,
+      skip_screenshots: true,
+      precheck_include_in_app_purchases: false,
       submission_information: {
         add_id_info_uses_idfa: false
-      },
-      precheck_include_in_app_purchases: false
+      }
     )
   end
 end
