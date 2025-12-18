@@ -65,7 +65,9 @@ class AuthService extends GetxController {
     if (!kIsWeb) {
       final GoogleSignIn signIn = GoogleSignIn.instance;
       await signIn.initialize(
-        clientId: dotenv.env['GOOGLE_CLIENT_ID'],
+        clientId: Platform.isIOS
+          ? dotenv.env['GOOGLE_IOS_CLIENT_ID']
+          : dotenv.env['GOOGLE_ANDROID_CLIENT_ID'],
         serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
       );
     }
