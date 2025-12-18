@@ -16,14 +16,19 @@ platform :ios do
   lane :beta do
     match(
       type: "appstore",
-      readonly: ENV['CI']
+      readonly: true
     )
 
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
       export_method: "app-store",
-      xcargs: "-allowProvisioningUpdates"
+      export_options: {
+        signingStyle: "manual",
+        provisioningProfiles: {
+          "com.din.dimigoin" => "match AppStore com.din.dimigoin"
+        }
+      }
     )
 
     upload_to_testflight(
@@ -35,14 +40,19 @@ platform :ios do
   lane :prod do
     match(
       type: "appstore",
-      readonly: ENV['CI']
+      readonly: true
     )
 
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
       export_method: "app-store",
-      xcargs: "-allowProvisioningUpdates"
+      export_options: {
+        signingStyle: "manual",
+        provisioningProfiles: {
+          "com.din.dimigoin" => "match AppStore com.din.dimigoin"
+        }
+      }
     )
 
     upload_to_app_store(
