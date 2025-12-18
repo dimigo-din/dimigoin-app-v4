@@ -22,11 +22,11 @@ platform :ios do
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      export_method: "app-store-connect",
+      export_method: "app-store",
       export_options: {
         signingStyle: "manual",
         provisioningProfiles: {
-          "com.din.dimigoin" => "match AppStore com.din.dimigoin"
+          "com.din.dimigoin" => "match AppStore com.din.dimigoin 1766023354"
         }
       }
     )
@@ -44,16 +44,16 @@ platform :ios do
     )
 
     build_app(
-      workspace: "Runner.xcworkspace",
-      scheme: "Runner",
-      export_method: "app-store-connect",
-      export_options: {
-        signingStyle: "manual",
-        provisioningProfiles: {
-          "com.din.dimigoin" => "match AppStore com.din.dimigoin"
-        }
+    workspace: "Runner.xcworkspace",
+    scheme: "Runner",
+    export_method: "app-store",
+    export_options: {
+      signingStyle: "manual",
+      provisioningProfiles: {
+        "com.din.dimigoin" => "match AppStore com.din.dimigoin 1766023354"
       }
-    )
+    }
+  )
 
     upload_to_app_store(
       force: true,
