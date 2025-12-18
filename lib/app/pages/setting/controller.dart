@@ -59,6 +59,14 @@ class SettingController extends GetxController {
   }
 
   Future<void> updateNotificationSettings(NotificationSubject subject) async {
+    final hasPermission = await pushService.hasNotificationPermission;
+
+    if (!hasPermission) {
+      DFSnackBar.error("알림 권한이 없습니다. 권한을 허용해주세요.");
+      await pushService.requestPushPermission();
+      return;
+    }
+
     final previousState = List<String>.from(notificationSubscribedSubject);
 
     try {

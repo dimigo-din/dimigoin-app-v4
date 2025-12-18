@@ -40,6 +40,8 @@ class PushService extends GetxController {
       return;
     }
 
+    await _initLocalNotification();
+
     await requestPushPermission();
 
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
@@ -58,8 +60,6 @@ class PushService extends GetxController {
     }).onError((err) {
       log('FCM Token update failed: $err');
     });
-
-    await _initLocalNotification();
 
     if (authService.isLoginSuccess) {
       await syncTokenToServer();
@@ -137,6 +137,16 @@ class PushService extends GetxController {
 
   Future<void> requestPushPermission() async {
     await FirebaseMessaging.instance.requestPermission();
+  }
+
+  Future<bool> get hasNotificationPermission async {
+    if (kIsWeb) {
+      return false;
+    }
+
+    final settings = await FirebaseMessaging.instance.getNotificationSettings();
+    return settings.authorizationStatus == AuthorizationStatus.authorized ||
+           settings.authorizationStatus == AuthorizationStatus.provisional;
   }
 
   Future<String?> getFCMToken() async {
