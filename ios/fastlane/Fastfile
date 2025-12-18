@@ -44,16 +44,16 @@ platform :ios do
     )
 
     build_app(
-    workspace: "Runner.xcworkspace",
-    scheme: "Runner",
-    export_method: "app-store",
-    export_options: {
-      signingStyle: "manual",
-      provisioningProfiles: {
-        "com.din.dimigoin" => "match AppStore com.din.dimigoin 1766023354"
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      export_options: {
+        signingStyle: "manual",
+        provisioningProfiles: {
+          "com.din.dimigoin" => "match AppStore com.din.dimigoin 1766023354"
+        }
       }
-    }
-  )
+    )
 
     upload_to_app_store(
       force: true,
@@ -62,7 +62,8 @@ platform :ios do
       skip_screenshots: true,
       precheck_include_in_app_purchases: false,
       submission_information: {
-        add_id_info_uses_idfa: false
+        add_id_info_uses_idfa: false,
+        export_compliance_uses_encryption: false
       }
     )
   end
