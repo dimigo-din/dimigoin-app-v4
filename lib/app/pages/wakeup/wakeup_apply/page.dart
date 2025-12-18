@@ -64,6 +64,7 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
                   fill: DFAvatarFill.image,
                   image: Image.network(video.snippet.thumbnails.high.url),
                 ),
+                marquee: true,
               ),
               const SizedBox(height: 20),
               SizedBox(
