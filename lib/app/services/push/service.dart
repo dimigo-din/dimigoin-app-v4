@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
+//import 'package:dimigoin_app_v4/app/routes/routes.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/services/push/model.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -70,6 +71,63 @@ class PushService extends GetxController {
         _showNotification(message);
       }
     });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      log('Notification tapped (app in background): ${message.messageId}');
+      _handleNotificationTap(message);
+    });
+
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      log('Notification tapped (app terminated): ${initialMessage.messageId}');
+      _handleNotificationTap(initialMessage);
+    }
+  }
+
+  void _handleNotificationTap(RemoteMessage message) {
+    log('Notification data: ${message.data}');
+
+    // Navigation logic based on notification type
+    // Uncomment and customize the code below when you want to enable deep linking
+    /*
+    final data = message.data;
+    final type = data['type'] as String?;
+
+    if (type == null) return;
+
+    switch (type) {
+      case 'stay':
+        // Navigate to stay application page
+        Get.toNamed(Routes.STAY);
+        break;
+
+      case 'wakeup':
+        // Navigate to wakeup song page
+        Get.toNamed(Routes.WAKEUP);
+        break;
+
+      case 'washer':
+        // Navigate to washer page
+        Get.toNamed(Routes.WASHER);
+        break;
+
+      case 'notice':
+        // Navigate to specific notice if ID is provided
+        // final noticeId = data['noticeId'] as String?;
+        // if (noticeId != null) {
+        //   Get.toNamed(Routes.MAIN, arguments: {'noticeId': noticeId});
+        // } else {
+        //   Get.toNamed(Routes.MAIN);
+        // }
+        Get.toNamed(Routes.MAIN);
+        break;
+
+      default:
+        // Default: navigate to main page
+        Get.toNamed(Routes.MAIN);
+        break;
+    }
+    */
   }
 
   Future<void> _initLocalNotification() async {
@@ -136,7 +194,19 @@ class PushService extends GetxController {
   }
 
   Future<void> requestPushPermission() async {
-    await FirebaseMessaging.instance.requestPermission();
+    await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (Platform.isIOS) {
+      await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
   }
 
   Future<bool> get hasNotificationPermission async {
