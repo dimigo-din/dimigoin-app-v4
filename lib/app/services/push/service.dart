@@ -50,18 +50,31 @@ class PushService extends GetxController {
     await requestPushPermission();
     print('🚀 [Push] Push permission requested');
 
-    // iOS에서 APNs 토큰 명시적 요청
+    // iOS에서 APNs 토큰 명시적 요청 (재시도 로직 포함)
     if (Platform.isIOS) {
-      print('🍎 [Push] iOS detected - requesting APNs token');
-      try {
-        String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-        if (apnsToken != null) {
-          print('🍎 [Push] APNs token received: $apnsToken');
-        } else {
-          print('⚠️ [Push] APNs token is null - waiting for token refresh');
+      print('🍎 [Push] iOS detected - waiting for APNs token');
+      String? apnsToken;
+      int retryCount = 0;
+      const maxRetries = 10;
+
+      while (apnsToken == null && retryCount < maxRetries) {
+        try {
+          await Future.delayed(Duration(milliseconds: 500 * (retryCount + 1)));
+          apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+          if (apnsToken != null) {
+            print('🍎 [Push] APNs token received (attempt ${retryCount + 1}): $apnsToken');
+            break;
+          } else {
+            retryCount++;
+            print('🍎 [Push] APNs token is null (attempt ${retryCount}/$maxRetries), retrying...');
+          }
+        } catch (e) {
+          retryCount++;
+          print('⚠️ [Push] Failed to get APNs token (attempt ${retryCount}/$maxRetries): $e');
+          if (retryCount >= maxRetries) {
+            print('❌ [Push] Max retries reached. Will rely on onTokenRefresh listener.');
+          }
         }
-      } catch (e) {
-        print('❌ [Push] Failed to get APNs token: $e');
       }
     }
 
@@ -94,11 +107,6 @@ class PushService extends GetxController {
 
     print('🚀 [Push] Login status: ${authService.isLoginSuccess}');
     if (authService.isLoginSuccess) {
-      // iOS의 경우 토큰이 준비될 때까지 약간 대기
-      if (Platform.isIOS) {
-        print('🍎 [Push] Waiting 500ms for iOS token preparation');
-        await Future.delayed(const Duration(milliseconds: 500));
-      }
       await syncTokenToServer();
     } else {
       print('⚠️ [Push] User not logged in - skipping initial sync');
