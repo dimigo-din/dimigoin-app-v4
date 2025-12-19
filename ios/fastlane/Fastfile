@@ -51,7 +51,7 @@ platform :ios do
 
     upload_to_app_store(
       force: true,
-      submit_for_review: true,
+      submit_for_review: false,
       automatic_release: false,
       skip_screenshots: true,
       precheck_include_in_app_purchases: false,
