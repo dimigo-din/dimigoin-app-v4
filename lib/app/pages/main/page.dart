@@ -1,3 +1,4 @@
+import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -59,43 +60,50 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          toolbarHeight: 80,
-          elevation: 0,
-          title: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DFSpacing.spacing550,
-              vertical: DFSpacing.spacing400,
+    final colorTheme = Theme.of(context).extension<DFColors>()!;
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: colorTheme.backgroundStandardPrimary,
+      ),
+      child: SafeArea(
+        top: false,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            toolbarHeight: 80,
+            elevation: 0,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: DFSpacing.spacing550,
+                vertical: DFSpacing.spacing400,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(
+                    'assets/images/dimigoin_icon.png',
+                    height: 35,
+                  )
+                ],
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.asset(
-                  'assets/images/dimigoin_icon.png',
-                  height: 35,
-                )
-              ],
+          ),
+          body: Obx(
+            () => IndexedStack(
+              index: controller.currentIndex.value,
+              children: pages.map((set) => set.page).toList(),
             ),
           ),
-        ),
-        body: Obx(
-          () => IndexedStack(
-            index: controller.currentIndex.value,
-            children: pages.map((set) => set.page).toList(),
+          bottomNavigationBar: Obx(
+            () => BottomNavBar(
+              items: navItems,
+              currentIndex: controller.currentIndex.value,
+              onTap: controller.changePage,
+            ),
           ),
-        ),
-        bottomNavigationBar: Obx(
-          () => BottomNavBar(
-            items: navItems,
-            currentIndex: controller.currentIndex.value,
-            onTap: controller.changePage,
-          ),
-        ),
-      )
+        )
+      ),
     );
   }
 }
