@@ -17,73 +17,78 @@ class SettingPage extends GetView<SettingController> {
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
 
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: colorTheme.backgroundStandardSecondary,
-        appBar: const DFAppBar(
-          title: '설정'
-        ),
-        body: ListView(
-          physics: const ClampingScrollPhysics(),
-          children: [
-            Column(
-              children: [
-              Visibility(
-                visible: kIsWeb == false,
-                child: Column(
+    return Container(
+      decoration: BoxDecoration(
+        color: colorTheme.backgroundStandardSecondary,
+      ),
+      child: SafeArea(
+        top: false,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: colorTheme.backgroundStandardSecondary,
+          appBar: const DFAppBar(
+            title: '설정'
+          ),
+          body: ListView(
+            physics: const ClampingScrollPhysics(),
+            children: [
+              Column(
                 children: [
-                  const MenuHeader(
-                  title: "알림 설정",
+                Visibility(
+                  visible: kIsWeb == false,
+                  child: Column(
+                  children: [
+                    const MenuHeader(
+                    title: "알림 설정",
+                    ),
+                    Obx(() => Column(
+                    children: _buildNotificationSetting(),
+                    )),
+                    const SizedBox(height: DFSpacing.spacing300),
+                  ],
                   ),
-                  Obx(() => Column(
-                  children: _buildNotificationSetting(),
-                  )),
-                  const SizedBox(height: DFSpacing.spacing300),
+                ),
                 ],
+              ),
+              if (kIsWeb == false) const DFDivider(size: DFDividerSize.medium),
+              const MenuHeader(
+                title: "앱 정보"
+              ),
+              MenuItem(
+                title: "개인정보 처리방침",
+                onTap: () => controller.openPrivacyPolicy(),
+              ),
+              MenuItem(
+                title: "오픈소스 라이선스",
+                onTap: () => controller.openOpenSourceLicenses(),
+              ),
+              MenuItem(
+                title: "버전 정보",
+                trailing: Obx(() => Text(
+                  "v${controller.appVersion.value}",
+                  style: Theme.of(context).extension<DFTypography>()!.body.copyWith(
+                    color: colorTheme.contentStandardSecondary,
+                    fontWeight: FontWeight.w400,
+                  ),
+                )),
+              ),
+              const SizedBox(height: DFSpacing.spacing300),
+              const DFDivider(size: DFDividerSize.medium),
+              const MenuHeader(
+                title: "계정 정보"
+              ),
+              MenuItem(
+                title: "로그아웃",
+                trailing: GestureDetector(
+                  onTap: () => controller.logout(),
+                  child: Icon(
+                    Icons.logout,
+                    color: colorTheme.contentStandardSecondary,
+                  ),
                 ),
               ),
-              ],
-            ),
-            if (kIsWeb == false) const DFDivider(size: DFDividerSize.medium),
-            const MenuHeader(
-              title: "앱 정보"
-            ),
-            MenuItem(
-              title: "개인정보 처리방침",
-              onTap: () => controller.openPrivacyPolicy(),
-            ),
-            MenuItem(
-              title: "오픈소스 라이선스",
-              onTap: () => controller.openOpenSourceLicenses(),
-            ),
-            MenuItem(
-              title: "버전 정보",
-              trailing: Obx(() => Text(
-                "v${controller.appVersion.value}",
-                style: Theme.of(context).extension<DFTypography>()!.body.copyWith(
-                  color: colorTheme.contentStandardSecondary,
-                  fontWeight: FontWeight.w400,
-                ),
-              )),
-            ),
-            const SizedBox(height: DFSpacing.spacing300),
-            const DFDivider(size: DFDividerSize.medium),
-            const MenuHeader(
-              title: "계정 정보"
-            ),
-            MenuItem(
-              title: "로그아웃",
-              trailing: GestureDetector(
-                onTap: () => controller.logout(),
-                child: Icon(
-                  Icons.logout,
-                  color: colorTheme.contentStandardSecondary,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

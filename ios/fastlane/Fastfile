@@ -24,10 +24,7 @@ platform :ios do
       scheme: "Runner",
       export_method: "app-store",
       export_options: {
-        signingStyle: "manual",
-        provisioningProfiles: {
-          "com.din.dimigoin" => "match AppStore com.din.dimigoin 1766023354"
-        }
+        signingStyle: "manual"
       }
     )
 
@@ -48,16 +45,13 @@ platform :ios do
       scheme: "Runner",
       export_method: "app-store",
       export_options: {
-        signingStyle: "manual",
-        provisioningProfiles: {
-          "com.din.dimigoin" => "match AppStore com.din.dimigoin 1766023354"
-        }
+        signingStyle: "manual"
       }
     )
 
     upload_to_app_store(
       force: true,
-      submit_for_review: true,
+      submit_for_review: false,
       automatic_release: false,
       skip_screenshots: true,
       precheck_include_in_app_purchases: false,
