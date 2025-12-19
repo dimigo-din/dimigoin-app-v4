@@ -163,6 +163,7 @@ class DFItemList extends StatelessWidget {
   final String? content;
   final Widget? leading;
   final Widget? trailing;
+  final bool marquee;
 
   const DFItemList({
     super.key,
@@ -172,6 +173,7 @@ class DFItemList extends StatelessWidget {
     this.content,
     this.leading,
     this.trailing,
+    this.marquee = false
   });
 
   @override
@@ -199,47 +201,92 @@ class DFItemList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (subTitle != null) ...[
-                  MarqueeText(
-                    text: subTitle!,
-                    style: size == DFItemListSize.large
-                      ? textTheme.body.copyWith(
-                        color: colorTheme.contentStandardSecondary,
-                        fontWeight: FontWeight.w400,
-                      )
-                      : textTheme.footnote.copyWith(
-                        color: colorTheme.contentStandardSecondary,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    velocity: 30.0,
-                  ),
+                  if (marquee) ...[
+                    MarqueeText(
+                      text: subTitle!,
+                      style: size == DFItemListSize.large
+                        ? textTheme.body.copyWith(
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        )
+                        : textTheme.footnote.copyWith(
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      velocity: 30.0,
+                    ),
+                  ] else ... [
+                    Text(
+                      subTitle!,
+                      style: size == DFItemListSize.large
+                        ? textTheme.body.copyWith(
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        )
+                        : textTheme.footnote.copyWith(
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        ),
+                    ),
+                  ]
                 ],
                 if (title != null) ...[
-                  MarqueeText(
-                    text: title!,
-                    style: size == DFItemListSize.large
-                      ? textTheme.headline.copyWith(
-                        color: colorTheme.contentStandardPrimary,
-                        fontWeight: FontWeight.w700,
-                      )
-                      : textTheme.body.copyWith(
-                        color: colorTheme.contentStandardPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                  ),
+                  if (marquee) ...[
+                    MarqueeText(
+                      text: title!,
+                      style: size == DFItemListSize.large
+                        ? textTheme.headline.copyWith(
+                          color: colorTheme.contentStandardPrimary,
+                          fontWeight: FontWeight.w700,
+                        )
+                        : textTheme.body.copyWith(
+                          color: colorTheme.contentStandardPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                    ),
+                  ] else ... [
+                    Text(
+                      title!,
+                      style: size == DFItemListSize.large
+                        ? textTheme.headline.copyWith(
+                          color: colorTheme.contentStandardPrimary,
+                          fontWeight: FontWeight.w700,
+                        )
+                        : textTheme.body.copyWith(
+                          color: colorTheme.contentStandardPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                    ),
+                  ]
                 ],
                 if (content != null) ...[
-                  MarqueeText(
-                    text: content!,
-                    style: size == DFItemListSize.large
-                      ? textTheme.paragraphLarge.copyWith(
-                        color: colorTheme.contentStandardSecondary,
-                        fontWeight: FontWeight.w400,
-                      )
-                      : textTheme.paragraphSmall.copyWith(
-                        color: colorTheme.contentStandardSecondary,
-                        fontWeight: FontWeight.w400,
-                      ),
-                  ),
+                  if (marquee) ...[
+                    MarqueeText(
+                      text: content!,
+                      style: size == DFItemListSize.large
+                        ? textTheme.paragraphLarge.copyWith(
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        )
+                        : textTheme.paragraphSmall.copyWith(
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        ),
+                    ),
+                  ] else ...[
+                    Text(
+                      content!,
+                      style: size == DFItemListSize.large
+                        ? textTheme.paragraphLarge.copyWith(
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        )
+                        : textTheme.paragraphSmall.copyWith(
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        ),
+                    ),
+                  ]
                 ],
               ],
             ),
