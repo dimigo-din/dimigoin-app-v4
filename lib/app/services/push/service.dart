@@ -35,41 +35,83 @@ class PushService extends GetxController {
   }
 
   Future<void> initialize() async {
+    print('🚀 [Push] Initialize started');
+    print('🚀 [Push] Platform: ${Platform.operatingSystem}');
+
     // web 미지원
     if (kIsWeb) {
+      print('🚀 [Push] Web platform detected, skipping initialization');
       return;
     }
 
     await _initLocalNotification();
+    print('🚀 [Push] Local notification initialized');
 
     await requestPushPermission();
+    print('🚀 [Push] Push permission requested');
+
+    // iOS에서 APNs 토큰 명시적 요청
+    if (Platform.isIOS) {
+      print('🍎 [Push] iOS detected - requesting APNs token');
+      try {
+        String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        if (apnsToken != null) {
+          print('🍎 [Push] APNs token received: $apnsToken');
+        } else {
+          print('⚠️ [Push] APNs token is null - waiting for token refresh');
+        }
+      } catch (e) {
+        print('❌ [Push] Failed to get APNs token: $e');
+      }
+    }
 
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
+      print('🔄 [Push] Token refresh triggered');
+      print('🔄 [Push] New FCM token: $fcmToken');
+      print('🔄 [Push] Login status: ${authService.isLoginSuccess}');
+
       if (authService.isLoginSuccess) {
         String? deviceId = await getDeviceId();
         if (deviceId == null) {
+          print('❌ [Push] Device ID is null');
           log('FCM Token refreshed but device ID is null: $fcmToken');
           return;
         }
 
+        print('🔄 [Push] Device ID: $deviceId');
+        print('🔄 [Push] Sending token to server...');
         await repository.upsertFCMToken(deviceId, fcmToken);
+        print('✅ [Push] Token successfully sent to server');
         log('FCM Token updated and sent to server: $fcmToken');
       } else {
+        print('⚠️ [Push] User not logged in - token not sent');
         log('FCM Token refreshed but not sent to server (not logged in): $fcmToken');
       }
     }).onError((err) {
+      print('❌ [Push] Token refresh error: $err');
       log('FCM Token update failed: $err');
     });
 
+    print('🚀 [Push] Login status: ${authService.isLoginSuccess}');
     if (authService.isLoginSuccess) {
+      // iOS의 경우 토큰이 준비될 때까지 약간 대기
+      if (Platform.isIOS) {
+        print('🍎 [Push] Waiting 500ms for iOS token preparation');
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
       await syncTokenToServer();
+    } else {
+      print('⚠️ [Push] User not logged in - skipping initial sync');
     }
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('📬 [Push] Message received: ${message.notification?.title}');
       if (message.notification != null) {
         _showNotification(message);
       }
     });
+
+    print('✅ [Push] Initialize completed');
   }
 
   Future<void> _initLocalNotification() async {
@@ -136,7 +178,10 @@ class PushService extends GetxController {
   }
 
   Future<void> requestPushPermission() async {
-    await FirebaseMessaging.instance.requestPermission();
+    print('🔔 [Push] Requesting push notification permission');
+    final settings = await FirebaseMessaging.instance.requestPermission();
+    print('🔔 [Push] Permission status: ${settings.authorizationStatus}');
+    print('🔔 [Push] Alert: ${settings.alert}, Badge: ${settings.badge}, Sound: ${settings.sound}');
   }
 
   Future<bool> get hasNotificationPermission async {
@@ -150,7 +195,10 @@ class PushService extends GetxController {
   }
 
   Future<String?> getFCMToken() async {
-    return await FirebaseMessaging.instance.getToken();
+    print('🔑 [Push] getFCMToken() called');
+    final token = await FirebaseMessaging.instance.getToken();
+    print('🔑 [Push] FCM Token: ${token ?? "NULL"}');
+    return token;
   }
 
   Future<void> deleteFCMToken() async {
@@ -158,31 +206,48 @@ class PushService extends GetxController {
   }
 
   Future<void> syncTokenToServer() async {
+    print('🔄 [Push] syncTokenToServer() called');
+
     // web 미지원
     if (kIsWeb) {
+      print('⚠️ [Push] Web platform - sync skipped');
       return;
     }
 
     if (!authService.isLoginSuccess) {
+      print('⚠️ [Push] User not logged in - sync skipped');
       log('Cannot sync FCM token: User not logged in');
       return;
     }
 
+    print('🔄 [Push] Attempting to get FCM token...');
     try {
       String? fcmToken = await FirebaseMessaging.instance.getToken();
+      print('🔄 [Push] FCM token result: ${fcmToken ?? "NULL"}');
+
       if (fcmToken != null) {
+        print('🔄 [Push] Getting device ID...');
         String? deviceId = await getDeviceId();
+        print('🔄 [Push] Device ID result: ${deviceId ?? "NULL"}');
+
         if (deviceId == null) {
+          print('❌ [Push] Cannot sync - Device ID is null');
           log('Cannot sync FCM token: Device ID is null');
           return;
         }
 
+        print('🔄 [Push] Upserting token to server...');
         await repository.upsertFCMToken(deviceId, fcmToken);
+        print('✅ [Push] Token successfully synced to server');
+        print('✅ [Push] Device ID: $deviceId');
+        print('✅ [Push] FCM Token: $fcmToken');
         log('FCM Token synced to server: $fcmToken');
       } else {
+        print('❌ [Push] Cannot sync - FCM token is null');
         log('Cannot sync FCM token: Token is null');
       }
     } catch (e) {
+      print('❌ [Push] Sync failed with error: $e');
       log('Failed to sync FCM token to server: $e');
     }
   }
@@ -226,23 +291,34 @@ class PushService extends GetxController {
   }
 
   Future<String?> getDeviceId() async {
+    print('📱 [Push] getDeviceId() called');
     try {
       if (kIsWeb) {
+        print('📱 [Push] Getting Web device ID');
         // Web
         final webInfo = await _deviceInfo.webBrowserInfo;
-        return '${webInfo.userAgent}_${webInfo.vendor}';
+        final deviceId = '${webInfo.userAgent}_${webInfo.vendor}';
+        print('📱 [Push] Web Device ID: $deviceId');
+        return deviceId;
       } else if (Platform.isAndroid) {
+        print('📱 [Push] Getting Android device ID');
         // Android
         final androidInfo = await _deviceInfo.androidInfo;
+        print('📱 [Push] Android Device ID: ${androidInfo.id}');
         return androidInfo.id;
       } else if (Platform.isIOS) {
+        print('📱 [Push] Getting iOS device ID');
         // iOS
         final iosInfo = await _deviceInfo.iosInfo;
-        return iosInfo.identifierForVendor;
+        final deviceId = iosInfo.identifierForVendor;
+        print('📱 [Push] iOS Device ID (identifierForVendor): ${deviceId ?? "NULL"}');
+        return deviceId;
       }
     } catch (e) {
+      print('❌ [Push] Failed to get device ID: $e');
       return null;
     }
+    print('⚠️ [Push] Unknown platform - returning null');
     return null;
   }
 

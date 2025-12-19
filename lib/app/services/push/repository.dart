@@ -29,12 +29,23 @@ class PushRepository {
   Future<void> upsertFCMToken(String deviceId, String fcmToken) async {
     String url = '/student/push/subscribe';
 
+    print('🌐 [Push Repository] upsertFCMToken() called');
+    print('🌐 [Push Repository] URL: $url');
+    print('🌐 [Push Repository] Device ID: $deviceId');
+    print('🌐 [Push Repository] FCM Token: $fcmToken');
+
     try {
-      await api.put(url, data: {
+      final response = await api.put(url, data: {
         'deviceId': deviceId,
         'token': fcmToken,
       });
-    } on DioException {
+      print('✅ [Push Repository] Token upsert successful');
+      print('✅ [Push Repository] Response: ${response.data}');
+    } on DioException catch (e) {
+      print('❌ [Push Repository] Token upsert failed');
+      print('❌ [Push Repository] Error: ${e.message}');
+      print('❌ [Push Repository] Status code: ${e.response?.statusCode}');
+      print('❌ [Push Repository] Response: ${e.response?.data}');
       rethrow;
     }
   }
