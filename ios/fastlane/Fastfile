@@ -26,7 +26,7 @@ platform :ios do
       export_options: {
         signingStyle: "manual",
         provisioningProfiles: {
-          "com.din.dimigoin" => "match AppStore com.din.dimigoin"
+          "com.din.dimigoin" => "match AppStore com.din.dimigoin 1766133768"
         }
       }
     )
@@ -50,7 +50,7 @@ platform :ios do
       export_options: {
         signingStyle: "manual",
         provisioningProfiles: {
-          "com.din.dimigoin" => "match AppStore com.din.dimigoin"
+          "com.din.dimigoin" => "match AppStore com.din.dimigoin 1766133768"
         }
       }
     )
