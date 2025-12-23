@@ -16,6 +16,7 @@ class AuthStorage {
   static const _keyPersonalInformationNumber = 'number';
   static const _keyPersonalInformationGender = 'gender';
   static const _keyPersonalInformationId = 'user_id';
+  static const _keyDeviceId = "device_id";
 
   /// Save both access and refresh tokens
   static Future<void> saveTokens(String accessToken, String refreshToken) async {
@@ -53,6 +54,14 @@ class AuthStorage {
     return await _storage.read(key: _keyPersonalInformationId) ?? '';
   }
 
+  static Future<void> saveDeviceId(String deviceId) async {
+    await _storage.write(key: _keyDeviceId, value: deviceId);
+  }
+
+  static Future<String?> getDeviceId() async {
+    return await _storage.read(key: _keyDeviceId);
+  }
+
   static Future<PersonalInformation?> getPersonalInformation() async {
     // Read all values at once to avoid timing issues on web (IndexedDB)
     final allValues = await _storage.readAll();
@@ -78,7 +87,13 @@ class AuthStorage {
     return null;
   }
 
-  static Future<void> clear() async {
-    await _storage.deleteAll();
+  static Future<void> clearAuth() async {
+    await _storage.delete(key: _keyAccessToken);
+    await _storage.delete(key: _keyRefreshToken);
+    await _storage.delete(key: _keyUserImageURL);
+    await _storage.delete(key: _keyPersonalInformationName);
+    await _storage.delete(key: _keyPersonalInformationNumber);
+    await _storage.delete(key: _keyPersonalInformationGender);
+    await _storage.delete(key: _keyPersonalInformationId);
   }
 }
