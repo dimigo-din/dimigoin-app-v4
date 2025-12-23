@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 //import 'package:dimigoin_app_v4/app/routes/routes.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/services/push/model.dart';
@@ -22,8 +20,6 @@ class PushService extends GetxController {
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-
-  final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
 
   @override
   Future<void> onInit() async {
@@ -47,11 +43,7 @@ class PushService extends GetxController {
 
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
       if (authService.isLoginSuccess) {
-        String? deviceId = await getDeviceId();
-        if (deviceId == null) {
-          log('FCM Token refreshed but device ID is null: $fcmToken');
-          return;
-        }
+        String deviceId = await authService.getDeviceId();
 
         await repository.upsertFCMToken(deviceId, fcmToken);
         log('FCM Token updated and sent to server: $fcmToken');
@@ -241,11 +233,7 @@ class PushService extends GetxController {
     try {
       String? fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken != null) {
-        String? deviceId = await getDeviceId();
-        if (deviceId == null) {
-          log('Cannot sync FCM token: Device ID is null');
-          return;
-        }
+        String deviceId = await authService.getDeviceId();
 
         await repository.upsertFCMToken(deviceId, fcmToken);
         log('FCM Token synced to server: $fcmToken');
@@ -269,10 +257,7 @@ class PushService extends GetxController {
 
   Future<List<String>> getSubscribedSubjects() async {
     try {
-      String? deviceId = await getDeviceId();
-      if (deviceId == null) {
-        throw PushDeviceIDNullException();
-      }
+      String deviceId = await authService.getDeviceId();
 
       return await repository.getSubscribedSubjects(deviceId);
     } catch (e) {
@@ -283,10 +268,7 @@ class PushService extends GetxController {
 
   Future<void> updateSubscribedSubjects(List<String> subjects) async {
     try {
-      String? deviceId = await getDeviceId();
-      if (deviceId == null) {
-        throw PushDeviceIDNullException();
-      }
+      String deviceId = await authService.getDeviceId();
 
       await repository.updateSubscribedSubjects(deviceId, subjects);
     } catch (e) {
@@ -294,26 +276,4 @@ class PushService extends GetxController {
       rethrow;
     }
   }
-
-  Future<String?> getDeviceId() async {
-    try {
-      if (kIsWeb) {
-        // Web
-        final webInfo = await _deviceInfo.webBrowserInfo;
-        return '${webInfo.userAgent}_${webInfo.vendor}';
-      } else if (Platform.isAndroid) {
-        // Android
-        final androidInfo = await _deviceInfo.androidInfo;
-        return androidInfo.id;
-      } else if (Platform.isIOS) {
-        // iOS
-        final iosInfo = await _deviceInfo.iosInfo;
-        return iosInfo.identifierForVendor;
-      }
-    } catch (e) {
-      return null;
-    }
-    return null;
-  }
-
 }

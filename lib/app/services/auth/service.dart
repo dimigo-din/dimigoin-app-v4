@@ -11,6 +11,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:uuid/uuid.dart';
 
 import '../auth/model.dart';
 import 'repository.dart';
@@ -35,6 +36,8 @@ class AuthService extends GetxController {
   Future<void> get initComplete => _initCompleter.future;
 
   AuthService({AuthRepository? repository}) : repository = repository ?? AuthRepository();
+  
+  static const _uuid = Uuid();
 
   @override
   Future<void> onInit() async {
@@ -246,7 +249,7 @@ class AuthService extends GetxController {
   }
 
   Future<void> logout() async {
-    await AuthStorage.clear();
+    await AuthStorage.clearAuth();
     _jwtToken.value = LoginToken();
     _user.value = null;
 
@@ -284,5 +287,17 @@ class AuthService extends GetxController {
       log(e.toString());
       rethrow;
     }
+  }
+
+  Future<String> getDeviceId() async {
+    String? deviceId = await AuthStorage.getDeviceId();
+
+    if (deviceId == null) {
+      final newId = _uuid.v4();
+      await AuthStorage.saveDeviceId(newId);
+      return newId;
+    }
+
+    return deviceId;
   }
 }
