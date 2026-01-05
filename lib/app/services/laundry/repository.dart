@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../provider/api_interface.dart';
 import '../../provider/model/response.dart';
+import '../../provider/interceptors/app_check_middleware.dart';
 
 import 'model.dart';
 
@@ -49,7 +50,7 @@ class LaundryRepository {
         'grade': authService.user?.userGrade,
         'time': timeId,
         'machine': machineId,
-      });
+      }, middlewares: [AppCheckMiddleware()]);
 
       return LaundryApply.fromJson(response.data['data']);
     } on DioException catch (e) {

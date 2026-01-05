@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/services/push/service.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,6 +24,16 @@ class AppLoader {
       setPathUrlStrategy();
 
       await dotenv.load(fileName: "env/.env");
+
+      await FirebaseAppCheck.instance.activate(
+          providerAndroid: kDebugMode
+              ? const AndroidDebugProvider()
+              : const AndroidPlayIntegrityProvider(),
+          providerApple: kDebugMode
+              ? const AppleDebugProvider()
+              : const AppleAppAttestProvider(),
+          providerWeb: ReCaptchaV3Provider(dotenv.env["RECAPCHA_SITE_KEY"]!),
+        );
 
       Get.put<ApiProvider>(ProdApiProvider());
       final authService = Get.put(AuthService());

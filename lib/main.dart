@@ -24,7 +24,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); 
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -41,7 +41,7 @@ void main() async {
   };
 
   await AppLoader().load();
-  
+
   runApp(
     GetMaterialApp(
       title: '디미고인',
