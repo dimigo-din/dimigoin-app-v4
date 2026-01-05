@@ -4,7 +4,7 @@ import '../user/model.dart';
 part 'model.g.dart';
 
 enum LaundryMachineType { washer, dryer }
-enum LaundryTimelineTrigger { primary, stay }
+enum LaundryTimelineTrigger { primary, stay, etc }
 
 @JsonSerializable()
 class LaundryMachine {
@@ -52,6 +52,7 @@ class LaundryTime {
 class LaundryTimeline {
   final String id;
   final String name;
+  @JsonKey(name: 'scheduler', unknownEnumValue: LaundryTimelineTrigger.etc)
   final LaundryTimelineTrigger triggeredOn;
   final bool enabled;
   final List<LaundryTime> times;

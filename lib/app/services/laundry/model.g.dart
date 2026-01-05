@@ -54,7 +54,8 @@ LaundryTimeline _$LaundryTimelineFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       triggeredOn: $enumDecode(
         _$LaundryTimelineTriggerEnumMap,
-        json['triggeredOn'],
+        json['scheduler'],
+        unknownValue: LaundryTimelineTrigger.etc,
       ),
       enabled: json['enabled'] as bool,
       times: (json['times'] as List<dynamic>)
@@ -66,7 +67,7 @@ Map<String, dynamic> _$LaundryTimelineToJson(LaundryTimeline instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'triggeredOn': _$LaundryTimelineTriggerEnumMap[instance.triggeredOn]!,
+      'scheduler': _$LaundryTimelineTriggerEnumMap[instance.triggeredOn]!,
       'enabled': instance.enabled,
       'times': instance.times,
     };
@@ -74,6 +75,7 @@ Map<String, dynamic> _$LaundryTimelineToJson(LaundryTimeline instance) =>
 const _$LaundryTimelineTriggerEnumMap = {
   LaundryTimelineTrigger.primary: 'primary',
   LaundryTimelineTrigger.stay: 'stay',
+  LaundryTimelineTrigger.etc: 'etc',
 };
 
 LaundryApply _$LaundryApplyFromJson(Map<String, dynamic> json) => LaundryApply(

@@ -32,17 +32,18 @@ class LaundryMachineSelector extends StatelessWidget {
             ? controller.selectedWasherIndex.value
             : controller.selectedDryerIndex.value;
 
-        final selectedMachineName = hasMachine && selectedIndex < machines.length
+        final selectedMachineName =
+            hasMachine && selectedIndex < machines.length
             ? machines[selectedIndex].name
             : "사용 가능 기기 없음";
-
         return DFGestureDetectorWithOpacityInteraction(
           onTap: hasMachine ? onTap : null,
           child: DFSectionHeader(
             size: DFSectionHeaderSize.large,
             title: selectedMachineName,
             rightIcon: Icons.keyboard_arrow_down_outlined,
-            trailingText: "${laundryType == LaundryMachineType.washer ? '세탁기' : '건조기'} 선택",
+            trailingText:
+                "${laundryType == LaundryMachineType.washer ? '세탁기' : '건조기'} 선택",
           ),
         );
       }),
