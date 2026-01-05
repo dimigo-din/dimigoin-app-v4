@@ -19,7 +19,7 @@ class LaundryRepository {
 
     try {
       DFHttpResponse response = await api.get(url);
-
+      print(response.data);
       return LaundryTimeline.fromJson(response.data['data']);
     } on DioException {
       rethrow;
@@ -36,7 +36,6 @@ class LaundryRepository {
           .map((e) => LaundryApply.fromJson(e))
           .toList();
     } on DioException {
-
       rethrow;
     }
   }
@@ -45,11 +44,14 @@ class LaundryRepository {
     String url = '/student/laundry';
 
     try {
-      DFHttpResponse response = await api.post(url, data: {
-        'grade': authService.user?.userGrade,
-        'time': timeId,
-        'machine': machineId,
-      });
+      DFHttpResponse response = await api.post(
+        url,
+        data: {
+          'grade': authService.user?.userGrade,
+          'time': timeId,
+          'machine': machineId,
+        },
+      );
 
       return LaundryApply.fromJson(response.data['data']);
     } on DioException catch (e) {
@@ -57,7 +59,8 @@ class LaundryRepository {
         throw LaundryApplyIsAfterEightAMException();
       } else if (e.response?.data['code'] == 'LaundryApply_AlreadyExists') {
         throw LaundryApplyAlreadyExistsException();
-      } else if (e.response?.data['code'] == 'PermissionDenied_Resource_Grade') {
+      } else if (e.response?.data['code'] ==
+          'PermissionDenied_Resource_Grade') {
         throw PermissionDeniedResourceGradeException();
       } else if (e.response?.data['code'] == 'LaundryMachine_AlreadyTaken') {
         throw LaundryMachineAlreadyTakenException();
@@ -70,9 +73,7 @@ class LaundryRepository {
     String url = '/student/laundry';
 
     try {
-      await api.delete(url, queryParameters: {
-        'id': applyId,
-      });
+      await api.delete(url, queryParameters: {'id': applyId});
     } on DioException {
       rethrow;
     }

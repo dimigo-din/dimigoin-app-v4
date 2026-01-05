@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 class LaundryPageController extends GetxController {
   final laundryService = LaundryService();
   final AuthService authService = Get.find<AuthService>();
-    
+
   final RxInt selectedIndex = 0.obs;
   final RxInt selectedWasherIndex = 0.obs;
   final RxInt selectedDryerIndex = 0.obs;
@@ -25,12 +25,18 @@ class LaundryPageController extends GetxController {
     super.onInit();
     await fetchLaundryTimeline();
   }
-  
+
   void selectLaundryMachine(LaundryMachineType type, LaundryMachine machine) {
     if (type == LaundryMachineType.washer) {
-      selectedWasherIndex.value = laundryMachines.where((m) => m.type == LaundryMachineType.washer).toList().indexOf(machine);
+      selectedWasherIndex.value = laundryMachines
+          .where((m) => m.type == LaundryMachineType.washer)
+          .toList()
+          .indexOf(machine);
     } else {
-      selectedDryerIndex.value = laundryMachines.where((m) => m.type == LaundryMachineType.dryer).toList().indexOf(machine);
+      selectedDryerIndex.value = laundryMachines
+          .where((m) => m.type == LaundryMachineType.dryer)
+          .toList()
+          .indexOf(machine);
     }
   }
 
@@ -50,7 +56,7 @@ class LaundryPageController extends GetxController {
   Future<void> filterLaundryMachines() async {
     final user = authService.user!;
     final userGrade = user.userGrade;
-    final userGender = user.gender;
+    final userGender = _normalizeGender(user.gender);
 
     final times = laundryTimeline.value!.times;
 
@@ -59,7 +65,8 @@ class LaundryPageController extends GetxController {
     for (final time in times) {
       if (time.grade.contains(userGrade)) {
         for (final machine in time.assigns) {
-          if (!map.containsKey(machine.id) && machine.gender == userGender) {
+          final machineGender = _normalizeGender(machine.gender);
+          if (!map.containsKey(machine.id) && machineGender == userGender) {
             map[machine.id] = machine;
           }
         }
@@ -67,6 +74,27 @@ class LaundryPageController extends GetxController {
     }
 
     laundryMachines.value = map.values.toList();
+  }
+
+  String _normalizeGender(String gender) {
+    final normalized = gender.trim().toLowerCase();
+
+    switch (normalized) {
+      case 'm':
+      case 'male':
+      case 'man':
+      case '남':
+      case '남자':
+        return 'male';
+      case 'f':
+      case 'female':
+      case 'woman':
+      case '여':
+      case '여자':
+        return 'female';
+      default:
+        return normalized;
+    }
   }
 
   Future<void> fetchLaundryApplications() async {
@@ -117,5 +145,4 @@ class LaundryPageController extends GetxController {
       rethrow;
     }
   }
-
 }
