@@ -21,13 +21,13 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
   String cleanText(String text) {
     final unescape = HtmlUnescape();
     String cleaned = unescape.convert(text);
-    
+
     cleaned = cleaned.replaceAll(RegExp(r'\([^\)]*\)'), '');
     cleaned = cleaned.replaceAll(RegExp(r'\[[^\]]*\]'), '');
     cleaned = cleaned.replaceAll(RegExp(r'\{[^\}]*\}'), '');
-    
+
     cleaned = cleaned.replaceAll(RegExp(r'\s+'), ' ').trim();
-    
+
     return cleaned;
   }
 
@@ -62,7 +62,7 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
                   type: DFAvatarType.classroom,
                   size: DFAvatarSize.large,
                   fill: DFAvatarFill.image,
-                  image: Image.network(video.snippet.thumbnails.high.url),
+                  image: Image.network(video.snippet.thumbnails.defaultThumbnail.url),
                 ),
                 marquee: true,
               ),
@@ -107,7 +107,7 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
                     ...(controller.youtubeSearchResults.toList())
                     .map((video) => [
                       GestureDetector(
-                        behavior: HitTestBehavior.opaque, 
+                        behavior: HitTestBehavior.opaque,
                         onTap: () => _showApplyBottomSheet(context, video),
                         child: WakeupItem(
                           title: cleanText(video.snippet.title),
@@ -116,7 +116,7 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
                           type: DFAvatarType.classroom,
                           size: DFAvatarSize.large,
                           fill: DFAvatarFill.image,
-                          image: Image.network(video.snippet.thumbnails.high.url),
+                          image: Image.network(video.snippet.thumbnails.defaultThumbnail.url),
                           ),
                         ),
                       ),
