@@ -23,17 +23,32 @@ class AppLoader {
     try {
       setPathUrlStrategy();
 
-      await dotenv.load(fileName: "env/.env");
+      try {
+        await dotenv.load(fileName: "env/.env");
+      } catch (e) {
+        debugPrint('dotenv load failed: $e');
+      }
 
-      await FirebaseAppCheck.instance.activate(
-          providerAndroid: kDebugMode
-              ? const AndroidDebugProvider()
-              : const AndroidPlayIntegrityProvider(),
-          providerApple: kDebugMode
-              ? const AppleDebugProvider()
-              : const AppleAppAttestProvider(),
-          providerWeb: ReCaptchaV3Provider(dotenv.env["RECAPTCHA_SITE_KEY"]!),
-        );
+      try {
+        if (kIsWeb) {
+          final siteKey = dotenv.env["RECAPTCHA_SITE_KEY"];
+          if (siteKey != null && siteKey.isNotEmpty) {
+            await FirebaseAppCheck.instance
+                .activate(providerWeb: ReCaptchaV3Provider(siteKey));
+          }
+        } else {
+          await FirebaseAppCheck.instance.activate(
+            providerAndroid: kDebugMode
+                ? const AndroidDebugProvider()
+                : const AndroidPlayIntegrityProvider(),
+            providerApple: kDebugMode
+                ? const AppleDebugProvider()
+                : const AppleAppAttestProvider(),
+          );
+        }
+      } catch (e) {
+        debugPrint('Firebase App Check activate failed: $e');
+      }
 
       Get.put<ApiProvider>(ProdApiProvider());
       final authService = Get.put(AuthService());
@@ -42,15 +57,13 @@ class AppLoader {
 
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-      if (!kIsWeb) {
-        if (Platform.isAndroid) {
-          await FlutterDisplayMode.setHighRefreshRate();
-        }
+      if (!kIsWeb && Platform.isAndroid) {
+        await FlutterDisplayMode.setHighRefreshRate();
       }
-
-      FlutterNativeSplash.remove();
     } catch (e) {
-      rethrow;
+      debugPrint('AppLoader failed: $e');
+    } finally {
+      FlutterNativeSplash.remove();
     }
   }
 }
