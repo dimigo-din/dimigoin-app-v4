@@ -32,7 +32,7 @@ class AppLoader {
           providerApple: kDebugMode
               ? const AppleDebugProvider()
               : const AppleAppAttestProvider(),
-          providerWeb: ReCaptchaV3Provider(dotenv.env["RECAPCHA_SITE_KEY"]!),
+          providerWeb: ReCaptchaV3Provider(dotenv.env["RECAPTCHA_SITE_KEY"]!),
         );
 
       Get.put<ApiProvider>(ProdApiProvider());
