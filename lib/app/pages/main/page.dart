@@ -20,21 +20,44 @@ import 'widgets/bottom_nav_bar.dart';
 
 class MainPageController extends GetxController {
   RxInt currentIndex = 0.obs;
+  final Set<int> _initializedTabs = <int>{};
+
+  bool isTabInitialized(int index) => _initializedTabs.contains(index);
+
+  void _ensureTabInitialized(int index) {
+    if (_initializedTabs.contains(index)) return;
+    _initializedTabs.add(index);
+
+    switch (index) {
+      case 0:
+        HomePageBinding().dependencies();
+        break;
+      case 1:
+        StayPageBinding().dependencies();
+        break;
+      case 2:
+        WakeupPageBinding().dependencies();
+        break;
+      case 3:
+        LaundryPageBinding().dependencies();
+        break;
+      case 4:
+        OthersPageBinding().dependencies();
+        break;
+    }
+  }
+
   void changePage(int index) {
     HapticFeedback.lightImpact();
 
+    _ensureTabInitialized(index);
     currentIndex.value = index;
   }
 
   @override
   void onInit() {
     super.onInit();
-
-    HomePageBinding().dependencies();
-    StayPageBinding().dependencies();
-    WakeupPageBinding().dependencies();
-    LaundryPageBinding().dependencies();
-    OthersPageBinding().dependencies();
+    _ensureTabInitialized(0);
   }
 }
 
@@ -50,12 +73,12 @@ class MainPage extends StatelessWidget {
     NavItemData('assets/icons/menu/others.svg', '더보기'),
   ];
 
-  final List<_PageBindingSet> pages = [
-    _PageBindingSet(HomePage(), HomePageBinding()),
-    _PageBindingSet(StayPage(), StayPageBinding()),
-    _PageBindingSet(WakeupPage(), WakeupPageBinding()),
-    _PageBindingSet(LaundryPage(), LaundryPageBinding()),
-    _PageBindingSet(OthersPage(), OthersPageBinding()),
+  final List<Widget Function()> pageBuilders = [
+    () => HomePage(),
+    () => StayPage(),
+    () => WakeupPage(),
+    () => LaundryPage(),
+    () => OthersPage(),
   ];
 
   @override
@@ -92,7 +115,12 @@ class MainPage extends StatelessWidget {
           body: Obx(
             () => IndexedStack(
               index: controller.currentIndex.value,
-              children: pages.map((set) => set.page).toList(),
+              children: List.generate(pageBuilders.length, (i) {
+                if (!controller.isTabInitialized(i)) {
+                  return const SizedBox.shrink();
+                }
+                return pageBuilders[i]();
+              }),
             ),
           ),
           bottomNavigationBar: Obx(
@@ -106,12 +134,6 @@ class MainPage extends StatelessWidget {
       ),
     );
   }
-}
-
-class _PageBindingSet {
-  final Widget page;
-  final Bindings binding;
-  _PageBindingSet(this.page, this.binding);
 }
 
 class NavItemData {

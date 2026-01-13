@@ -12,7 +12,7 @@ TextStyle style(
       color: color,
       height: lineHeight / size,
       fontSize: size,
-      fontFamily: 'WantedSans',
+      fontFamily: 'SUITv1',
       fontWeight: weight,
       letterSpacing: spacing,
       decoration: underlined ? TextDecoration.underline : TextDecoration.none,

@@ -14,7 +14,7 @@ RUN mkdir -p env \
     && echo -n "$DIMIGOIN_FLUTTER_FIREBASE" | base64 -d > lib/firebase_options.dart \
     && echo -n "$DIMIGOIN_FLUTTER_ENV" | base64 -d > env/.env
 
-RUN flutter build web --release
+RUN flutter build web --release --wasm
 
 FROM nginx:1.27.2-alpine-slim
 

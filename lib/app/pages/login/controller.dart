@@ -1,4 +1,3 @@
-import 'package:universal_html/html.dart' as html;
 import 'package:get/get.dart';
 
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
@@ -59,7 +58,7 @@ class LoginPageController extends GetxController {
     }
 
     try {
-      final uri = Uri.parse(html.window.location.href);
+      final uri = Uri.base;
       final code = uri.queryParameters['code'];
 
       if (code == null) {
