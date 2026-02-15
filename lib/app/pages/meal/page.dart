@@ -23,10 +23,6 @@ class MealPage extends GetView<MealPageController> {
         child: Scaffold(
           backgroundColor: colorTheme.backgroundStandardSecondary,
           body: Obx(() {
-            if (controller.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
             return Padding(
               padding: const EdgeInsets.only(
                 left: DFSpacing.spacing400,
@@ -44,7 +40,9 @@ class MealPage extends GetView<MealPageController> {
                           onChanged: controller.selectDay,
                         ),
                         const SizedBox(height: DFSpacing.spacing550),
-                        if (controller.hasLoadError.value)
+                        if (controller.isLoading.value) 
+                          const Center(child: CircularProgressIndicator())
+                        else if (controller.hasLoadError.value)
                           const _MealStateMessage(message: "급식 정보를 불러오지 못했습니다.")
                         else if (controller.meals.isEmpty)
                           const _MealStateMessage(message: "급식 정보가 없습니다.")
