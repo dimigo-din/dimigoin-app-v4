@@ -5,13 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'package:dimigoin_app_v4/app/pages/home/page.dart';
-import 'package:dimigoin_app_v4/app/pages/stay/page.dart';
+import 'package:dimigoin_app_v4/app/pages/dorm/page.dart';
 import 'package:dimigoin_app_v4/app/pages/wakeup/page.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/page.dart';
 import 'package:dimigoin_app_v4/app/pages/others/page.dart';
 
 import 'package:dimigoin_app_v4/app/pages/home/binding.dart';
-import 'package:dimigoin_app_v4/app/pages/stay/binding.dart';
+import 'package:dimigoin_app_v4/app/pages/dorm/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/wakeup/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/others/binding.dart';
@@ -33,7 +33,7 @@ class MainPageController extends GetxController {
         HomePageBinding().dependencies();
         break;
       case 1:
-        StayPageBinding().dependencies();
+        DormPageBinding().dependencies();
         break;
       case 2:
         WakeupPageBinding().dependencies();
@@ -75,7 +75,7 @@ class MainPage extends StatelessWidget {
 
   final List<Widget Function()> pageBuilders = [
     () => HomePage(),
-    () => StayPage(),
+    () => DormPage(),
     () => WakeupPage(),
     () => LaundryPage(),
     () => OthersPage(),

@@ -25,6 +25,7 @@ class DFHeader extends StatelessWidget {
     final textTheme = Theme.of(context).extension<DFTypography>()!;
 
     return Container(
+      width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
