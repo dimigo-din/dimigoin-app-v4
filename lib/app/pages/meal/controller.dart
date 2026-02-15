@@ -23,6 +23,8 @@ class MealDay {
   final List<MealMenu> meals;
 
   const MealDay({required this.dayLabel, required this.meals});
+
+  String? get label => null;
 }
 
 class MealPageController extends GetxController {

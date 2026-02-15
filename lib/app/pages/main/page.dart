@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 
 import 'package:dimigoin_app_v4/app/pages/home/page.dart';
 import 'package:dimigoin_app_v4/app/pages/dorm/page.dart';
-import 'package:dimigoin_app_v4/app/pages/wakeup/page.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/page.dart';
 import 'package:dimigoin_app_v4/app/pages/others/page.dart';
 
@@ -38,7 +37,7 @@ class MainPageController extends GetxController {
         MealPageBinding().dependencies();
         break;
       case 2:
-        StayPageBinding().dependencies();
+        DormPageBinding().dependencies();
         break;
       case 3:
         WakeupPageBinding().dependencies();
@@ -73,17 +72,15 @@ class MainPage extends StatelessWidget {
   final List<NavItemData> navItems = const [
     NavItemData('assets/icons/menu/home.svg', '홈'),
     NavItemData('assets/icons/menu/meal.svg', '급식'),
-    NavItemData('assets/icons/menu/office.svg', '잔류·금귀'),
-    NavItemData('assets/icons/menu/music.svg', '기상곡'),
-    NavItemData('assets/icons/menu/washer.svg', '세탁'),
+    NavItemData('assets/icons/menu/office.svg', '생활관'),
+    NavItemData('assets/icons/menu/washer.svg', '일정'),
     NavItemData('assets/icons/menu/others.svg', '더보기'),
   ];
 
   final List<Widget Function()> pageBuilders = [
     () => HomePage(),
     () => MealPage(),
-    () => StayPage(),
-    () => WakeupPage(),
+    () => DormPage(),
     () => LaundryPage(),
     () => OthersPage(),
   ];

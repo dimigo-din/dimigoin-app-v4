@@ -27,39 +27,44 @@ class MealPage extends GetView<MealPageController> {
               return const Center(child: CircularProgressIndicator());
             }
 
-            return ListView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: DFSpacing.spacing500,
-              ),
-              children: [
-                const SizedBox(height: DFSpacing.spacing200),
-                _DayTabs(
-                  selectedIndex: controller.selectedDayIndex.value,
-                  labels: controller.mealDays
-                      .map((day) => day.dayLabel)
-                      .toList(),
-                  onSelected: controller.selectDay,
-                ),
-                const SizedBox(height: DFSpacing.spacing550),
-                if (controller.hasLoadError.value)
-                  const _MealStateMessage(message: "급식 정보를 불러오지 못했습니다.")
-                else if (controller.meals.isEmpty)
-                  const _MealStateMessage(message: "급식 정보가 없습니다.")
-                else
-                  ...controller.meals.map((meal) => _MealCard(meal: meal)),
-                const SizedBox(height: DFSpacing.spacing600),
-                SizedBox(
-                  width: double.infinity,
-                  child: DFButton(
-                    label: "간편식 신청",
-                    size: DFButtonSize.large,
-                    theme: DFButtonTheme.accent,
-                    style: DFButtonStyle.primary,
-                    onPressed: () {},
+            return Padding(
+              padding: const EdgeInsets.only(
+                left: DFSpacing.spacing400,
+                right: DFSpacing.spacing400,
+                bottom: DFSpacing.spacing500),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: DFSpacing.spacing200),
+                        DFSegmentControl(
+                          segments: controller.mealDays.map((day) => DFSegment(label: day.dayLabel)).toList(),
+                          initialIndex: controller.selectedDayIndex.value,
+                          onChanged: controller.selectDay,
+                        ),
+                        const SizedBox(height: DFSpacing.spacing550),
+                        if (controller.hasLoadError.value)
+                          const _MealStateMessage(message: "급식 정보를 불러오지 못했습니다.")
+                        else if (controller.meals.isEmpty)
+                          const _MealStateMessage(message: "급식 정보가 없습니다.")
+                        else
+                          ...controller.meals.map((meal) => _MealCard(meal: meal)),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: DFSpacing.spacing800),
-              ],
+                  SizedBox(
+                    width: double.infinity,
+                    child: DFButton(
+                      label: "간편식 신청",
+                      size: DFButtonSize.large,
+                      theme: DFButtonTheme.accent,
+                      style: DFButtonStyle.primary,
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
+              ),
             );
           }),
         ),
@@ -86,47 +91,6 @@ class _MealStateMessage extends StatelessWidget {
             color: colorTheme.contentStandardSecondary,
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _DayTabs extends StatelessWidget {
-  final int selectedIndex;
-  final List<String> labels;
-  final ValueChanged<int> onSelected;
-
-  const _DayTabs({
-    required this.selectedIndex,
-    required this.labels,
-    required this.onSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colorTheme = Theme.of(context).extension<DFColors>()!;
-
-    return Container(
-      padding: const EdgeInsets.all(DFSpacing.spacing100),
-      decoration: BoxDecoration(
-        color: colorTheme.componentsTranslucentSecondary,
-        borderRadius: BorderRadius.circular(DFRadius.radius700),
-      ),
-      child: Row(
-        children: List.generate(labels.length, (index) {
-          return Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(
-                right: index == labels.length - 1 ? 0 : DFSpacing.spacing100,
-              ),
-              child: DFSegment(
-                activated: index == selectedIndex,
-                label: labels[index],
-                onTap: () => onSelected(index),
-              ),
-            ),
-          );
-        }),
       ),
     );
   }
