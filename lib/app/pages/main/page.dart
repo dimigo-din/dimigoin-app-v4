@@ -10,10 +10,8 @@ import 'package:dimigoin_app_v4/app/pages/home/page.dart';
 import 'package:dimigoin_app_v4/app/pages/dorm/page.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/page.dart';
 import 'package:dimigoin_app_v4/app/pages/others/page.dart';
-
 import 'package:dimigoin_app_v4/app/pages/home/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/dorm/binding.dart';
-import 'package:dimigoin_app_v4/app/pages/wakeup/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/others/binding.dart';
 
