@@ -20,7 +20,6 @@ class LaundryRepository {
 
     try {
       DFHttpResponse response = await api.get(url);
-      print(response.data);
       return LaundryTimeline.fromJson(response.data['data']);
     } on DioException {
       rethrow;
@@ -45,11 +44,15 @@ class LaundryRepository {
     String url = '/student/laundry';
 
     try {
-      DFHttpResponse response = await api.post(url, data: {
-        'grade': authService.user?.userGrade,
-        'time': timeId,
-        'machine': machineId,
-      }, middlewares: [AppCheckMiddleware()]);
+      DFHttpResponse response = await api.post(
+        url,
+        data: {
+          'grade': authService.user?.userGrade,
+          'time': timeId,
+          'machine': machineId,
+        },
+        middlewares: [AppCheckMiddleware()],
+      );
 
       return LaundryApply.fromJson(response.data['data']);
     } on DioException catch (e) {

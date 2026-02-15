@@ -22,6 +22,9 @@ import '../pages/pin/binding.dart';
 import '../pages/setting/binding.dart';
 import '../pages/setting/page.dart';
 
+import '../pages/meal/binding.dart';
+import '../pages/meal/page.dart';
+
 import 'routes.dart';
 
 class AppPages {
@@ -68,6 +71,13 @@ class AppPages {
       name: Routes.SETTING,
       page: () => SettingPage(),
       binding: SettingPageBinding(),
+      middlewares: [LoginMiddleware()],
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.MEAL,
+      page: () => MealPage(),
+      binding: MealPageBinding(),
       middlewares: [LoginMiddleware()],
       transition: Transition.cupertino,
     ),
