@@ -40,12 +40,9 @@ class MainPageController extends GetxController {
         DormPageBinding().dependencies();
         break;
       case 3:
-        WakeupPageBinding().dependencies();
-        break;
-      case 4:
         LaundryPageBinding().dependencies();
         break;
-      case 5:
+      case 4:
         OthersPageBinding().dependencies();
         break;
     }
