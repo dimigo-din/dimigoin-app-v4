@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import '../../core/theme/static.dart';
 import 'controller.dart';
 
-import './widgets/personal_status.dart';
-import './widgets/timetable.dart';
+import '../../widgets/personal_status.dart';
+import '../../widgets/timetable.dart';
 
 class HomePage extends GetView<HomePageController> {
   const HomePage({super.key});
