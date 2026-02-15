@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:url_strategy/url_strategy.dart';
 
 import '../../provider/api.dart';
 import '../../provider/api_interface.dart';
@@ -20,8 +19,6 @@ class AppLoader {
     WidgetsFlutterBinding.ensureInitialized();
 
     try {
-      setPathUrlStrategy();
-
       try {
         await dotenv.load(fileName: "env/.env");
       } catch (e) {

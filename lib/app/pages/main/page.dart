@@ -1,5 +1,7 @@
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
+import 'package:dimigoin_app_v4/app/pages/meal/binding.dart';
+import 'package:dimigoin_app_v4/app/pages/meal/page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -33,15 +35,18 @@ class MainPageController extends GetxController {
         HomePageBinding().dependencies();
         break;
       case 1:
-        DormPageBinding().dependencies();
+        MealPageBinding().dependencies();
         break;
       case 2:
-        WakeupPageBinding().dependencies();
+        StayPageBinding().dependencies();
         break;
       case 3:
-        LaundryPageBinding().dependencies();
+        WakeupPageBinding().dependencies();
         break;
       case 4:
+        LaundryPageBinding().dependencies();
+        break;
+      case 5:
         OthersPageBinding().dependencies();
         break;
     }
@@ -67,6 +72,7 @@ class MainPage extends StatelessWidget {
 
   final List<NavItemData> navItems = const [
     NavItemData('assets/icons/menu/home.svg', '홈'),
+    NavItemData('assets/icons/menu/meal.svg', '급식'),
     NavItemData('assets/icons/menu/office.svg', '잔류·금귀'),
     NavItemData('assets/icons/menu/music.svg', '기상곡'),
     NavItemData('assets/icons/menu/washer.svg', '세탁'),
@@ -75,7 +81,8 @@ class MainPage extends StatelessWidget {
 
   final List<Widget Function()> pageBuilders = [
     () => HomePage(),
-    () => DormPage(),
+    () => MealPage(),
+    () => StayPage(),
     () => WakeupPage(),
     () => LaundryPage(),
     () => OthersPage(),
@@ -84,11 +91,9 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
-    
+
     return Container(
-      decoration: BoxDecoration(
-        color: colorTheme.backgroundStandardPrimary,
-      ),
+      decoration: BoxDecoration(color: colorTheme.backgroundStandardPrimary),
       child: SafeArea(
         top: false,
         child: Scaffold(
@@ -104,10 +109,7 @@ class MainPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(
-                    'assets/images/dimigoin_icon.png',
-                    height: 35,
-                  )
+                  Image.asset('assets/images/dimigoin_icon.png', height: 35),
                 ],
               ),
             ),
@@ -130,7 +132,7 @@ class MainPage extends StatelessWidget {
               onTap: controller.changePage,
             ),
           ),
-        )
+        ),
       ),
     );
   }
