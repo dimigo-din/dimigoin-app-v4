@@ -7,7 +7,8 @@ class Routes {
   static const PW_LOGIN = '/login/pw';
   static const STAY = '/stay';
   static const WAKEUP = '/wakeup';
-  static const WASHER = '/washer';
+  static const LAUNDRY = '/laundry';
+  static const FRIGO = '/frigo';
   static const OTHERS = '/others';
   static const MAIN = '/';
   static const PIN = '/pin';
