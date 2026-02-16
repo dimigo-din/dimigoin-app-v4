@@ -28,7 +28,10 @@ class TestPage extends GetView<TestPageController> {
   }
 
   Widget linkToRouteWithArgs(
-      String route, String title, Map<String, dynamic> args) {
+    String route,
+    String title,
+    Map<String, dynamic> args,
+  ) {
     return TextButton(
       onPressed: () {
         Get.toNamed(route, arguments: args);
@@ -64,19 +67,29 @@ class TestPage extends GetView<TestPageController> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text("Routes"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Routes"), centerTitle: true),
       body: Column(
         children: [
           linkToRoute('/license'),
           linkToRoute('/main'),
           linkToRoute('/login'),
           linkToRoute('/stay'),
-          DFChip(label: "label", status: false, onTap: () {}), 
-          DFInput(placeholder: "입력해보세요", leading: const Icon(Icons.search), trailing: const Icon(Icons.clear), type: DFInputType.focus,),
-          DFAvatar(size: DFAvatarSize.large, type: DFAvatarType.person, fill: DFAvatarFill.icon, image: Image.network("https://i.ytimg.com/vi/qdD7ciXKfzE/hq720.jpg?sqp=-oaymwEXCK4FEIIDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBacpz-KLCEsW5rw-HKI08xHR3sOQ")),
+          linkToRoute('/meal'),
+          DFChip(label: "label", status: false, onTap: () {}),
+          DFInput(
+            placeholder: "입력해보세요",
+            leading: const Icon(Icons.search),
+            trailing: const Icon(Icons.clear),
+            type: DFInputType.focus,
+          ),
+          DFAvatar(
+            size: DFAvatarSize.large,
+            type: DFAvatarType.person,
+            fill: DFAvatarFill.icon,
+            image: Image.network(
+              "https://i.ytimg.com/vi/qdD7ciXKfzE/hq720.jpg?sqp=-oaymwEXCK4FEIIDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBacpz-KLCEsW5rw-HKI08xHR3sOQ",
+            ),
+          ),
           DFSegmentControl(
             segments: const [
               DFSegment(label: "첫번째"),
@@ -103,21 +116,33 @@ class TestPage extends GetView<TestPageController> {
             },
             child: const Text("Show Bottom Sheet"),
           ),
-          DFSectionHeader(size: DFSectionHeaderSize.large, title: "오른쪽 세탁기", rightIcon: Icons.arrow_downward, trailingText: "3타임 사용 가능"),
-          DFValueList(type: DFValueListType.vertical, title: "아침", subTitle: "7시 10분", content: "아침 세탁기 사용 중"),
-          TextButton(
-              onPressed: () {
-                HapticFeedback.heavyImpact();
-              },
-              child: const Text("Haptic"),
+          DFSectionHeader(
+            size: DFSectionHeaderSize.large,
+            title: "오른쪽 세탁기",
+            rightIcon: Icons.arrow_downward,
+            trailingText: "3타임 사용 가능",
           ),
-          Obx(() => DFControl(
-            type: DFControlType.toggle,
-            status: controller.checkToggle.value,
-            onTap: () => controller.checkToggle.value = !controller.checkToggle.value,
-          )),
+          DFValueList(
+            type: DFValueListType.vertical,
+            title: "아침",
+            subTitle: "7시 10분",
+            content: "아침 세탁기 사용 중",
+          ),
+          TextButton(
+            onPressed: () {
+              HapticFeedback.heavyImpact();
+            },
+            child: const Text("Haptic"),
+          ),
+          Obx(
+            () => DFControl(
+              type: DFControlType.toggle,
+              status: controller.checkToggle.value,
+              onTap: () =>
+                  controller.checkToggle.value = !controller.checkToggle.value,
+            ),
+          ),
         ],
-        
       ),
     );
   }

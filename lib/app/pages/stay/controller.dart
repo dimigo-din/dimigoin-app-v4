@@ -3,24 +3,14 @@ import 'dart:developer';
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/pages/home/controller.dart';
 import 'package:dimigoin_app_v4/app/pages/stay/stay_outing/utils/outing_date_utils.dart';
-import 'package:dimigoin_app_v4/app/services/frigo/model.dart';
-import 'package:dimigoin_app_v4/app/services/frigo/service.dart';
 import 'package:dimigoin_app_v4/app/services/stay/model.dart';
 import 'package:dimigoin_app_v4/app/services/stay/service.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-List<String> frigoTiming = [
-  "afterschool",
-  "dinner",
-  "after_1st_study",
-  "after_2nd_study",
-];
-
 class StayPageController extends GetxController {
   final stayService = StayService();
-  final frigoService = FrigoService();
 
   final RxInt selectedIndex = 0.obs;
 
@@ -42,10 +32,6 @@ class StayPageController extends GetxController {
   final RxBool breakfastCancel = false.obs;
   final RxBool lunchCancel = false.obs;
   final RxBool dinnerCancel = false.obs;
-
-  final Rx<Frigo?> frigoApplication = Rx<Frigo?>(null);
-  final RxInt selectedFrigoTimingIndex = 0.obs;
-  final RxString frigoReason = ''.obs;
 
   final RxBool isApplied = false.obs;
 
@@ -296,60 +282,4 @@ class StayPageController extends GetxController {
     }
   }
 
-  Future<void> fetchFrigoApplication() async {
-    try {
-      final application = await frigoService.getFrigoApplication();
-      frigoApplication.value = application;
-      frigoReason.value = application.reason;
-      selectedFrigoTimingIndex.value = frigoTiming.indexOf(application.timing.toString());
-    } catch (e) {
-      frigoApplication.value = null;
-      log('Error fetching frigo application: $e');
-      return;
-    }
-  }
-
-  Future<void> addFrigoApplication() async {
-    try {
-      if (frigoReason.value.isEmpty) {
-        DFSnackBar.error("금요귀가 신청 사유를 입력해주세요.");
-        return;
-      }
-
-      DFSnackBar.info("금요귀가 신청 중입니다...");
-      await frigoService.addFrigoApplication(
-        frigoTiming[selectedFrigoTimingIndex.value],
-        frigoReason.value,
-      );
-      await fetchFrigoApplication();
-      DFSnackBar.success("금요귀가 신청이 완료되었습니다.");
-    } on FrigoPeriodNotExistsForGradeException {
-      DFSnackBar.error("해당 학년은 금요귀가 신청이 불가능합니다. 담임 선생님께 문의주세요.");
-      return;
-    } on FrigoPeriodNotInApplyPeriodException {
-      DFSnackBar.error("금요귀가 신청 기간이 아닙니다.");
-      return;
-    } on FrigoAlreadyAppliedException {
-      DFSnackBar.error("이미 금요귀가 신청을 하였습니다.");
-      return;
-    } catch (e) {
-      DFSnackBar.error("금요귀가 신청 중 오류가 발생했습니다. 다시 시도해주세요.");
-      return;
-    }
-  }
-
-  Future<void> deleteFrigoApplication() async {
-    try {
-      DFSnackBar.info("금요귀가 신청 취소 중입니다...");
-      await frigoService.deleteFrigoApplication();
-      await fetchFrigoApplication();
-      DFSnackBar.success("금요귀가 신청이 취소되었습니다.");
-    } on FrigoPeriodNotInApplyPeriodException {
-      DFSnackBar.error("금요귀가 신청 취소 기간이 아닙니다.");
-      return;
-    } catch (e) {
-      DFSnackBar.error("금요귀가 신청 취소 중 오류가 발생했습니다. 다시 시도해주세요.");
-      return;
-    }
-  }
 }

@@ -1,9 +1,8 @@
+import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../core/theme/colors.dart';
 import '../core/theme/typography.dart';
-import '../widgets/gestureDetector.dart';
 
 class DFAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
@@ -18,7 +17,7 @@ class DFAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.hasBackButton = true,
     this.onBackPressed,
-    this.height = kToolbarHeight,
+    this.height = 80,
   });
 
   @override
@@ -27,22 +26,36 @@ class DFAppBar extends StatelessWidget implements PreferredSizeWidget {
     final textTheme = Theme.of(context).extension<DFTypography>()!;
 
     return AppBar(
+      toolbarHeight: 80,
+      elevation: 0,
       leading: hasBackButton
-          ? DFGestureDetectorWithOpacityInteraction(
-              onTap: onBackPressed ?? Get.back,
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 20,
-                color: colorTheme.contentStandardTertiary,
+        ? IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 20,
+              color: colorTheme.contentStandardTertiary,
+            ),
+            onPressed: onBackPressed ?? () {
+              Navigator.of(context).maybePop();
+            },
+          )
+        : null,
+      title: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: DFSpacing.spacing400,
+        ),
+        child: title != null
+          ? Text(
+              title!,
+              style: textTheme.title.copyWith(
+                color: colorTheme.contentStandardPrimary,
+                fontWeight: FontWeight.w700,
               ),
             )
-          : null,
-      title: Text(
-        title ?? '',
-        style: textTheme.headline.copyWith(
-          color: colorTheme.contentStandardPrimary,
-          fontWeight: FontWeight.bold,
-        ),
+          : Image.asset(
+            'assets/images/dimigoin_icon.png',
+            height: 35,
+          ),
       ),
       actions: actions,
     );

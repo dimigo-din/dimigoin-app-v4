@@ -1,18 +1,17 @@
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
+import 'package:dimigoin_app_v4/app/pages/meal/binding.dart';
+import 'package:dimigoin_app_v4/app/pages/meal/page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'package:dimigoin_app_v4/app/pages/home/page.dart';
-import 'package:dimigoin_app_v4/app/pages/stay/page.dart';
-import 'package:dimigoin_app_v4/app/pages/wakeup/page.dart';
+import 'package:dimigoin_app_v4/app/pages/dorm/page.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/page.dart';
 import 'package:dimigoin_app_v4/app/pages/others/page.dart';
-
 import 'package:dimigoin_app_v4/app/pages/home/binding.dart';
-import 'package:dimigoin_app_v4/app/pages/stay/binding.dart';
-import 'package:dimigoin_app_v4/app/pages/wakeup/binding.dart';
+import 'package:dimigoin_app_v4/app/pages/dorm/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/others/binding.dart';
 
@@ -33,10 +32,10 @@ class MainPageController extends GetxController {
         HomePageBinding().dependencies();
         break;
       case 1:
-        StayPageBinding().dependencies();
+        MealPageBinding().dependencies();
         break;
       case 2:
-        WakeupPageBinding().dependencies();
+        DormPageBinding().dependencies();
         break;
       case 3:
         LaundryPageBinding().dependencies();
@@ -67,16 +66,16 @@ class MainPage extends StatelessWidget {
 
   final List<NavItemData> navItems = const [
     NavItemData('assets/icons/menu/home.svg', '홈'),
-    NavItemData('assets/icons/menu/office.svg', '잔류·금귀'),
-    NavItemData('assets/icons/menu/music.svg', '기상곡'),
-    NavItemData('assets/icons/menu/washer.svg', '세탁'),
+    NavItemData('assets/icons/menu/meal.svg', '급식'),
+    NavItemData('assets/icons/menu/office.svg', '생활관'),
+    NavItemData('assets/icons/menu/washer.svg', '일정'),
     NavItemData('assets/icons/menu/others.svg', '더보기'),
   ];
 
   final List<Widget Function()> pageBuilders = [
     () => HomePage(),
-    () => StayPage(),
-    () => WakeupPage(),
+    () => MealPage(),
+    () => DormPage(),
     () => LaundryPage(),
     () => OthersPage(),
   ];
@@ -84,11 +83,9 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
-    
+
     return Container(
-      decoration: BoxDecoration(
-        color: colorTheme.backgroundStandardPrimary,
-      ),
+      decoration: BoxDecoration(color: colorTheme.backgroundStandardPrimary),
       child: SafeArea(
         top: false,
         child: Scaffold(
@@ -104,10 +101,7 @@ class MainPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(
-                    'assets/images/dimigoin_icon.png',
-                    height: 35,
-                  )
+                  Image.asset('assets/images/dimigoin_icon.png', height: 35),
                 ],
               ),
             ),
@@ -130,7 +124,7 @@ class MainPage extends StatelessWidget {
               onTap: controller.changePage,
             ),
           ),
-        )
+        ),
       ),
     );
   }

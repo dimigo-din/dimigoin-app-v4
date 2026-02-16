@@ -4,12 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginMiddleware extends GetMiddleware {
-  final AuthService authService = Get.find<AuthService>();
-
   LoginMiddleware({super.priority});
 
   @override
   RouteSettings? redirect(String? route) {
+    if (!Get.isRegistered<AuthService>()) {
+      return RouteSettings(
+        name: Routes.LOGIN,
+        arguments: {'redirect': route},
+      );
+    }
+
+    final authService = Get.find<AuthService>();
     return authService.isLoginSuccess || authService.isPersonalInfoRegistered ? null : RouteSettings(name: Routes.LOGIN, arguments: {'redirect': route});
   }
 }
