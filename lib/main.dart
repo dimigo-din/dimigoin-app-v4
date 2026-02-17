@@ -93,17 +93,6 @@ class _BootstrapAppState extends State<_BootstrapApp> {
     return FutureBuilder<void>(
       future: _initFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: lightThemeData,
-            darkTheme: darkThemeData,
-            home: const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            ),
-          );
-        }
-
         return GetMaterialApp(
           title: '디미고인',
           debugShowCheckedModeBanner: false,
@@ -112,6 +101,12 @@ class _BootstrapAppState extends State<_BootstrapApp> {
           initialRoute: kReleaseMode ? Routes.MAIN : Routes.TEST,
           getPages: AppPages.pages,
           builder: (context, child) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+
             final app = Overlay(
               initialEntries: [
                 OverlayEntry(builder: (_) => child!),
