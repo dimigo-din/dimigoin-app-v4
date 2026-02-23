@@ -7,13 +7,15 @@ import 'package:get/get.dart';
 class MealMenu {
   final String title;
   final String time;
-  final List<String> items;
+  final List<String> regular;
+  final List<String> simple;
   final bool highlighted;
 
   const MealMenu({
     required this.title,
     required this.time,
-    required this.items,
+    required this.regular,
+    required this.simple,
     this.highlighted = false,
   });
 }
@@ -86,7 +88,8 @@ class MealPageController extends GetxController {
                     (menuData) => MealMenu(
                       title: menuData.title,
                       time: menuData.time,
-                      items: menuData.allItems,
+                      regular: menuData.regular,
+                      simple: menuData.simple,
                       highlighted: isHighlightedMeal(menuData.type, dayData),
                     ),
                   )

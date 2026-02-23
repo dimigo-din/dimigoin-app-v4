@@ -1,6 +1,5 @@
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
-import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSegmentControl.dart';
 import 'package:flutter/material.dart';
@@ -81,8 +80,8 @@ class _MealCard extends StatelessWidget {
             ? DFValueListTheme.active
             : DFValueListTheme.outlined,
         title: meal.title,
-        subTitle: meal.time,
-        content: meal.items.isEmpty ? "급식 정보가 없습니다." : meal.items.join(", "),
+        subTitle: meal.time != "" ? "${meal.time.split(':').first}시 ${meal.time.split(':').last}분" : "",
+        content: meal.regular.isEmpty && meal.simple.isEmpty ? "급식 정보가 없습니다." : (meal.regular.isEmpty ? meal.simple.join(", ") : meal.regular.join(", ") + (meal.simple.isEmpty ? "" : "\n<간편식> ${meal.simple.join(", ")}")),
       ),
     );
   }
