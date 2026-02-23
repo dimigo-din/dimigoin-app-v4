@@ -53,6 +53,24 @@ class MealPageController extends GetxController {
     return mealDays[safeIndex].meals;
   }
 
+  MealType getCurrentMealType() {
+    final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
+    final currentHour = nowKst.hour;
+
+    if (currentHour >= 14) {
+      return MealType.dinner;
+    } else if (currentHour >= 8) {
+      return MealType.lunch;
+    } else {
+      return MealType.breakfast;
+    }
+  }
+
+  bool isHighlightedMeal(MealType mealType, MealDayData dayData) {
+    final currentMealType = getCurrentMealType();
+    return mealType == currentMealType && DateTime.now().toUtc().add(const Duration(hours: 9)).day == dayData.date.day;
+  }
+
   Future<void> fetchWeeklyMeals() async {
     isLoading.value = true;
     hasLoadError.value = false;
@@ -69,7 +87,7 @@ class MealPageController extends GetxController {
                       title: menuData.title,
                       time: menuData.time,
                       items: menuData.allItems,
-                      highlighted: menuData.type == MealType.lunch,
+                      highlighted: isHighlightedMeal(menuData.type, dayData),
                     ),
                   )
                   .toList(growable: false),
