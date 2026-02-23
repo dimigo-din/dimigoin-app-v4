@@ -153,6 +153,7 @@ class _DFCalendarState extends State<DFCalendar> {
             ),
           ],
         ),
+        SizedBox(height: 10),
         TableCalendar(
           firstDay: DateTime.utc(2020, 1, 1),
           lastDay: DateTime.utc(2100, 12, 31),
@@ -202,12 +203,12 @@ class _DFCalendarState extends State<DFCalendar> {
             todayBuilder: (context, day, focusedDay) {
               final eventList = _getEventsForDay(day);
 
-              return _dayCell(day, eventList, true, true);
+              return _dayCell(day, eventList, true, false);
             },
             selectedBuilder: (context, day, focusedDay) {
               final eventList = _getEventsForDay(day);
 
-              return _dayCell(day, eventList, true, false);
+              return _dayCell(day, eventList, true, true);
             },
           ),
           headerVisible: false,
