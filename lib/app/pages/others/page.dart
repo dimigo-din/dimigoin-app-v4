@@ -18,6 +18,8 @@ class OthersPage extends GetView<OthersPageController> {
   OthersPage({super.key});
   AuthService authService = Get.find<AuthService>();
 
+  final year = DateTime.now().year;
+
   Widget _othersPageItem({required String title, required VoidCallback onTap}) {
     return DFGestureDetectorWithOpacityInteraction(
       onTap: () => {},
@@ -75,10 +77,10 @@ class OthersPage extends GetView<OthersPageController> {
               onTap: () => controller.launchMenuUrl("https://pf.kakao.com/_fxhZen/chat"),
             ),      
             const Spacer(),
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(bottom: DFSpacing.spacing400),
               child: Text(
-                "Copyright 2025. DIN Org. All rights reserved.",
+                "Copyright $year. DIN Org. All rights reserved.",
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 10,
