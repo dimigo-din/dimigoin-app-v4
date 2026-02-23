@@ -24,6 +24,7 @@ Map<String, dynamic> _$LoginTokenToJson(LoginToken instance) =>
       'refreshToken': instance.refreshToken,
     };
 
+// ignore: unused_element
 PersonalInformation _$PersonalInformationFromJson(Map<String, dynamic> json) =>
     PersonalInformation(
       id: json['id'] as String,

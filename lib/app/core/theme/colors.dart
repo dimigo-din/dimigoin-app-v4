@@ -75,6 +75,12 @@ class DFColors extends ThemeExtension<DFColors> {
   final Color syntaxOperator;
   final Color syntaxKeyword;
 
+  final Color calenarExam;
+  final Color calendarHome;
+  final Color calendarEvent;
+  final Color calendarVacation;
+  final Color calendarStay;
+
   DFColors({
     required this.solidRed,
     required this.solidOrange,
@@ -137,6 +143,11 @@ class DFColors extends ThemeExtension<DFColors> {
     required this.syntaxConstant,
     required this.syntaxOperator,
     required this.syntaxKeyword,
+    required this.calenarExam,
+    required this.calendarHome,
+    required this.calendarEvent,
+    required this.calendarVacation,
+    required this.calendarStay,
   });
 
   @override
@@ -202,6 +213,11 @@ class DFColors extends ThemeExtension<DFColors> {
     Color? syntaxConstant,
     Color? syntaxOperator,
     Color? syntaxKeyword,
+    Color? calenarExam,
+    Color? calendarHome,
+    Color? calendarEvent,
+    Color? calendarVacation,
+    Color? calendarStay,
   }) {
     return DFColors(
       solidRed: solidRed ?? this.solidRed,
@@ -265,6 +281,11 @@ class DFColors extends ThemeExtension<DFColors> {
       syntaxConstant: syntaxConstant ?? this.syntaxConstant,
       syntaxOperator: syntaxOperator ?? this.syntaxOperator,
       syntaxKeyword: syntaxKeyword ?? this.syntaxKeyword,
+      calenarExam: calenarExam ?? this.calenarExam,
+      calendarHome: calendarHome ?? this.calendarHome,
+      calendarEvent: calendarEvent ?? this.calendarEvent,
+      calendarVacation: calendarVacation ?? this.calendarVacation,
+      calendarStay: calendarStay ?? this.calendarStay,
     );
   }
 
@@ -335,6 +356,11 @@ class DFColors extends ThemeExtension<DFColors> {
       syntaxConstant: Color.lerp(syntaxConstant, other.syntaxConstant, t)!,
       syntaxOperator: Color.lerp(syntaxOperator, other.syntaxOperator, t)!,
       syntaxKeyword: Color.lerp(syntaxKeyword, other.syntaxKeyword, t)!,
+      calenarExam: Color.lerp(calenarExam, other.calenarExam, t)!,
+      calendarHome: Color.lerp(calendarHome, other.calendarHome, t)!,
+      calendarEvent: Color.lerp(calendarEvent, other.calendarEvent, t)!,
+      calendarVacation: Color.lerp(calendarVacation, other.calendarVacation, t)!,
+      calendarStay: Color.lerp(calendarStay, other.calendarStay, t)!,
     );
   }
 }
