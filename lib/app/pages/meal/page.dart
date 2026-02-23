@@ -46,16 +46,16 @@ class MealPage extends GetView<MealPageController> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: DFButton(
-                      label: "간편식 신청",
-                      size: DFButtonSize.large,
-                      theme: DFButtonTheme.accent,
-                      style: DFButtonStyle.primary,
-                      onPressed: () {},
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   child: DFButton(
+                  //     label: "간편식 신청",
+                  //     size: DFButtonSize.large,
+                  //     theme: DFButtonTheme.accent,
+                  //     style: DFButtonStyle.primary,
+                  //     onPressed: () {},
+                  //   ),
+                  // ),
                 ],
               ),
             );
