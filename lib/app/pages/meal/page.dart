@@ -1,6 +1,5 @@
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
-import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSegmentControl.dart';
@@ -42,10 +41,6 @@ class MealPage extends GetView<MealPageController> {
                         const SizedBox(height: DFSpacing.spacing550),
                         if (controller.isLoading.value) 
                           const Center(child: CircularProgressIndicator())
-                        else if (controller.hasLoadError.value)
-                          const _MealStateMessage(message: "급식 정보를 불러오지 못했습니다.")
-                        else if (controller.meals.isEmpty)
-                          const _MealStateMessage(message: "급식 정보가 없습니다.")
                         else
                           ...controller.meals.map((meal) => _MealCard(meal: meal)),
                       ],
@@ -71,29 +66,6 @@ class MealPage extends GetView<MealPageController> {
   }
 }
 
-class _MealStateMessage extends StatelessWidget {
-  final String message;
-
-  const _MealStateMessage({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorTheme = Theme.of(context).extension<DFColors>()!;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: DFSpacing.spacing800),
-      child: Center(
-        child: Text(
-          message,
-          style: Theme.of(context).extension<DFTypography>()!.body.copyWith(
-            color: colorTheme.contentStandardSecondary,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _MealCard extends StatelessWidget {
   final MealMenu meal;
 
@@ -110,7 +82,7 @@ class _MealCard extends StatelessWidget {
             : DFValueListTheme.outlined,
         title: meal.title,
         subTitle: meal.time,
-        content: meal.items.join(", "),
+        content: meal.items.isEmpty ? "급식 정보가 없습니다." : meal.items.join(", "),
       ),
     );
   }
