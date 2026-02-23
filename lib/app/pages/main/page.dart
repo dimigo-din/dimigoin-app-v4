@@ -68,7 +68,7 @@ class MainPage extends StatelessWidget {
     NavItemData('assets/icons/menu/home.svg', '홈'),
     NavItemData('assets/icons/menu/meal.svg', '급식'),
     NavItemData('assets/icons/menu/office.svg', '생활관'),
-    NavItemData('assets/icons/menu/washer.svg', '일정'),
+    NavItemData('assets/icons/menu/calendar.svg', '일정'),
     NavItemData('assets/icons/menu/others.svg', '더보기'),
   ];
 
