@@ -87,7 +87,7 @@ class DFValueList extends StatelessWidget {
                       color: switch (theme) {
                         DFValueListTheme.disabled => colorTheme.contentStandardQuaternary,
                         DFValueListTheme.outlined => colorTheme.contentStandardTertiary,
-                        DFValueListTheme.active => colorTheme.solidWhite,
+                        DFValueListTheme.active => colorTheme.contentStandardTertiary,
                       },
                       fontWeight: switch (theme) {
                         DFValueListTheme.disabled => FontWeight.w500,
@@ -111,7 +111,7 @@ class DFValueList extends StatelessWidget {
                       color: switch (theme) {
                         DFValueListTheme.disabled => colorTheme.contentStandardPrimary,
                         DFValueListTheme.outlined => colorTheme.contentStandardPrimary,
-                        DFValueListTheme.active => colorTheme.contentInvertedPrimary,
+                        DFValueListTheme.active => colorTheme.solidWhite,
                       },
                       fontWeight: FontWeight.w700,
                     ),
@@ -125,7 +125,7 @@ class DFValueList extends StatelessWidget {
                       color: switch (theme) {
                         DFValueListTheme.disabled => colorTheme.contentStandardQuaternary,
                         DFValueListTheme.outlined => colorTheme.contentStandardTertiary,
-                        DFValueListTheme.active => colorTheme.contentInvertedPrimary,
+                        DFValueListTheme.active => colorTheme.solidWhite,
                       },
                       fontWeight: FontWeight.w400,
                     ),
@@ -141,7 +141,7 @@ class DFValueList extends StatelessWidget {
                   color: switch (theme) {
                     DFValueListTheme.disabled => colorTheme.contentStandardQuaternary,
                     DFValueListTheme.outlined => colorTheme.contentStandardSecondary,
-                    DFValueListTheme.active => colorTheme.contentInvertedPrimary,
+                    DFValueListTheme.active => colorTheme.contentStandardSecondary,
                   },
                   fontWeight: FontWeight.w400,
                 ),
