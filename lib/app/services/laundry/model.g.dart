@@ -44,7 +44,6 @@ Map<String, dynamic> _$LaundryTimeToJson(LaundryTime instance) =>
     <String, dynamic>{
       'id': instance.id,
       'time': instance.time,
-      'grade': instance.grade,
       'assigns': instance.assigns,
     };
 

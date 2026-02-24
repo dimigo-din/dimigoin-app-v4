@@ -2,9 +2,9 @@ import 'package:get/get.dart';
 
 import 'controller.dart';
 
-class PinInputPageBinding implements Bindings {
+class SignupPageBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => PinInputController());
+    Get.lazyPut(() => SignupPageController());
   }
 }

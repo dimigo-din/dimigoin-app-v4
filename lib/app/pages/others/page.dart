@@ -57,7 +57,7 @@ class OthersPage extends GetView<OthersPageController> {
               ),
               child: Obx(() => DFItemList(
                 title: authService.user?.name,
-                subTitle: "${authService.user!.number.substring(0, 1)}학년 ${authService.user!.number.substring(1, 2)}반 ${int.parse(authService.user!.number.substring(2, 4)).toString()}번",
+                subTitle: "${authService.user!.userGrade}학년 ${authService.user!.userClass}반",
                 leading: DFAvatar(
                   type: DFAvatarType.person,
                   size: DFAvatarSize.large,

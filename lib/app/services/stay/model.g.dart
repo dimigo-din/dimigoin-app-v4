@@ -162,7 +162,6 @@ StayApplyPeriod _$StayApplyPeriodFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$StayApplyPeriodToJson(StayApplyPeriod instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'grade': instance.grade,
       'apply_start': instance.applyStart,
       'apply_end': instance.applyEnd,
     };

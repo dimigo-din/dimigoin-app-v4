@@ -39,7 +39,7 @@ class DFAppBar extends StatelessWidget implements PreferredSizeWidget {
               Navigator.of(context).maybePop();
             },
           )
-        : null,
+        : const SizedBox(width: kToolbarHeight),
       title: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: DFSpacing.spacing400,

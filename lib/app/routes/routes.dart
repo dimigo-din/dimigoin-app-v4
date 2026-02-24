@@ -11,7 +11,7 @@ class Routes {
   static const FRIGO = '/frigo';
   static const OTHERS = '/others';
   static const MAIN = '/';
-  static const PIN = '/pin';
+  static const SIGNUP = '/signup';
   static const SETTING = '/setting';
   static const MEAL = '/meal';
 }

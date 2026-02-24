@@ -74,7 +74,7 @@ class TestPage extends GetView<TestPageController> {
           linkToRoute('/main'),
           linkToRoute('/login'),
           linkToRoute('/stay'),
-          linkToRoute('/meal'),
+          linkToRoute('/signup'),
           DFChip(label: "label", status: false, onTap: () {}),
           DFInput(
             placeholder: "입력해보세요",

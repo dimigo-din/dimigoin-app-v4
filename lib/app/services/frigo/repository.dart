@@ -33,7 +33,6 @@ class FrigoRepository {
       await api.post(url, data: {
         'timing': timing,
         'reason': reason,
-        'grade': authService.user?.userGrade,
       });
     } on DioException catch (e) {
 

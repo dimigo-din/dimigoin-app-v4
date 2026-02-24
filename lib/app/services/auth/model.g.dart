@@ -24,15 +24,12 @@ Map<String, dynamic> _$LoginTokenToJson(LoginToken instance) =>
       'refreshToken': instance.refreshToken,
     };
 
-// ignore: unused_element
 PersonalInformation _$PersonalInformationFromJson(Map<String, dynamic> json) =>
     PersonalInformation(
       id: json['id'] as String,
       name: json['name'] as String,
-      number: json['number'] as String,
       userGrade: (json['userGrade'] as num).toInt(),
       userClass: (json['userClass'] as num).toInt(),
-      userNumber: (json['userNumber'] as num).toInt(),
       gender: json['gender'] as String,
       profileUrl: json['profileUrl'] as String?,
     );
@@ -42,10 +39,8 @@ Map<String, dynamic> _$PersonalInformationToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
-  'number': instance.number,
   'userGrade': instance.userGrade,
   'userClass': instance.userClass,
-  'userNumber': instance.userNumber,
   'gender': instance.gender,
   'profileUrl': instance.profileUrl,
 };

@@ -13,7 +13,8 @@ class AuthStorage {
   static const _keyRefreshToken = 'refresh_token';
   static const _keyUserImageURL = 'user_image_url';
   static const _keyPersonalInformationName = 'name';
-  static const _keyPersonalInformationNumber = 'number';
+  static const _keyPersonalInformationGrade = 'grade';
+  static const _keyPersonalInformationClass = 'class';
   static const _keyPersonalInformationGender = 'gender';
   static const _keyPersonalInformationId = 'user_id';
   static const _keyDeviceId = "device_id";
@@ -33,25 +34,12 @@ class AuthStorage {
   }
 
   static Future<void> savePersonalInformation(PersonalInformation info) async {
+    await _storage.write(key: _keyPersonalInformationId, value: info.id);
+    await _storage.write(key: _keyUserImageURL, value: info.profileUrl);
     await _storage.write(key: _keyPersonalInformationName, value: info.name);
-    await _storage.write(key: _keyPersonalInformationNumber, value: info.number);
+    await _storage.write(key: _keyPersonalInformationGrade, value: info.userGrade.toString());
+    await _storage.write(key: _keyPersonalInformationClass, value: info.userClass.toString());
     await _storage.write(key: _keyPersonalInformationGender, value: info.gender);
-  }
-
-  static Future<void> saveUserImageURL(String imageUrl) async {
-    await _storage.write(key: _keyUserImageURL, value: imageUrl);
-  }
-
-  static Future<String> getUserImageURL() async {
-    return await _storage.read(key: _keyUserImageURL) ?? '';
-  }
-
-  static Future<void> saveUserId(String id) async {
-    await _storage.write(key: _keyPersonalInformationId, value: id);
-  }
-
-  static Future<String> getUserId() async {
-    return await _storage.read(key: _keyPersonalInformationId) ?? '';
   }
 
   static Future<void> saveDeviceId(String deviceId) async {
@@ -67,19 +55,18 @@ class AuthStorage {
     final allValues = await _storage.readAll();
 
     final name = allValues[_keyPersonalInformationName];
-    final number = allValues[_keyPersonalInformationNumber];
+    final grade = allValues[_keyPersonalInformationGrade];
+    final classNumber = allValues[_keyPersonalInformationClass];
     final gender = allValues[_keyPersonalInformationGender];
     final profileUrl = allValues[_keyUserImageURL];
     final id = allValues[_keyPersonalInformationId];
 
-    if (name != null && number != null && gender != null && profileUrl != null && id != null) {
+    if (name != null && grade != null && classNumber != null && gender != null && profileUrl != null && id != null) {
       return PersonalInformation(
         id: id,
         name: name,
-        number: number,
-        userGrade: int.parse(number.substring(0, 1)),
-        userClass: int.parse(number.substring(1, 2)),
-        userNumber: int.parse(number.substring(2, 4)),
+        userGrade: int.parse(grade),
+        userClass: int.parse(classNumber),
         gender: gender,
         profileUrl: profileUrl,
       );
@@ -92,7 +79,8 @@ class AuthStorage {
     await _storage.delete(key: _keyRefreshToken);
     await _storage.delete(key: _keyUserImageURL);
     await _storage.delete(key: _keyPersonalInformationName);
-    await _storage.delete(key: _keyPersonalInformationNumber);
+    await _storage.delete(key: _keyPersonalInformationGrade);
+    await _storage.delete(key: _keyPersonalInformationClass);
     await _storage.delete(key: _keyPersonalInformationGender);
     await _storage.delete(key: _keyPersonalInformationId);
   }

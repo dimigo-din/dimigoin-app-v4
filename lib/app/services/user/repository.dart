@@ -15,10 +15,7 @@ class UserRepository {
     String url = '/student/user/timeline';
 
     try {
-      DFHttpResponse response = await api.get(url, queryParameters: {
-        'grade': userGrade,
-        'class': userClass,
-      });
+      DFHttpResponse response = await api.get(url);
 
       return Timetable.fromJson(response.data['data']);
     } on DioException {
