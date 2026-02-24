@@ -4,7 +4,7 @@ part 'model.g.dart';
 
 enum CalendarEventType { exam, home, vacation, event, stay }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class CalendarEvent {
   final String title;
   final CalendarEventType type;

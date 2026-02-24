@@ -31,9 +31,11 @@ class FrigoController extends GetxController {
   Future<void> fetchFrigoApplication() async {
     try {
       final application = await frigoService.getFrigoApplication();
+
       frigoApplication.value = application;
       frigoReason.value = application.reason;
-      selectedFrigoTimingIndex.value = frigoTiming.indexOf(application.timing.toString());
+      selectedFrigoTimingIndex.value = frigoTiming.indexOf(application.timing.name);
+      isApplied.value = true;
     } catch (e) {
       frigoApplication.value = null;
       log('Error fetching frigo application: $e');

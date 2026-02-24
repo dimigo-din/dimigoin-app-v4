@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'model.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class Meal {
   final MealMenu breakfast;
   final MealMenu lunch;
@@ -14,7 +14,7 @@ class Meal {
   Map<String, dynamic> toJson() => _$MealToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class MealMenu {
   @JsonKey(defaultValue: <String>[])
   final List<String> regular;

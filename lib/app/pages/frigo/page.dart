@@ -77,7 +77,8 @@ class FrigoPage extends GetView<FrigoController> {
                 ),
                 SizedBox(
                   width: double.infinity,
-                  child: DFButton(
+                  child: Obx(() => DFButton(
+                    disabled: controller.isApplied.value,
                     label: controller.frigoApplication.value != null ? "금요귀가 신청 취소" : "금요귀가 신청",
                     size: DFButtonSize.large,
                     theme: DFButtonTheme.accent,
@@ -89,7 +90,7 @@ class FrigoPage extends GetView<FrigoController> {
                         controller.addFrigoApplication();
                       }
                     },
-                  ),
+                  )),
                 ),
               ],
             ),

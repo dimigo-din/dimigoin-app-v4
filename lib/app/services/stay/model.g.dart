@@ -162,6 +162,7 @@ StayApplyPeriod _$StayApplyPeriodFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$StayApplyPeriodToJson(StayApplyPeriod instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'grade': instance.grade,
       'apply_start': instance.applyStart,
       'apply_end': instance.applyEnd,
     };
@@ -182,7 +183,7 @@ StaySeatPreset _$StaySeatPresetFromJson(Map<String, dynamic> json) =>
     StaySeatPreset(
       id: json['id'] as String,
       name: json['name'] as String,
-      onlyReadingRoom: json['only_readingRoom'] as bool,
+      onlyReadingRoom: json['only_reading_room'] as bool,
       staySeat: (json['stay_seat'] as List<dynamic>?)
           ?.map((e) => StaySeat.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -192,7 +193,7 @@ Map<String, dynamic> _$StaySeatPresetToJson(StaySeatPreset instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'only_readingRoom': instance.onlyReadingRoom,
+      'only_reading_room': instance.onlyReadingRoom,
       'stay_seat': instance.staySeat,
     };
 

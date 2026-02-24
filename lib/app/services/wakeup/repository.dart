@@ -74,6 +74,7 @@ class WakeupRepository {
       DFHttpResponse response = await api.get(url, queryParameters: {
         'query': query,
       });
+
       return YoutubeSearchResult.fromJson(response.data['data']);
     } on DioException {
       rethrow;
