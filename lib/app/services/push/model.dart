@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class NotificationSubject {
   final String id;
   final String description;
@@ -18,7 +18,7 @@ class NotificationSubject {
   Map<String, dynamic> toJson() => _$NotificationSubjectToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class SubscribedNotificationSubject {
   final String id;
   final String name;

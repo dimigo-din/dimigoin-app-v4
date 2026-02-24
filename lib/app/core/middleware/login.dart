@@ -16,6 +16,21 @@ class LoginMiddleware extends GetMiddleware {
     }
 
     final authService = Get.find<AuthService>();
-    return authService.isLoginSuccess || authService.isPersonalInfoRegistered ? null : RouteSettings(name: Routes.LOGIN, arguments: {'redirect': route});
+    
+    if (!authService.isLoginSuccess) {
+      return RouteSettings(
+        name: Routes.LOGIN,
+        arguments: {'redirect': route},
+      );
+    }
+
+    if (!authService.isPersonalInfoRegistered) {
+      return RouteSettings(
+        name: Routes.SIGNUP,
+        arguments: {'redirect': route},
+      );
+    }
+
+    return null;
   }
 }

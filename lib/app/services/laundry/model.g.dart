@@ -81,12 +81,12 @@ const _$LaundryTimelineTriggerEnumMap = {
 LaundryApply _$LaundryApplyFromJson(Map<String, dynamic> json) => LaundryApply(
   id: json['id'] as String,
   date: json['date'] as String,
-  created_at: json['created_at'] as String,
+  createdAt: json['created_at'] as String,
   laundryTime: LaundryTime.fromJson(
-    json['laundryTime'] as Map<String, dynamic>,
+    json['laundry_time'] as Map<String, dynamic>,
   ),
   laundryMachine: LaundryMachine.fromJson(
-    json['laundryMachine'] as Map<String, dynamic>,
+    json['laundry_machine'] as Map<String, dynamic>,
   ),
   user: json['user'] == null
       ? null
@@ -97,8 +97,8 @@ Map<String, dynamic> _$LaundryApplyToJson(LaundryApply instance) =>
     <String, dynamic>{
       'id': instance.id,
       'date': instance.date,
-      'created_at': instance.created_at,
-      'laundryTime': instance.laundryTime,
-      'laundryMachine': instance.laundryMachine,
+      'created_at': instance.createdAt,
+      'laundry_time': instance.laundryTime,
+      'laundry_machine': instance.laundryMachine,
       'user': instance.user,
     };

@@ -6,7 +6,7 @@ part 'model.g.dart';
 enum LaundryMachineType { washer, dryer }
 enum LaundryTimelineTrigger { primary, stay, etc }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class LaundryMachine {
   final String id;
   final String name;
@@ -28,7 +28,7 @@ class LaundryMachine {
   Map<String, dynamic> toJson() => _$LaundryMachineToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class LaundryTime {
   final String id;
   final String time;
@@ -48,7 +48,7 @@ class LaundryTime {
   Map<String, dynamic> toJson() => _$LaundryTimeToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class LaundryTimeline {
   final String id;
   final String name;
@@ -71,11 +71,11 @@ class LaundryTimeline {
   Map<String, dynamic> toJson() => _$LaundryTimelineToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class LaundryApply {
   final String id;
   final String date;
-  final String created_at;
+  final String createdAt;
   final LaundryTime laundryTime;
   final LaundryMachine laundryMachine;
   final User? user;
@@ -83,7 +83,7 @@ class LaundryApply {
   LaundryApply({
     required this.id,
     required this.date,
-    required this.created_at,
+    required this.createdAt,
     required this.laundryTime,
     required this.laundryMachine,
     this.user,

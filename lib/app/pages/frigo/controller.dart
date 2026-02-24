@@ -13,11 +13,24 @@ List<String> frigoTiming = [
   "after_2nd_study",
 ];
 
+String _getFrigoTimingValue(FrigoTiming timing) {
+  switch (timing) {
+    case FrigoTiming.afterschool:
+      return "afterschool";
+    case FrigoTiming.dinner:
+      return "dinner";
+    case FrigoTiming.afterFirstStudy:
+      return "after_1st_study";
+    case FrigoTiming.afterSecondStudy:
+      return "after_2nd_study";
+  }
+}
+
 class FrigoController extends GetxController {
   final frigoService = FrigoService();
 
   final Rx<Frigo?> frigoApplication = Rx<Frigo?>(null);
-  final RxInt selectedFrigoTimingIndex = 0.obs;
+  final RxInt selectedFrigoTimingIndex = (-1).obs;
   final RxString frigoReason = ''.obs;
 
   final RxBool isApplied = false.obs;
@@ -31,11 +44,15 @@ class FrigoController extends GetxController {
   Future<void> fetchFrigoApplication() async {
     try {
       final application = await frigoService.getFrigoApplication();
+
       frigoApplication.value = application;
       frigoReason.value = application.reason;
-      selectedFrigoTimingIndex.value = frigoTiming.indexOf(application.timing.toString());
+      selectedFrigoTimingIndex.value = frigoTiming.indexOf(_getFrigoTimingValue(application.timing));
+      
+      isApplied.value = true;
     } catch (e) {
       frigoApplication.value = null;
+      isApplied.value = false;
       log('Error fetching frigo application: $e');
       return;
     }
@@ -45,6 +62,11 @@ class FrigoController extends GetxController {
     try {
       if (frigoReason.value.isEmpty) {
         DFSnackBar.error("금요귀가 신청 사유를 입력해주세요.");
+        return;
+      }
+
+      if (selectedFrigoTimingIndex.value == -1) {
+        DFSnackBar.error("귀가 시간을 선택해주세요.");
         return;
       }
 

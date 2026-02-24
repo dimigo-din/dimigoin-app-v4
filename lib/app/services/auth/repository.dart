@@ -1,8 +1,6 @@
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../provider/api_interface.dart';
 import '../../provider/model/response.dart';
@@ -126,38 +124,22 @@ class AuthRepository {
     }
   }
 
-  Future<String> getPersonalInformationVerifyToken() async {
-    String url = '/auth/personalInformationVerifyToken';
+  Future<LoginToken> signUpPersonalInformation(int grade, int classNum, String gender) async {
+    String url = '/auth/signup';
 
     try {
-      DFHttpResponse response = await api.get(url);
+      DFHttpResponse response = await api.post(url, data: {
+        'grade': grade,
+        'class': classNum,
+        'gender': gender,
+      });
 
-      return response.data['data'];
-    } on DioException {
-      rethrow;
-    }
-  }
+      LoginToken loginToken = LoginToken.fromJson(response.data['data']);
 
-  Future<PersonalInformation> getPersonalInformation(String passcode) async {
-    String url = dotenv.env['PERSONAL_INFO_API_URL'] ?? '';
-    if (url.isEmpty) {
-      throw Exception('PERSONAL_INFO_API_URL is not defined in .env file');
-    }
-
-    try {
-      final token = await getPersonalInformationVerifyToken();
-      DFHttpResponse response = await api.get(url, options: Options(
-        headers: {
-          'Authorization': 'Bearer ${base64Encode(utf8.encode('${token}\$${passcode}'))}',
-        },
-      ));
-
-      return PersonalInformation.fromJson(response.data);
+      return loginToken;
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        throw WrongPasscodeException();
-      } else if (e.response?.statusCode == 404) {
-        throw PersonalInformationNotRegisteredException();
+      if (e.response?.statusCode == 409) {
+        throw PersonalInformationAlreadyRegisteredException();
       } else {
         rethrow;
       }

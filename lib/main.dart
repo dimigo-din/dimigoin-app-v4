@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'app/core/theme/inapp/dark.dart';
@@ -25,8 +26,11 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   log('background noti: ${message.messageId}');
 }
 
-void main() {
+void main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting('ko_KR');
+
   if (kIsWeb) {
     // URL strategy must be configured once before the app tree is initialized.
     setPathUrlStrategy();
@@ -93,17 +97,6 @@ class _BootstrapAppState extends State<_BootstrapApp> {
     return FutureBuilder<void>(
       future: _initFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: lightThemeData,
-            darkTheme: darkThemeData,
-            home: const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            ),
-          );
-        }
-
         return GetMaterialApp(
           title: '디미고인',
           debugShowCheckedModeBanner: false,
@@ -112,6 +105,12 @@ class _BootstrapAppState extends State<_BootstrapApp> {
           initialRoute: kReleaseMode ? Routes.MAIN : Routes.TEST,
           getPages: AppPages.pages,
           builder: (context, child) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+
             final app = Overlay(
               initialEntries: [
                 OverlayEntry(builder: (_) => child!),

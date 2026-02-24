@@ -35,19 +35,19 @@ class FrigoPage extends GetView<FrigoController> {
                 Expanded(
                   child: Column(
                     children: [
-                      Obx(() => DFInputField(
+                      DFInputField(
                         title: "금요귀가 신청 사유",
                         inputs: [
-                          DFInput(
+                          Obx(() => DFInput(
                             placeholder: "금요귀가 신청 사유를 입력하세요",
                             content: controller.frigoReason.value,
                             type: DFInputType.normal,
                             onChanged: (value) {
                               controller.frigoReason.value = value;
                             },
-                          )
+                          )),
                         ]
-                      )),
+                      ),
                       const SizedBox(height: DFSpacing.spacing600),
                       Padding(
                         padding: const EdgeInsets.only(bottom: DFSpacing.spacing200, left: DFSpacing.spacing100, right: DFSpacing.spacing100),
@@ -64,20 +64,25 @@ class FrigoPage extends GetView<FrigoController> {
                       ),
                       Obx(() => DFOptionPicker(
                         type: DFOptionPickerType.quadruple,
-                        initialIndex: controller.selectedFrigoTimingIndex.value,
+                        currentIndex: controller.selectedFrigoTimingIndex.value,
                         options: const [
-                          DFOption(label: "종례 후"),
-                          DFOption(label: "저녁시간"),
-                          DFOption(label: "야자 1타임 후"),
-                          DFOption(label: "야자 2타임 후"),
+                          DFOptionData(label: "종례 후"),
+                          DFOptionData(label: "저녁시간"),
+                          DFOptionData(label: "야자 1타임 후"),
+                          DFOptionData(label: "야자 2타임 후"),
                         ],
+                        onChanged: (index) {
+                          if(controller.isApplied.value) return;
+
+                          controller.selectedFrigoTimingIndex.value = index;
+                        },
                       )),
                     ],
                   ),
                 ),
                 SizedBox(
                   width: double.infinity,
-                  child: DFButton(
+                  child: Obx(() => DFButton(
                     label: controller.frigoApplication.value != null ? "금요귀가 신청 취소" : "금요귀가 신청",
                     size: DFButtonSize.large,
                     theme: DFButtonTheme.accent,
@@ -89,7 +94,7 @@ class FrigoPage extends GetView<FrigoController> {
                         controller.addFrigoApplication();
                       }
                     },
-                  ),
+                  )),
                 ),
               ],
             ),

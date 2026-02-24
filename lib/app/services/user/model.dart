@@ -63,19 +63,19 @@ class UserApply {
 
   factory UserApply.fromJson(Map<String, dynamic> json) {
     return UserApply(
-      stayApply: json['stayApply'] == null
+      stayApply: json['stay_apply'] == null
           ? null
-          : StayApply.fromJson(json['stayApply'] as Map<String, dynamic>),
-      laundryApply: json['laundryApply'] == null
+          : StayApply.fromJson(json['stay_apply'] as Map<String, dynamic>),
+      laundryApply: json['laundry_apply'] == null
           ? null
-          : LaundryApply.fromJson(json['laundryApply'] as Map<String, dynamic>),
+          : LaundryApply.fromJson(json['laundry_apply'] as Map<String, dynamic>),
     );
   }
 
   Map<String, dynamic> toJson() => _$UserApplyToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class User {
   final String id;
   final String? email;

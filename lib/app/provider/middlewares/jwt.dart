@@ -13,11 +13,12 @@ class JWTMiddleware extends ApiMiddleware {
 
   @override
   Future<Response> handle(RequestOptions options, Future<Response> Function(RequestOptions) next) async {
-    // AuthService 초기화 완료를 기다림
     await _authService.initComplete;
 
     final token = _authService.jwtToken.accessToken;
-    if (token != null && options.headers['Authorization'] == null) {
+    final String path = options.path;
+    final bool isAuthLoginEndpoint = path.startsWith('/auth/login');
+    if (token != null && options.headers['Authorization'] == null && !isAuthLoginEndpoint) {
       options.headers['Authorization'] = 'Bearer $token';
     }
     return next(options);
@@ -28,7 +29,9 @@ class JWTMiddleware extends ApiMiddleware {
     final responseCode = err.response?.statusCode;
     final errorCode = err.response?.data?['code'];
 
-    if (options.path == '/auth/refresh' || options.path == dotenv.env['PERSONAL_INFO_API_URL']) {
+    if (options.path == '/auth/refresh' ||
+        options.path.startsWith('/auth/login') ||
+        options.path == dotenv.env['PERSONAL_INFO_API_URL']) {
       return null;
     }
 

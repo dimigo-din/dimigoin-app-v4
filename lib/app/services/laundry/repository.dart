@@ -47,7 +47,6 @@ class LaundryRepository {
       DFHttpResponse response = await api.post(
         url,
         data: {
-          'grade': authService.user?.userGrade,
           'time': timeId,
           'machine': machineId,
         },

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -8,13 +7,15 @@ import 'model.dart';
 import 'repository.dart';
 
 class MealService extends GetxController {
+  static const int _daysPerWeek = 7;
+
   final MealRepository repository;
 
   MealService({MealRepository? repository})
-    : repository = repository ?? MealRepository();
+      : repository = repository ?? MealRepository();
 
   @override
-  Future<void> onInit() async {
+  void onInit() {
     super.onInit();
     initialize();
   }
@@ -23,8 +24,7 @@ class MealService extends GetxController {
 
   Future<Meal> getMeal({DateTime? date}) async {
     try {
-      final response = await repository.getMeal(date: _toApiDate(date));
-      return response;
+      return await repository.getMeal(date: _toApiDate(date));
     } catch (e) {
       log(e.toString());
       rethrow;
@@ -37,29 +37,12 @@ class MealService extends GetxController {
   }
 
   Future<List<MealDayData>> getWeeklyMealMenus({DateTime? baseDate}) async {
-    final normalizedBaseDate = _normalizeKstDate(baseDate ?? DateTime.now());
-    final weekStart = normalizedBaseDate.subtract(
-      Duration(days: normalizedBaseDate.weekday - DateTime.monday),
-    );
-    final dates = List.generate(
-      7,
-      (index) => weekStart.add(Duration(days: index)),
-      growable: false,
-    );
+    final dates = _buildWeekDates(baseDate ?? DateTime.now());
 
     try {
       final meals = await Future.wait<Meal?>(
         dates
-            .map((date) async {
-              try {
-                return await repository.getMeal(date: _toApiDate(date));
-              } on DioException catch (e) {
-                if (e.response?.statusCode == 404) {
-                  return null;
-                }
-                rethrow;
-              }
-            })
+            .map(_getMealOrNullOn404)
             .toList(growable: false),
       );
 
@@ -68,14 +51,23 @@ class MealService extends GetxController {
         (index) => MealDayData(
           date: dates[index],
           dayLabel: _weekdayToKorean(dates[index].weekday),
-          menus: meals[index] == null
-              ? const []
-              : convertToMenus(meals[index]!),
+          menus: meals[index] == null ? const [] : convertToMenus(meals[index]!),
         ),
         growable: false,
       );
     } catch (e) {
       log(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<Meal?> _getMealOrNullOn404(DateTime date) async {
+    try {
+      return await repository.getMeal(date: _toApiDate(date));
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      }
       rethrow;
     }
   }
@@ -111,9 +103,22 @@ class MealService extends GetxController {
 
   List<String> _normalizeItems(List<String> items) {
     return items
-        .map((item) => item.trim())
-        .where((item) => item.isNotEmpty)
-        .toList(growable: false);
+      .map((item) => item.trim())
+      .where((item) => item.isNotEmpty)
+      .toList(growable: false);
+  }
+
+  List<DateTime> _buildWeekDates(DateTime baseDate) {
+    final normalizedBaseDate = _normalizeKstDate(baseDate);
+    final weekStart = normalizedBaseDate.subtract(
+      Duration(days: normalizedBaseDate.weekday - DateTime.monday),
+    );
+
+    return List.generate(
+      _daysPerWeek,
+      (index) => weekStart.add(Duration(days: index)),
+      growable: false,
+    );
   }
 
   DateTime _normalizeKstDate(DateTime dateTime) {
@@ -132,23 +137,16 @@ class MealService extends GetxController {
   }
 
   String _weekdayToKorean(int weekday) {
-    switch (weekday) {
-      case DateTime.monday:
-        return '월';
-      case DateTime.tuesday:
-        return '화';
-      case DateTime.wednesday:
-        return '수';
-      case DateTime.thursday:
-        return '목';
-      case DateTime.friday:
-        return '금';
-      case DateTime.saturday:
-        return '토';
-      case DateTime.sunday:
-        return '일';
-      default:
-        return '';
-    }
+    const labels = {
+      DateTime.monday: '월',
+      DateTime.tuesday: '화',
+      DateTime.wednesday: '수',
+      DateTime.thursday: '목',
+      DateTime.friday: '금',
+      DateTime.saturday: '토',
+      DateTime.sunday: '일',
+    };
+
+    return labels[weekday] ?? '';
   }
 }

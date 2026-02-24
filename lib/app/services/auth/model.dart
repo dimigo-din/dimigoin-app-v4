@@ -41,47 +41,22 @@ class LoginToken {
 class PersonalInformation {
   String id;
   String name;
-  String number;
   int userGrade;
   int userClass;
-  int userNumber;
   String gender;
   String? profileUrl;
 
   PersonalInformation({
     required this.id,
     required this.name,
-    required this.number,
     required this.userGrade,
     required this.userClass,
-    required this.userNumber,
     required this.gender,
     this.profileUrl,
   });
 
-  factory PersonalInformation.fromJson(Map<String, dynamic> json) {
-    final number = json['number']?.toString() ?? '';
-
-    int userGrade = 0;
-    int userClass = 0;
-    int userNumber = 0;
-    if (number.length >= 4) {
-      userGrade = int.tryParse(number[0]) ?? 0;
-      userClass = int.tryParse(number[1]) ?? 0;
-      userNumber = int.tryParse(number.substring(2, 4)) ?? 0;
-    }
-
-    return PersonalInformation(
-      id: json['id']?.toString() ?? '',
-      name: json['name']?.toString() ?? '',
-      number: number,
-      userGrade: userGrade,
-      userClass: userClass,
-      userNumber: userNumber,
-      gender: json['gender']?.toString() ?? '',
-      profileUrl: '',
-    );
-  }
+  factory PersonalInformation.fromJson(Map<String, dynamic> json) =>
+      _$PersonalInformationFromJson(json);
 
   Map<String, dynamic> toJson() => _$PersonalInformationToJson(this);
 }

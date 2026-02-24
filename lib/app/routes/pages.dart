@@ -2,6 +2,8 @@ import 'package:dimigoin_app_v4/app/pages/frigo/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/frigo/page.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/page.dart';
+import 'package:dimigoin_app_v4/app/pages/signup/binding.dart';
+import 'package:dimigoin_app_v4/app/pages/signup/page.dart';
 import 'package:dimigoin_app_v4/app/pages/stay/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/stay/page.dart';
 import 'package:dimigoin_app_v4/app/pages/wakeup/binding.dart';
@@ -23,9 +25,6 @@ import '../pages/main/page.dart';
 
 import '../pages/login/pw/binding.dart';
 import '../pages/login/pw/page.dart';
-
-import '../pages/pin/page.dart';
-import '../pages/pin/binding.dart';
 
 import '../pages/setting/binding.dart';
 import '../pages/setting/page.dart';
@@ -97,10 +96,9 @@ class AppPages {
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: Routes.PIN,
-      page: () => const PinInputPage(),
-      binding: PinInputPageBinding(),
-      middlewares: [LoginMiddleware()],
+      name: Routes.SIGNUP,
+      page: () => SignupPage(),
+      binding: SignupPageBinding(),
       transition: Transition.cupertino,
     ),
     GetPage(

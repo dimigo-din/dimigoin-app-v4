@@ -13,7 +13,7 @@ enum FrigoTiming {
   afterSecondStudy,
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class FrigoUser {
   final String id;
   final String email;
@@ -31,25 +31,24 @@ class FrigoUser {
   Map<String, dynamic> toJson() => _$FrigoUserToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Frigo {
   final String id;
   final String week;
   final FrigoTiming timing;
   final String reason;
-  @JsonKey(name: 'audit_reason')
-  final String auditReason;
-  final bool approved;
-  final FrigoUser user;
+  final String? auditReason;
+  final bool? approved;
+  final String userId;
 
   Frigo({
     required this.id,
     required this.week,
     required this.timing,
     required this.reason,
-    required this.auditReason,
-    required this.approved,
-    required this.user,
+    this.auditReason,
+    this.approved,
+    required this.userId,
   });
 
   factory Frigo.fromJson(Map<String, dynamic> json) => _$FrigoFromJson(json);

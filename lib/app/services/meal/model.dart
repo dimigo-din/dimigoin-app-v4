@@ -2,11 +2,11 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'model.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class Meal {
-  final MealBreakfast breakfast;
-  final MealLunch lunch;
-  final MealDinner dinner;
+  final MealMenu breakfast;
+  final MealMenu lunch;
+  final MealMenu dinner;
 
   Meal({required this.breakfast, required this.lunch, required this.dinner});
 
@@ -14,44 +14,8 @@ class Meal {
   Map<String, dynamic> toJson() => _$MealToJson(this);
 }
 
-@JsonSerializable()
-class MealBreakfast {
-  @JsonKey(defaultValue: <String>[])
-  final List<String> regular;
-  @JsonKey(defaultValue: <String>[])
-  final List<String> simple;
-  @JsonKey(defaultValue: '')
-  final String image;
-
-  MealBreakfast({
-    required this.regular,
-    required this.simple,
-    required this.image,
-  });
-
-  factory MealBreakfast.fromJson(Map<String, dynamic> json) =>
-      _$MealBreakfastFromJson(json);
-  Map<String, dynamic> toJson() => _$MealBreakfastToJson(this);
-}
-
-@JsonSerializable()
-class MealLunch {
-  @JsonKey(defaultValue: <String>[])
-  final List<String> regular;
-  @JsonKey(defaultValue: '')
-  final String image;
-  @JsonKey(defaultValue: '')
-  final String time;
-
-  MealLunch({required this.regular, required this.image, required this.time});
-
-  factory MealLunch.fromJson(Map<String, dynamic> json) =>
-      _$MealLunchFromJson(json);
-  Map<String, dynamic> toJson() => _$MealLunchToJson(this);
-}
-
-@JsonSerializable()
-class MealDinner {
+@JsonSerializable(fieldRename: FieldRename.snake)
+class MealMenu {
   @JsonKey(defaultValue: <String>[])
   final List<String> regular;
   @JsonKey(defaultValue: <String>[])
@@ -61,17 +25,17 @@ class MealDinner {
   @JsonKey(defaultValue: '')
   final String time;
 
-  MealDinner({
+  MealMenu({
     required this.regular,
     required this.simple,
     required this.image,
     required this.time,
   });
 
-  factory MealDinner.fromJson(Map<String, dynamic> json) =>
-      _$MealDinnerFromJson(json);
-  Map<String, dynamic> toJson() => _$MealDinnerToJson(this);
-}
+  factory MealMenu.fromJson(Map<String, dynamic> json) =>
+      _$MealMenuFromJson(json);
+  Map<String, dynamic> toJson() => _$MealMenuToJson(this);
+} 
 
 enum MealType { breakfast, lunch, dinner }
 

@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Thumbnail {
   final String url;
   final int? width;
@@ -19,7 +19,7 @@ class Thumbnail {
   Map<String, dynamic> toJson() => _$ThumbnailToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Thumbnails {
   @JsonKey(name: 'default')
   final Thumbnail defaultThumbnail;
@@ -37,7 +37,7 @@ class Thumbnails {
   Map<String, dynamic> toJson() => _$ThumbnailsToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class VideoId {
   final String kind;
   final String? videoId;
@@ -52,7 +52,7 @@ class VideoId {
   Map<String, dynamic> toJson() => _$VideoIdToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Snippet {
   final String publishedAt;
   final String channelId;
@@ -79,7 +79,7 @@ class Snippet {
   Map<String, dynamic> toJson() => _$SnippetToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class YoutubeItem {
   final String kind;
   final String etag;
@@ -98,7 +98,7 @@ class YoutubeItem {
   Map<String, dynamic> toJson() => _$YoutubeItemToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class PageInfo {
   final int totalResults;
   final int resultsPerPage;
@@ -113,7 +113,7 @@ class PageInfo {
   Map<String, dynamic> toJson() => _$PageInfoToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class YoutubeSearchResult {
   final String kind;
   final String etag;
@@ -136,16 +136,12 @@ class YoutubeSearchResult {
   Map<String, dynamic> toJson() => _$YoutubeSearchResultToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class WakeupApplication {
   final String id;
-  @JsonKey(name: 'video_id')
   final String videoId;
-  @JsonKey(name: 'video_title')
   final String videoTitle;
-  @JsonKey(name: 'video_thumbnail')
   final String? videoThumbnail;
-  @JsonKey(name: 'video_channel')
   final String? videoChannel;
   final String? week;
   final String gender;
@@ -165,7 +161,7 @@ class WakeupApplication {
   Map<String, dynamic> toJson() => _$WakeupApplicationToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class WakeupApplicationWithVote extends WakeupApplication {
   final int up;
   final int down;
@@ -188,7 +184,7 @@ class WakeupApplicationWithVote extends WakeupApplication {
   Map<String, dynamic> toJson() => _$WakeupApplicationWithVoteToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class WakeupApplicationVotes {
   final String id;
   final bool upvote;
@@ -205,12 +201,10 @@ class WakeupApplicationVotes {
   Map<String, dynamic> toJson() => _$WakeupApplicationVotesToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class WakeupHistory {
   final String id;
-  @JsonKey(name: 'video_id')
   final String videoId;
-  @JsonKey(name: 'video_title')
   final String videoTitle;
   final String date;
   final String gender;

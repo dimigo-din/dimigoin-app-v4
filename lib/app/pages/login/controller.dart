@@ -1,3 +1,4 @@
+import 'package:dimigoin_app_v4/app/routes/routes.dart';
 import 'package:get/get.dart';
 
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
@@ -37,7 +38,15 @@ class LoginPageController extends GetxController {
     try {
       isLoginProcessing.value = true;
 
-      await authService.loginWithGoogle();
+      bool success = await authService.loginWithGoogle();
+
+      if(success && authService.isLoginSuccess) {
+        if (authService.isPersonalInfoRegistered) {
+          Get.offAllNamed(Routes.MAIN);
+        } else {
+          Get.offAllNamed(Routes.SIGNUP);
+        }
+      }
     } on PersonalInformationNotRegisteredException {
       DFSnackBar.open('개인정보가 등록되지 않은 계정입니다. 디미인증에서 먼저 등록해주세요.');
       await Future.delayed(const Duration(seconds: 2));
@@ -69,7 +78,15 @@ class LoginPageController extends GetxController {
 
       DFSnackBar.open('로그인 중입니다...');
 
-      await authService.loginWithGoogleCallback(code);
+      bool success = await authService.loginWithGoogleCallback(code);
+
+      if(success && authService.isLoginSuccess) {
+        if (authService.isPersonalInfoRegistered) {
+          Get.offAllNamed(Routes.MAIN);
+        } else {
+          Get.offAllNamed(Routes.SIGNUP);
+        }
+      }
     } on PersonalInformationNotRegisteredException {
       DFSnackBar.open('개인정보가 등록되지 않은 계정입니다. 디미인증에서 먼저 등록해주세요.');
       await Future.delayed(const Duration(seconds: 2));

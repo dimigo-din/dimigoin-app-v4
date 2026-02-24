@@ -8,11 +8,11 @@ import 'package:get/get.dart';
 
 import 'package:dimigoin_app_v4/app/pages/home/page.dart';
 import 'package:dimigoin_app_v4/app/pages/dorm/page.dart';
-import 'package:dimigoin_app_v4/app/pages/laundry/page.dart';
+import 'package:dimigoin_app_v4/app/pages/calendar/page.dart';
 import 'package:dimigoin_app_v4/app/pages/others/page.dart';
 import 'package:dimigoin_app_v4/app/pages/home/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/dorm/binding.dart';
-import 'package:dimigoin_app_v4/app/pages/laundry/binding.dart';
+import 'package:dimigoin_app_v4/app/pages/calendar/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/others/binding.dart';
 
 import 'widgets/bottom_nav_bar.dart';
@@ -38,7 +38,7 @@ class MainPageController extends GetxController {
         DormPageBinding().dependencies();
         break;
       case 3:
-        LaundryPageBinding().dependencies();
+        CalendarPageBinding().dependencies();
         break;
       case 4:
         OthersPageBinding().dependencies();
@@ -68,7 +68,7 @@ class MainPage extends StatelessWidget {
     NavItemData('assets/icons/menu/home.svg', '홈'),
     NavItemData('assets/icons/menu/meal.svg', '급식'),
     NavItemData('assets/icons/menu/office.svg', '생활관'),
-    NavItemData('assets/icons/menu/washer.svg', '일정'),
+    NavItemData('assets/icons/menu/calendar.svg', '일정'),
     NavItemData('assets/icons/menu/others.svg', '더보기'),
   ];
 
@@ -76,7 +76,7 @@ class MainPage extends StatelessWidget {
     () => HomePage(),
     () => MealPage(),
     () => DormPage(),
-    () => LaundryPage(),
+    () => CalendarPage(),
     () => OthersPage(),
   ];
 

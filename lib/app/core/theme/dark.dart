@@ -94,6 +94,13 @@ class DFDarkThemeColors extends DFColors {
           syntaxConstant: const Color(0xFF057FFF),
           syntaxOperator: const Color(0xFFB756E8),
           syntaxKeyword: const Color(0xFFFF325A),
+
+          // Calendar
+          calenarExam: const Color(0xFF5B59DE),
+          calendarHome: const Color(0xFF32CC58),
+          calendarEvent: const Color(0xFFF5C905),
+          calendarVacation: const Color(0xFF057FFF),
+          calendarStay: const Color(0xFFFF4035),
         );
 }
 
