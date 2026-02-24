@@ -108,6 +108,17 @@ class _DFInputState extends State<DFInput> {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant DFInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.controller == null) {
+      if (widget.content != oldWidget.content) {
+        _controller.text = widget.content ?? '';
+      }
+    }
+  }
+
   void _updateDisplayText() {
     String text = '';
     

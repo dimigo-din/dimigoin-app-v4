@@ -37,18 +37,18 @@ class Frigo {
   final String week;
   final FrigoTiming timing;
   final String reason;
-  final String auditReason;
-  final bool approved;
-  final FrigoUser user;
+  final String? auditReason;
+  final bool? approved;
+  final String userId;
 
   Frigo({
     required this.id,
     required this.week,
     required this.timing,
     required this.reason,
-    required this.auditReason,
-    required this.approved,
-    required this.user,
+    this.auditReason,
+    this.approved,
+    required this.userId,
   });
 
   factory Frigo.fromJson(Map<String, dynamic> json) => _$FrigoFromJson(json);

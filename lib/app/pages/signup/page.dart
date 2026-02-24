@@ -58,10 +58,11 @@ class SignupPage extends GetView<SignupPageController> {
                         inputs: [
                           DFOptionPicker(
                             type: DFOptionPickerType.sextuple,
+                            currentIndex: controller.selectedGrade.value,
                             options: [
-                              DFOption(label: "1학년"),
-                              DFOption(label: "2학년"),
-                              DFOption(label: "3학년"),
+                              DFOptionData(label: "1학년"),
+                              DFOptionData(label: "2학년"),
+                              DFOptionData(label: "3학년"),
                             ],
                             onChanged: (index) {
                               controller.selectedGrade.value = index;
@@ -76,13 +77,14 @@ class SignupPage extends GetView<SignupPageController> {
                         inputs: [
                           DFOptionPicker(
                             type: DFOptionPickerType.sextuple,
+                            currentIndex: controller.selectedClass.value,
                             options: [
-                              DFOption(label: "1반"),
-                              DFOption(label: "2반"),
-                              DFOption(label: "3반"),
-                              DFOption(label: "4반"),
-                              DFOption(label: "5반"),
-                              DFOption(label: "6반"),
+                              DFOptionData(label: "1반"),
+                              DFOptionData(label: "2반"),
+                              DFOptionData(label: "3반"),
+                              DFOptionData(label: "4반"),
+                              DFOptionData(label: "5반"),
+                              DFOptionData(label: "6반"),
                             ],
                             onChanged: (index) {
                               controller.selectedClass.value = index;
@@ -97,9 +99,10 @@ class SignupPage extends GetView<SignupPageController> {
                         inputs: [
                           DFOptionPicker(
                             type: DFOptionPickerType.doubleHorizontal,
+                            currentIndex: controller.selectedGender.value,
                             options: [
-                              DFOption(label: "남"),
-                              DFOption(label: "여"),
+                              DFOptionData(label: "남"),
+                              DFOptionData(label: "여"),
                             ],
                             onChanged: (index) {
                               controller.selectedGender.value = index;

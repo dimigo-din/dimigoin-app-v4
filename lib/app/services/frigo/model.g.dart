@@ -23,9 +23,9 @@ Frigo _$FrigoFromJson(Map<String, dynamic> json) => Frigo(
   week: json['week'] as String,
   timing: $enumDecode(_$FrigoTimingEnumMap, json['timing']),
   reason: json['reason'] as String,
-  auditReason: json['audit_reason'] as String,
-  approved: json['approved'] as bool,
-  user: FrigoUser.fromJson(json['user'] as Map<String, dynamic>),
+  auditReason: json['audit_reason'] as String?,
+  approved: json['approved'] as bool?,
+  userId: json['user_id'] as String,
 );
 
 Map<String, dynamic> _$FrigoToJson(Frigo instance) => <String, dynamic>{
@@ -35,7 +35,7 @@ Map<String, dynamic> _$FrigoToJson(Frigo instance) => <String, dynamic>{
   'reason': instance.reason,
   'audit_reason': instance.auditReason,
   'approved': instance.approved,
-  'user': instance.user,
+  'user_id': instance.userId,
 };
 
 const _$FrigoTimingEnumMap = {
