@@ -33,9 +33,7 @@ class AuthService extends GetxController {
     final u = _user.value;
     if (u == null) return false;
 
-    return u.userGrade >= 1 &&
-          u.userClass >= 1 &&
-          u.gender.isNotEmpty;
+    return u!.userGrade != null && u!.userClass != null && u!.gender != null && u.gender!.isNotEmpty;
   }
 
   final Completer<void> _initCompleter = Completer<void>();
@@ -215,9 +213,9 @@ class AuthService extends GetxController {
       id: decode['id'].toString(),
       profileUrl: decode['picture'].toString(),
       name: decode['name'].toString(),
-      userGrade: int.parse(decode['grade'].toString()),
-      userClass: int.parse(decode['class'].toString()),
-      gender: decode['gender'].toString(),
+      userGrade: decode['grade'] != null ? int.parse(decode['grade'].toString()) : null,
+      userClass: decode['class'] != null ? int.parse(decode['class'].toString()) : null,
+      gender: decode['gender'] != null ? decode['gender'].toString() : null,
     );
 
     await AuthStorage.savePersonalInformation(user);
@@ -254,7 +252,7 @@ class AuthService extends GetxController {
     return true;
   }
 
-  Future<void> signUpPersonalInformation(int grade, int classNum, String gender) async {
+  Future<bool> signUpPersonalInformation(int grade, int classNum, String gender) async {
     try {
       final token = await repository.signUpPersonalInformation(grade, classNum, gender);
 
@@ -262,6 +260,8 @@ class AuthService extends GetxController {
     } catch (e) {
       rethrow;
     }
+
+    return true;
   }
 
   Future<void> logout() async {

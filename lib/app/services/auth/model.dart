@@ -41,17 +41,17 @@ class LoginToken {
 class PersonalInformation {
   String id;
   String name;
-  int userGrade;
-  int userClass;
-  String gender;
+  int? userGrade;
+  int? userClass;
+  String? gender;
   String? profileUrl;
 
   PersonalInformation({
     required this.id,
     required this.name,
-    required this.userGrade,
-    required this.userClass,
-    required this.gender,
+    this.userGrade,
+    this.userClass,
+    this.gender,
     this.profileUrl,
   });
 

@@ -37,9 +37,24 @@ class AuthStorage {
     await _storage.write(key: _keyPersonalInformationId, value: info.id);
     await _storage.write(key: _keyUserImageURL, value: info.profileUrl);
     await _storage.write(key: _keyPersonalInformationName, value: info.name);
-    await _storage.write(key: _keyPersonalInformationGrade, value: info.userGrade.toString());
-    await _storage.write(key: _keyPersonalInformationClass, value: info.userClass.toString());
-    await _storage.write(key: _keyPersonalInformationGender, value: info.gender);
+
+    if (info.userGrade != null) {
+      await _storage.write(key: _keyPersonalInformationGrade, value: info.userGrade.toString());
+    } else {
+      await _storage.delete(key: _keyPersonalInformationGrade);
+    }
+
+    if (info.userClass != null) {
+      await _storage.write(key: _keyPersonalInformationClass, value: info.userClass.toString());
+    } else {
+      await _storage.delete(key: _keyPersonalInformationClass);
+    }
+
+    if (info.gender != null) {
+      await _storage.write(key: _keyPersonalInformationGender, value: info.gender);
+    } else {
+      await _storage.delete(key: _keyPersonalInformationGender);
+    }
   }
 
   static Future<void> saveDeviceId(String deviceId) async {
@@ -61,14 +76,14 @@ class AuthStorage {
     final profileUrl = allValues[_keyUserImageURL];
     final id = allValues[_keyPersonalInformationId];
 
-    if (name != null && grade != null && classNumber != null && gender != null && profileUrl != null && id != null) {
+    if (name != null && profileUrl != null && id != null) {
       return PersonalInformation(
         id: id,
         name: name,
-        userGrade: int.parse(grade),
-        userClass: int.parse(classNumber),
-        gender: gender,
         profileUrl: profileUrl,
+        userGrade: grade != null ? int.parse(grade) : null,
+        userClass: classNumber != null ? int.parse(classNumber) : null,
+        gender: gender,
       );
     }
     return null;

@@ -28,9 +28,9 @@ PersonalInformation _$PersonalInformationFromJson(Map<String, dynamic> json) =>
     PersonalInformation(
       id: json['id'] as String,
       name: json['name'] as String,
-      userGrade: (json['userGrade'] as num).toInt(),
-      userClass: (json['userClass'] as num).toInt(),
-      gender: json['gender'] as String,
+      userGrade: (json['userGrade'] as num?)?.toInt(),
+      userClass: (json['userClass'] as num?)?.toInt(),
+      gender: json['gender'] as String?,
       profileUrl: json['profileUrl'] as String?,
     );
 
