@@ -213,7 +213,7 @@ class _DFCalendarState extends State<DFCalendar> {
           ),
           headerVisible: false,
           calendarStyle: const CalendarStyle(
-            outsideDaysVisible: true,
+            outsideDaysVisible: false,
           ),
           rowHeight: 60,
         ),
