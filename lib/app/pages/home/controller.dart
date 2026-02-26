@@ -29,11 +29,11 @@ class HomePageController extends GetxController {
 
   Future<void> getUserTimetable() async {
     try { 
-      int userGrade = authService.user!.userGrade;
-      int userClass = authService.user!.userClass;
+      int userGrade = authService.user!.userGrade!;
+      int userClass = authService.user!.userClass!;
 
       final fetchedTimetable =
-          await _userService.getTimeline(userGrade, userClass);
+          await _userService.getTimeline(userGrade!, userClass);
 
       timetable.value = fetchedTimetable;
     } catch (e) {
