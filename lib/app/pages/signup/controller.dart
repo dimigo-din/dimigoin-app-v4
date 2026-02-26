@@ -5,7 +5,7 @@ import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:get/get.dart';
 
 class SignupPageController extends GetxController {
-  final authService = AuthService();
+  late final AuthService authService;
 
   final RxInt selectedGrade = (-1).obs;
   final RxInt selectedClass = (-1).obs;
@@ -16,6 +16,7 @@ class SignupPageController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    authService = Get.find<AuthService>();
   }
 
   void checkCanSubmit() {
@@ -30,21 +31,13 @@ class SignupPageController extends GetxController {
     try { 
       if (!canSubmit.value) return;
 
-      bool success = await authService.signUpPersonalInformation(
+      await authService.signUpPersonalInformation(
         selectedGrade.value + 1,
         selectedClass.value + 1,
         selectedGender.value == 0 ? "male" : "female",
       );
 
-      if(success && authService.isLoginSuccess) {
-        if (authService.isPersonalInfoRegistered) {
-          Get.offAllNamed(Routes.MAIN);
-        } else {
-          DFSnackBar.error("개인정보 등록 중 오류가 발생했습니다.");
-          authService.logout();
-          Get.offAllNamed('/login');
-        }
-      }
+      Get.offAllNamed(Routes.MAIN);
     } on PersonalInformationAlreadyRegisteredException {
       DFSnackBar.error("개인정보가 이미 등록되어 있습니다.\n다시 로그인해주세요.");
       authService.logout();
