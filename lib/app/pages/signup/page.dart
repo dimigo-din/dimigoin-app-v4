@@ -56,7 +56,7 @@ class SignupPage extends GetView<SignupPageController> {
                       DFInputField(
                         title: "학년 선택",
                         inputs: [
-                          DFOptionPicker(
+                          Obx(() => DFOptionPicker(
                             type: DFOptionPickerType.sextuple,
                             currentIndex: controller.selectedGrade.value,
                             options: [
@@ -68,14 +68,14 @@ class SignupPage extends GetView<SignupPageController> {
                               controller.selectedGrade.value = index;
                               controller.checkCanSubmit();
                             },
-                          ),
+                          )),
                         ],
                       ),
                       const SizedBox(height: DFSpacing.spacing600),
                       DFInputField(
                         title: "반 선택",
                         inputs: [
-                          DFOptionPicker(
+                          Obx(() => DFOptionPicker(
                             type: DFOptionPickerType.sextuple,
                             currentIndex: controller.selectedClass.value,
                             options: [
@@ -90,14 +90,14 @@ class SignupPage extends GetView<SignupPageController> {
                               controller.selectedClass.value = index;
                               controller.checkCanSubmit();
                             },
-                          ),
+                          )),
                         ],
                       ),
                       const SizedBox(height: DFSpacing.spacing600),
                       DFInputField(
                         title: "성별 선택",
                         inputs: [
-                          DFOptionPicker(
+                          Obx(() => DFOptionPicker(
                             type: DFOptionPickerType.doubleHorizontal,
                             currentIndex: controller.selectedGender.value,
                             options: [
@@ -108,7 +108,7 @@ class SignupPage extends GetView<SignupPageController> {
                               controller.selectedGender.value = index;
                               controller.checkCanSubmit();
                             },
-                          ),
+                          )),
                         ],
                       ),
                     ],
