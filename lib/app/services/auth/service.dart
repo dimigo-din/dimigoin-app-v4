@@ -215,9 +215,9 @@ class AuthService extends GetxController {
       id: decode['id'].toString(),
       profileUrl: decode['picture'].toString(),
       name: decode['name'].toString(),
-      userGrade: int.parse(decode['grade'].toString()),
-      userClass: int.parse(decode['class'].toString()),
-      gender: decode['gender'].toString(),
+      userGrade: decode['grade'] != null ? int.parse(decode['grade'].toString()) : null,
+      userClass: decode['class'] != null ? int.parse(decode['class'].toString()) : null,
+      gender: decode['gender'] != null ? decode['gender'].toString() : null,
     );
 
     await AuthStorage.savePersonalInformation(user);

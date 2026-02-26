@@ -56,6 +56,7 @@ class LoginPageController extends GetxController {
     } catch (e) {
       developer.log('Error in loginWithGoogle: $e');
       DFSnackBar.open('알 수 없는 오류가 발생했습니다. 다시 시도해주세요.');
+      rethrow;
     } finally {
       isLoginProcessing.value = false;
     }
