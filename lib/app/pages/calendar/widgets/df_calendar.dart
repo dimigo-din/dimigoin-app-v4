@@ -74,7 +74,7 @@ class _DFCalendarState extends State<DFCalendar> {
           Text(
             '${day.day}',
             style: textTheme.callout.copyWith(
-              color: colorTheme.solidWhite,
+              color: colorTheme.contentStandardPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),

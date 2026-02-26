@@ -141,7 +141,7 @@ class DFValueList extends StatelessWidget {
                   color: switch (theme) {
                     DFValueListTheme.disabled => colorTheme.contentStandardQuaternary,
                     DFValueListTheme.outlined => colorTheme.contentStandardSecondary,
-                    DFValueListTheme.active => colorTheme.contentStandardSecondary,
+                    DFValueListTheme.active => colorTheme.solidWhite,
                   },
                   fontWeight: FontWeight.w400,
                 ),
