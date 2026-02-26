@@ -252,7 +252,7 @@ class AuthService extends GetxController {
     return true;
   }
 
-  Future<void> signUpPersonalInformation(int grade, int classNum, String gender) async {
+  Future<bool> signUpPersonalInformation(int grade, int classNum, String gender) async {
     try {
       final token = await repository.signUpPersonalInformation(grade, classNum, gender);
 
@@ -260,6 +260,8 @@ class AuthService extends GetxController {
     } catch (e) {
       rethrow;
     }
+
+    return true;
   }
 
   Future<void> logout() async {
