@@ -33,9 +33,7 @@ class AuthService extends GetxController {
     final u = _user.value;
     if (u == null) return false;
 
-    return u!.userGrade! >= 1 &&
-          u!.userClass! >= 1 &&
-          u!.gender!.isNotEmpty;
+    return u!.userGrade != null && u!.userClass != null && u!.gender != null && u.gender!.isNotEmpty;
   }
 
   final Completer<void> _initCompleter = Completer<void>();
