@@ -17,7 +17,7 @@ class LoginPageController extends GetxController {
   void onInit() {
     super.onInit();
 
-    if(kIsWeb) {
+    if (kIsWeb) {
       // 위젯이 빌드된 후 실행되도록 지연
       Future.delayed(Duration.zero, () {
         loginWithGoogleCallback();
@@ -26,12 +26,14 @@ class LoginPageController extends GetxController {
   }
 
   void openLoginHelpPage() {
-    final Uri url = Uri.parse('https://dimigo-din.notion.site/29e98f8027c68088ae85d049398c92bf');
+    final Uri url = Uri.parse(
+      'https://dimigo-din.notion.site/29e98f8027c68088ae85d049398c92bf',
+    );
     launchUrl(url, mode: LaunchMode.externalApplication);
   }
 
   Future<void> loginWithGoogle() async {
-    if(isLoginProcessing.value) {
+    if (isLoginProcessing.value) {
       return;
     }
 
@@ -40,8 +42,9 @@ class LoginPageController extends GetxController {
 
       bool success = await authService.loginWithGoogle();
 
-      if(success && authService.isLoginSuccess) {
+      if (success && authService.isLoginSuccess) {
         if (authService.isPersonalInfoRegistered) {
+          Get.until((route) => false);
           Get.offAllNamed(Routes.MAIN);
         } else {
           Get.offAllNamed(Routes.SIGNUP);
@@ -63,7 +66,7 @@ class LoginPageController extends GetxController {
   }
 
   Future<void> loginWithGoogleCallback() async {
-    if(isLoginProcessing.value) {
+    if (isLoginProcessing.value) {
       return;
     }
 
@@ -81,8 +84,9 @@ class LoginPageController extends GetxController {
 
       bool success = await authService.loginWithGoogleCallback(code);
 
-      if(success && authService.isLoginSuccess) {
+      if (success && authService.isLoginSuccess) {
         if (authService.isPersonalInfoRegistered) {
+          Get.until((route) => false);
           Get.offAllNamed(Routes.MAIN);
         } else {
           Get.offAllNamed(Routes.SIGNUP);
