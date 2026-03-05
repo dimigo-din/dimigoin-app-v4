@@ -20,45 +20,52 @@ class MealPage extends GetView<MealPageController> {
         top: false,
         child: Scaffold(
           backgroundColor: colorTheme.backgroundStandardSecondary,
-          body: Obx(() {
-            return Padding(
-              padding: const EdgeInsets.only(
-                left: DFSpacing.spacing400,
-                right: DFSpacing.spacing400,
-                bottom: DFSpacing.spacing500),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: DFSpacing.spacing200),
-                        DFSegmentControl(
-                          segments: controller.mealDays.map((day) => DFSegment(label: day.dayLabel)).toList(),
-                          initialIndex: controller.selectedDayIndex.value,
-                          onChanged: controller.selectDay,
-                        ),
-                        const SizedBox(height: DFSpacing.spacing550),
-                        if (controller.isLoading.value) 
-                          const Center(child: CircularProgressIndicator())
-                        else
-                          ...controller.meals.map((meal) => _MealCard(meal: meal)),
-                      ],
+          body: SingleChildScrollView(
+            child: Obx(() {
+              return Padding(
+                padding: const EdgeInsets.only(
+                  left: DFSpacing.spacing400,
+                  right: DFSpacing.spacing400,
+                  bottom: DFSpacing.spacing500,
+                ),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: DFSpacing.spacing200),
+                          DFSegmentControl(
+                            segments: controller.mealDays
+                                .map((day) => DFSegment(label: day.dayLabel))
+                                .toList(),
+                            initialIndex: controller.selectedDayIndex.value,
+                            onChanged: controller.selectDay,
+                          ),
+                          const SizedBox(height: DFSpacing.spacing550),
+                          if (controller.isLoading.value)
+                            const Center(child: CircularProgressIndicator())
+                          else
+                            ...controller.meals.map(
+                              (meal) => _MealCard(meal: meal),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                  // SizedBox(
-                  //   width: double.infinity,
-                  //   child: DFButton(
-                  //     label: "간편식 신청",
-                  //     size: DFButtonSize.large,
-                  //     theme: DFButtonTheme.accent,
-                  //     style: DFButtonStyle.primary,
-                  //     onPressed: () {},
-                  //   ),
-                  // ),
-                ],
-              ),
-            );
-          }),
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   child: DFButton(
+                    //     label: "간편식 신청",
+                    //     size: DFButtonSize.large,
+                    //     theme: DFButtonTheme.accent,
+                    //     style: DFButtonStyle.primary,
+                    //     onPressed: () {},
+                    //   ),
+                    // ),
+                  ],
+                ),
+              );
+            }),
+          ),
         ),
       ),
     );
@@ -80,8 +87,17 @@ class _MealCard extends StatelessWidget {
             ? DFValueListTheme.active
             : DFValueListTheme.outlined,
         title: meal.title,
-        subTitle: meal.time != "" ? "${meal.time.split(':').first}시 ${meal.time.split(':').last}분" : "",
-        content: meal.regular.isEmpty && meal.simple.isEmpty ? "급식 정보가 없습니다." : (meal.regular.isEmpty ? meal.simple.join(", ") : meal.regular.join(", ") + (meal.simple.isEmpty ? "" : "\n<간편식> ${meal.simple.join(", ")}")),
+        subTitle: meal.time != ""
+            ? "${meal.time.split(':').first}시 ${meal.time.split(':').last}분"
+            : "",
+        content: meal.regular.isEmpty && meal.simple.isEmpty
+            ? "급식 정보가 없습니다."
+            : (meal.regular.isEmpty
+                  ? meal.simple.join(", ")
+                  : meal.regular.join(", ") +
+                        (meal.simple.isEmpty
+                            ? ""
+                            : "\n<간편식> ${meal.simple.join(", ")}")),
       ),
     );
   }

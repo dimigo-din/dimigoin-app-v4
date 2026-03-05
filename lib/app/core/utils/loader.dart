@@ -31,7 +31,7 @@ class AppLoader {
           if (siteKey != null && siteKey.isNotEmpty) {
             unawaited(
               FirebaseAppCheck.instance
-                  .activate(providerWeb: ReCaptchaV3Provider(siteKey)),
+                  .activate(providerWeb: ReCaptchaEnterpriseProvider(siteKey)),
             );
           }
         } else {
