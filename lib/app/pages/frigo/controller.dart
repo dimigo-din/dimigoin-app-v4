@@ -4,6 +4,7 @@ import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/frigo/model.dart';
 import 'package:dimigoin_app_v4/app/services/frigo/service.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 List<String> frigoTiming = [
@@ -31,7 +32,7 @@ class FrigoController extends GetxController {
 
   final Rx<Frigo?> frigoApplication = Rx<Frigo?>(null);
   final RxInt selectedFrigoTimingIndex = (-1).obs;
-  final RxString frigoReason = ''.obs;
+  final TextEditingController frigoReasonTEC = TextEditingController();
 
   final RxBool isApplied = false.obs;
 
@@ -46,9 +47,11 @@ class FrigoController extends GetxController {
       final application = await frigoService.getFrigoApplication();
 
       frigoApplication.value = application;
-      frigoReason.value = application.reason;
-      selectedFrigoTimingIndex.value = frigoTiming.indexOf(_getFrigoTimingValue(application.timing));
-      
+      frigoReasonTEC.text = application.reason;
+      selectedFrigoTimingIndex.value = frigoTiming.indexOf(
+        _getFrigoTimingValue(application.timing),
+      );
+
       isApplied.value = true;
     } catch (e) {
       frigoApplication.value = null;
@@ -60,7 +63,8 @@ class FrigoController extends GetxController {
 
   Future<void> addFrigoApplication() async {
     try {
-      if (frigoReason.value.isEmpty) {
+      final reason = frigoReasonTEC.text.trim();
+      if (reason.isEmpty) {
         DFSnackBar.error("금요귀가 신청 사유를 입력해주세요.");
         return;
       }
@@ -73,7 +77,7 @@ class FrigoController extends GetxController {
       DFSnackBar.info("금요귀가 신청 중입니다...");
       await frigoService.addFrigoApplication(
         frigoTiming[selectedFrigoTimingIndex.value],
-        frigoReason.value,
+        reason,
       );
       await fetchFrigoApplication();
       DFSnackBar.success("금요귀가 신청이 완료되었습니다.");
@@ -105,5 +109,11 @@ class FrigoController extends GetxController {
       DFSnackBar.error("금요귀가 신청 취소 중 오류가 발생했습니다. 다시 시도해주세요.");
       return;
     }
+  }
+
+  @override
+  void onClose() {
+    frigoReasonTEC.dispose();
+    super.onClose();
   }
 }

@@ -30,27 +30,19 @@ class MealPage extends GetView<MealPageController> {
                 ),
                 child: Column(
                   children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          const SizedBox(height: DFSpacing.spacing200),
-                          DFSegmentControl(
-                            segments: controller.mealDays
-                                .map((day) => DFSegment(label: day.dayLabel))
-                                .toList(),
-                            initialIndex: controller.selectedDayIndex.value,
-                            onChanged: controller.selectDay,
-                          ),
-                          const SizedBox(height: DFSpacing.spacing550),
-                          if (controller.isLoading.value)
-                            const Center(child: CircularProgressIndicator())
-                          else
-                            ...controller.meals.map(
-                              (meal) => _MealCard(meal: meal),
-                            ),
-                        ],
-                      ),
+                    const SizedBox(height: DFSpacing.spacing200),
+                    DFSegmentControl(
+                      segments: controller.mealDays
+                          .map((day) => DFSegment(label: day.dayLabel))
+                          .toList(),
+                      initialIndex: controller.selectedDayIndex.value,
+                      onChanged: controller.selectDay,
                     ),
+                    const SizedBox(height: DFSpacing.spacing550),
+                    if (controller.isLoading.value)
+                      const Center(child: CircularProgressIndicator())
+                    else
+                      ...controller.meals.map((meal) => _MealCard(meal: meal)),
                     // SizedBox(
                     //   width: double.infinity,
                     //   child: DFButton(

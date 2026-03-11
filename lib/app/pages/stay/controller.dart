@@ -19,7 +19,7 @@ class StayPageController extends GetxController {
   final Rx<Stay?> selectedStay = Rx<Stay?>(null);
 
   final RxList<StayApply> stayApplyList = <StayApply>[].obs;
-  
+
   final RxList<Outing> currentStayOutings = <Outing>[].obs;
   final RxInt selectedStayOutingDay = 0.obs;
 
@@ -36,11 +36,17 @@ class StayPageController extends GetxController {
   final RxBool isApplied = false.obs;
 
   void updateIsApplied() {
-    final currentStayId = stayList[selectedStayIndex.value].id;
-    
-    isApplied.value = stayApplyList.firstWhereOrNull(
-      (application) => application.stay?.id == currentStayId,
-    ) != null;
+    final currentStayId = selectedStay.value?.id;
+    if (currentStayId == null) {
+      isApplied.value = false;
+      return;
+    }
+
+    isApplied.value =
+        stayApplyList.firstWhereOrNull(
+          (application) => application.stay?.id == currentStayId,
+        ) !=
+        null;
   }
 
   void resetOutingForm() {
@@ -53,8 +59,12 @@ class StayPageController extends GetxController {
   }
 
   void initOutingForm(Outing o) {
-    outingFrom.value = o.from != null ? TimeOfDay.fromDateTime(OutingDateUtils.parseServerDateTime(o.from!)) : null;
-    outingTo.value = o.to != null ? TimeOfDay.fromDateTime(OutingDateUtils.parseServerDateTime(o.to!)) : null;
+    outingFrom.value = o.from != null
+        ? TimeOfDay.fromDateTime(OutingDateUtils.parseServerDateTime(o.from!))
+        : null;
+    outingTo.value = o.to != null
+        ? TimeOfDay.fromDateTime(OutingDateUtils.parseServerDateTime(o.to!))
+        : null;
     outingReasonTEC.text = o.reason ?? '';
     breakfastCancel.value = o.breakfastCancel ?? false;
     lunchCancel.value = o.lunchCancel ?? false;
@@ -77,28 +87,86 @@ class StayPageController extends GetxController {
     await fetchStayList();
   }
 
-  Future<void> fetchStayList([int? index]) async {
-    final stays = await stayService.getStay();
-
-    
-    stayList.assignAll(stays);
-
-    if (stayList.isNotEmpty) {
-      if (index != null && index < stays.length) {
-        selectStay(stayList[index]);
-      } else {
-        selectStay(stayList[0]);
-      }
-    }
+  DateTime _normalizeKstDate(DateTime dateTime) {
+    final kstDate = dateTime.toUtc().add(const Duration(hours: 9));
+    return DateTime(kstDate.year, kstDate.month, kstDate.day);
   }
 
-  void selectStay(Stay stay) async {
+  DateTime _weekStart(DateTime date) {
+    return date.subtract(Duration(days: date.weekday - DateTime.monday));
+  }
+
+  bool _isSameDay(DateTime left, DateTime right) {
+    return left.year == right.year &&
+        left.month == right.month &&
+        left.day == right.day;
+  }
+
+  DateTime _parseStayDate(String rawDate) {
+    final datePrefix = RegExp(r'^(\d{4})-(\d{2})-(\d{2})').firstMatch(rawDate);
+    if (datePrefix != null) {
+      return DateTime(
+        int.parse(datePrefix.group(1)!),
+        int.parse(datePrefix.group(2)!),
+        int.parse(datePrefix.group(3)!),
+      );
+    }
+
+    final parsed = DateTime.parse(rawDate);
+    return _normalizeKstDate(parsed);
+  }
+
+  DateTime _effectiveStayBaseDate() {
+    final todayKst = _normalizeKstDate(DateTime.now());
+    if (todayKst.weekday == DateTime.sunday) {
+      return todayKst.add(const Duration(days: 1));
+    }
+    return todayKst;
+  }
+
+  Future<void> fetchStayList([String? preferredStayId]) async {
+    final stays = await stayService.getStay();
+    final sortedStays = [...stays]
+      ..sort(
+        (a, b) =>
+            _parseStayDate(b.stayFrom).compareTo(_parseStayDate(a.stayFrom)),
+      );
+
+    final targetWeekStart = _weekStart(_effectiveStayBaseDate());
+    final sameWeekStays = sortedStays.where((stay) {
+      final stayWeekStart = _weekStart(_parseStayDate(stay.stayFrom));
+      return _isSameDay(stayWeekStart, targetWeekStart);
+    }).toList();
+
+    final visibleStays = sameWeekStays.isNotEmpty ? sameWeekStays : sortedStays;
+    stayList.assignAll(visibleStays);
+
+    if (stayList.isEmpty) {
+      selectedStayIndex.value = 0;
+      selectedStay.value = null;
+      selectedSeat.value = '';
+      noSeatReason.text = '';
+      isApplied.value = false;
+      currentStayOutings.clear();
+      return;
+    }
+
+    final selected = preferredStayId == null
+        ? null
+        : stayList.firstWhereOrNull((stay) => stay.id == preferredStayId);
+
+    await selectStay(selected ?? stayList[0]);
+  }
+
+  Future<void> selectStay(Stay stay) async {
     selectedStayIndex.value = stayList.indexOf(stay);
     selectedStay.value = stay;
-    
+
     selectedStayOutingDay.value = 0;
 
-    final application = stayApplyList.firstWhereOrNull((application) => application.stay?.id == stay.id);
+    final application = stayApplyList.firstWhereOrNull(
+      (application) => application.stay?.id == stay.id,
+    );
     if (application != null) {
       selectedSeat.value = application.staySeat;
     } else {
@@ -117,7 +185,7 @@ class StayPageController extends GetxController {
   }
 
   Future<void> addStayApplication() async {
-    if(selectedSeat.value == '' && noSeatReason.text.isEmpty) {
+    if (selectedSeat.value == '' && noSeatReason.text.isEmpty) {
       DFSnackBar.info("잔류 좌석을 선택해주세요.");
       return;
     }
@@ -131,7 +199,7 @@ class StayPageController extends GetxController {
         noSeatReason: noSeatReason.text,
       );
       await fetchStayApply();
-      await fetchStayList(selectedStayIndex.value);
+      await fetchStayList(selectedStay.value?.id);
       Get.find<HomePageController>().getUserApply();
       DFSnackBar.success("잔류 신청이 완료되었습니다.");
     } on StayNotInApplyPeriodException {
@@ -156,10 +224,10 @@ class StayPageController extends GetxController {
 
   Future<void> deleteStayApplication() async {
     final currentStayApply = stayApplyList.firstWhereOrNull(
-      (application) => application.stay?.id == selectedStay.value!.id
+      (application) => application.stay?.id == selectedStay.value!.id,
     );
 
-    if(currentStayApply == null) {
+    if (currentStayApply == null) {
       DFSnackBar.error("잔류 신청 정보를 찾을 수 없습니다.");
       return;
     }
@@ -168,7 +236,7 @@ class StayPageController extends GetxController {
       DFSnackBar.info("잔류 신청 취소 중입니다...");
       await stayService.deleteStayApplication(currentStayApply.id);
       await fetchStayApply();
-      await fetchStayList(selectedStayIndex.value);
+      await fetchStayList(selectedStay.value?.id);
       await fetchCurrentStayOutings();
       Get.find<HomePageController>().getUserApply();
       DFSnackBar.success("잔류 신청이 취소되었습니다.");
@@ -191,10 +259,10 @@ class StayPageController extends GetxController {
 
   Future<void> fetchCurrentStayOutings() async {
     final currentStayApply = stayApplyList.firstWhereOrNull(
-      (application) => application.stay?.id == selectedStay.value!.id
+      (application) => application.stay?.id == selectedStay.value!.id,
     );
 
-    if(currentStayApply == null) {
+    if (currentStayApply == null) {
       currentStayOutings.clear();
       return;
     }
@@ -211,9 +279,11 @@ class StayPageController extends GetxController {
   Future<void> addStayOuting(Outing outing) async {
     try {
       DFSnackBar.info("외출 신청 중입니다...");
-      
-      final currentStayApply = stayApplyList.firstWhereOrNull((element) => element.stay?.id == selectedStay.value!.id);
-      
+
+      final currentStayApply = stayApplyList.firstWhereOrNull(
+        (element) => element.stay?.id == selectedStay.value!.id,
+      );
+
       if (currentStayApply == null) {
         DFSnackBar.error("잔류 신청 정보를 찾을 수 없습니다.");
         return;
@@ -281,5 +351,4 @@ class StayPageController extends GetxController {
       rethrow;
     }
   }
-
 }
