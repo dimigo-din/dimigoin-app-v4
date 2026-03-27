@@ -17,7 +17,7 @@ class LaundryService extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    initialize(); 
+    initialize();
   }
 
   Future<void> initialize() async {
