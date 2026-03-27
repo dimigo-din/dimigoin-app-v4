@@ -40,11 +40,11 @@ class LaundryRepository {
     }
   }
 
-  Future<LaundryApply> applyLaundry(String timeId, String machineId) async {
+  Future applyLaundry(String timeId, String machineId) async {
     String url = '/student/laundry';
 
     try {
-      DFHttpResponse response = await api.post(
+      await api.post(
         url,
         data: {
           'time': timeId,
@@ -53,7 +53,7 @@ class LaundryRepository {
         middlewares: [AppCheckMiddleware()],
       );
 
-      return LaundryApply.fromJson(response.data['data']);
+      return;
     } on DioException catch (e) {
       if (e.response?.data['code'] == 'LaundryApplyIsAfterEightAM') {
         throw LaundryApplyIsAfterEightAMException();
