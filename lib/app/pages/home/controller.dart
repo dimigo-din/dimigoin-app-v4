@@ -18,7 +18,7 @@ class HomePageController extends GetxController {
   final Rx<LaundryApply?> laundryApply = Rx<LaundryApply?>(null);
 
   HomePageController({UserService? userService})
-      : _userService = userService ?? UserService();
+    : _userService = userService ?? UserService();
 
   @override
   void onInit() {
@@ -28,12 +28,14 @@ class HomePageController extends GetxController {
   }
 
   Future<void> getUserTimetable() async {
-    try { 
+    try {
       int userGrade = authService.user!.userGrade!;
       int userClass = authService.user!.userClass!;
 
-      final fetchedTimetable =
-          await _userService.getTimeline(userGrade!, userClass);
+      final fetchedTimetable = await _userService.getTimeline(
+        userGrade,
+        userClass,
+      );
 
       timetable.value = fetchedTimetable;
     } catch (e) {
@@ -48,10 +50,11 @@ class HomePageController extends GetxController {
       stayApply.value = userApply.stayApply;
       laundryApply.value = userApply.laundryApply;
 
-      log('User apply retrieved: Stay - ${stayApply.value?.toJson()}, Laundry - ${laundryApply.value?.toJson()}');
+      log(
+        'User apply retrieved: Stay - ${stayApply.value?.toJson()}, Laundry - ${laundryApply.value?.toJson()}',
+      );
     } catch (e) {
       log('Error retrieving user apply: $e');
     }
   }
-  
 }

@@ -13,8 +13,7 @@ class HomePage extends GetView<HomePageController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding:
-            const EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
+        padding: const EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
         child: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
           child: Column(

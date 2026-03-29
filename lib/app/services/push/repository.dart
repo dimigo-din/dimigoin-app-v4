@@ -30,10 +30,7 @@ class PushRepository {
     String url = '/student/push/subscribe';
 
     try {
-      await api.put(url, data: {
-        'deviceId': deviceId,
-        'token': fcmToken,
-      });
+      await api.put(url, data: {'deviceId': deviceId, 'token': fcmToken});
     } on DioException {
       rethrow;
     }
@@ -60,12 +57,11 @@ class PushRepository {
     try {
       DFHttpResponse response = await api.get(url);
 
-      return (response.data['data'] as Map<String, dynamic>)
-          .entries
-          .map((entry) => NotificationSubject(
-                id: entry.key,
-                description: entry.value,
-              ))
+      return (response.data['data'] as Map<String, dynamic>).entries
+          .map(
+            (entry) =>
+                NotificationSubject(id: entry.key, description: entry.value),
+          )
           .toList();
     } on DioException {
       rethrow;
@@ -76,30 +72,31 @@ class PushRepository {
     String url = '/student/push/subjects/subscribed';
 
     try {
-      DFHttpResponse response = await api.get(url, queryParameters: {
-        'deviceId': deviceId,
-      });
+      DFHttpResponse response = await api.get(
+        url,
+        queryParameters: {'deviceId': deviceId},
+      );
 
       return (response.data['data'] as List)
           .map((e) => SubscribedNotificationSubject.fromJson(e).identifier)
           .toList();
     } on DioException catch (e) {
-      if(e.response?.data['code'] == 'Resource_NotFound'){
+      if (e.response?.data['code'] == 'Resource_NotFound') {
         return [];
-      }else {
+      } else {
         rethrow;
       }
     }
   }
 
-  Future<void> updateSubscribedSubjects(String deviceId, List<String> subjects) async {
+  Future<void> updateSubscribedSubjects(
+    String deviceId,
+    List<String> subjects,
+  ) async {
     String url = '/student/push/subjects/subscribed';
 
     try {
-      await api.patch(url, data: {
-        'deviceId': deviceId,
-        'subjects': subjects,
-      });
+      await api.patch(url, data: {'deviceId': deviceId, 'subjects': subjects});
     } on DioException {
       rethrow;
     }

@@ -12,16 +12,16 @@ class WakeupService extends GetxController {
 
   AuthService authService = Get.find<AuthService>();
 
-  WakeupService({WakeupRepository? repository}) : repository = repository ?? WakeupRepository();
+  WakeupService({WakeupRepository? repository})
+    : repository = repository ?? WakeupRepository();
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    initialize(); 
+    initialize();
   }
 
-  Future<void> initialize() async {
-  }
+  Future<void> initialize() async {}
 
   Future<List<WakeupApplicationWithVote>> getWakeupApplications() async {
     try {
@@ -45,7 +45,10 @@ class WakeupService extends GetxController {
     }
   }
 
-  Future<void> voteWakeupApplication(String applicationId, bool isUpvote) async {
+  Future<void> voteWakeupApplication(
+    String applicationId,
+    bool isUpvote,
+  ) async {
     try {
       await repository.voteWakeupApplication(applicationId, isUpvote);
     } catch (e) {

@@ -24,9 +24,7 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
         child: Column(
           children: [
             _buildTodayWakeupSection(context),
-            Expanded(
-              child: _buildApplicationsList(context),
-            ),
+            Expanded(child: _buildApplicationsList(context)),
           ],
         ),
       ),
@@ -45,14 +43,21 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
           GestureDetector(
             onTap: () => controller.launchYoutubeUrl(todayWakeup.videoId),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
+              padding: const EdgeInsets.symmetric(
+                horizontal: DFSpacing.spacing400,
+              ),
               child: WakeupItem(
                 title: TextCleaner.cleanText(todayWakeup.videoTitle),
                 trailing: Text(
                   '오늘의 기상송',
-                  style: Theme.of(context).extension<DFTypography>()!.callout.copyWith(
-                    color: Theme.of(context).extension<DFColors>()!.contentStandardSecondary,
-                  ),
+                  style: Theme.of(context)
+                      .extension<DFTypography>()!
+                      .callout
+                      .copyWith(
+                        color: Theme.of(
+                          context,
+                        ).extension<DFColors>()!.contentStandardSecondary,
+                      ),
                 ),
               ),
             ),
@@ -76,7 +81,7 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
 
       return ListView.separated(
         itemCount: sortedApplications.length,
-        separatorBuilder: (_, __) => const Column(
+        separatorBuilder: (_, _) => const Column(
           children: [
             SizedBox(height: 5),
             DFDivider(size: DFDividerSize.small),
@@ -97,7 +102,9 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
         child: Text(
           '신청된 기상송이 없습니다',
           style: Theme.of(context).extension<DFTypography>()!.body.copyWith(
-            color: Theme.of(context).extension<DFColors>()!.contentStandardSecondary,
+            color: Theme.of(
+              context,
+            ).extension<DFColors>()!.contentStandardSecondary,
           ),
         ),
       ),
@@ -124,23 +131,33 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
   Widget _buildVoteButtons(WakeupApplicationWithVote application) {
     return Column(
       children: [
-        Obx(() => WakeupVoteButton(
-          count: application.up,
-          isUpvote: true,
-          onPressed: () => controller.voteWakeupApplication(application.id, true),
-          isVoted: controller.wakeupVotes.any(
-            (vote) => vote.wakeupSongApplication.id == application.id && vote.upvote == true,
+        Obx(
+          () => WakeupVoteButton(
+            count: application.up,
+            isUpvote: true,
+            onPressed: () =>
+                controller.voteWakeupApplication(application.id, true),
+            isVoted: controller.wakeupVotes.any(
+              (vote) =>
+                  vote.wakeupSongApplication.id == application.id &&
+                  vote.upvote == true,
+            ),
           ),
-        )),
+        ),
         const SizedBox(height: DFSpacing.spacing100),
-        Obx(() => WakeupVoteButton(
-          count: application.down,
-          isUpvote: false,
-          onPressed: () => controller.voteWakeupApplication(application.id, false),
-          isVoted: controller.wakeupVotes.any(
-            (vote) => vote.wakeupSongApplication.id == application.id && vote.upvote == false,
+        Obx(
+          () => WakeupVoteButton(
+            count: application.down,
+            isUpvote: false,
+            onPressed: () =>
+                controller.voteWakeupApplication(application.id, false),
+            isVoted: controller.wakeupVotes.any(
+              (vote) =>
+                  vote.wakeupSongApplication.id == application.id &&
+                  vote.upvote == false,
+            ),
           ),
-        )),
+        ),
       ],
     );
   }

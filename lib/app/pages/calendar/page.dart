@@ -32,7 +32,8 @@ class CalendarPage extends GetView<CalendarPageController> {
             padding: const EdgeInsets.only(
               left: DFSpacing.spacing400,
               right: DFSpacing.spacing400,
-              bottom: DFSpacing.spacing500),
+              bottom: DFSpacing.spacing500,
+            ),
             child: Column(
               children: [
                 DFCalendar(
@@ -56,9 +57,7 @@ class CalendarPage extends GetView<CalendarPageController> {
                   },
                 ),
                 const SizedBox(height: 10),
-                DFDivider(
-                  size: DFDividerSize.small,
-                ),
+                DFDivider(size: DFDividerSize.small),
                 const SizedBox(height: 10),
                 Expanded(
                   child: Obx(
@@ -69,16 +68,14 @@ class CalendarPage extends GetView<CalendarPageController> {
                         final event = controller.events[index];
                         final normalized = normalize(event.date);
 
-                        final isFirstOfDay = index ==
+                        final isFirstOfDay =
+                            index ==
                             controller.events.indexWhere(
                               (e) => isSameDay(e.date, event.date),
                             );
 
                         if (isFirstOfDay) {
-                          _itemKeys.putIfAbsent(
-                            normalized,
-                            () => GlobalKey(),
-                          );
+                          _itemKeys.putIfAbsent(normalized, () => GlobalKey());
                         }
 
                         return Column(
@@ -87,7 +84,10 @@ class CalendarPage extends GetView<CalendarPageController> {
                             CalendarEventRow(
                               title: event.title,
                               day: DateFormat('dd', 'ko_KR').format(event.date),
-                              weekday: DateFormat('E', 'ko_KR').format(event.date),
+                              weekday: DateFormat(
+                                'E',
+                                'ko_KR',
+                              ).format(event.date),
                               content: '하루종일',
                             ),
                             const SizedBox(height: DFSpacing.spacing500),

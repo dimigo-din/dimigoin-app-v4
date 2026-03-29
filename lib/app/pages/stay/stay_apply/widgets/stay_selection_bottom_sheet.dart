@@ -12,14 +12,11 @@ class StaySelectionBottomSheet {
   }) {
     DFAnimatedBottomSheet.show(
       context: context,
-      padding: const EdgeInsets.only(
-        left: 20,
-        right: 20,
-        bottom: 24,
-      ),
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24),
       children: [
         ...stayList.map((stay) {
-          final isSelected = stayList.isNotEmpty &&
+          final isSelected =
+              stayList.isNotEmpty &&
               selectedStayIndex < stayList.length &&
               stay == stayList[selectedStayIndex];
 

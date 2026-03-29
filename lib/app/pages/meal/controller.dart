@@ -70,7 +70,9 @@ class MealPageController extends GetxController {
 
   bool isHighlightedMeal(MealType mealType, MealDayData dayData) {
     final currentMealType = getCurrentMealType();
-    return mealType == currentMealType && DateTime.now().toUtc().add(const Duration(hours: 9)).day == dayData.date.day;
+    return mealType == currentMealType &&
+        DateTime.now().toUtc().add(const Duration(hours: 9)).day ==
+            dayData.date.day;
   }
 
   Future<void> fetchWeeklyMeals() async {

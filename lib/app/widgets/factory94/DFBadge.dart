@@ -4,8 +4,11 @@ import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 
 enum DFBadgeType { normal, circular, circularText }
+
 enum DFBadgeSize { small, large }
+
 enum DFBadgeTheme { grayscale, accent, negative, solid }
+
 enum DFBadgeStyle { primary, secondary }
 
 class DFBadge extends StatelessWidget {
@@ -74,28 +77,28 @@ class DFBadge extends StatelessWidget {
   TextStyle getTextStyle(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
     final textTheme = Theme.of(context).extension<DFTypography>()!;
-    
+
     switch (theme) {
       case DFBadgeTheme.grayscale:
         return textTheme.body.copyWith(
-                color: colorTheme.contentStandardSecondary,
-                fontWeight: FontWeight.w400,
-              );
+          color: colorTheme.contentStandardSecondary,
+          fontWeight: FontWeight.w400,
+        );
       case DFBadgeTheme.accent:
         return textTheme.body.copyWith(
-                color: colorTheme.coreBrandPrimary,
-                fontWeight: FontWeight.w400,
-              );
+          color: colorTheme.coreBrandPrimary,
+          fontWeight: FontWeight.w400,
+        );
       case DFBadgeTheme.negative:
         return textTheme.body.copyWith(
-                color: colorTheme.coreStatusNegative,
-                fontWeight: FontWeight.w400,
-              );
+          color: colorTheme.coreStatusNegative,
+          fontWeight: FontWeight.w400,
+        );
       case DFBadgeTheme.solid:
         return textTheme.body.copyWith(
-                color: colorTheme.solidBlue,
-                fontWeight: FontWeight.w400,
-              );
+          color: colorTheme.solidBlue,
+          fontWeight: FontWeight.w400,
+        );
     }
   }
 
@@ -166,10 +169,7 @@ class DFBadge extends StatelessWidget {
                 ),
                 SizedBox(width: itemPadding),
               ],
-              Text(
-                label,
-                style: getTextStyle(context),
-              ),
+              Text(label, style: getTextStyle(context)),
             ],
           ),
         );

@@ -8,12 +8,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-enum NotificationType {
-  laundry,
-  stay,
-  wakeup,
-  general,
-}
+enum NotificationType { laundry, stay, wakeup, general }
 
 class SettingController extends GetxController {
   final AuthService authService = Get.find<AuthService>();
@@ -21,7 +16,8 @@ class SettingController extends GetxController {
 
   RxString appVersion = "".obs;
 
-  RxList<NotificationSubject> notificationSubjects = RxList<NotificationSubject>([]);
+  RxList<NotificationSubject> notificationSubjects =
+      RxList<NotificationSubject>([]);
   RxList<String> notificationSubscribedSubject = RxList<String>([]);
 
   RxBool isLoadNotiSetting = false.obs;
@@ -34,7 +30,7 @@ class SettingController extends GetxController {
   }
 
   Future<void> _loadAppVersion() async {
-    try { 
+    try {
       final packageInfo = await PackageInfo.fromPlatform();
       appVersion.value = packageInfo.version;
     } catch (e) {
@@ -43,13 +39,14 @@ class SettingController extends GetxController {
   }
 
   Future<void> loadNotificationSettings() async {
-    if(kIsWeb) {
+    if (kIsWeb) {
       return;
     }
 
     try {
       notificationSubjects.value = await pushService.getSubjects();
-      notificationSubscribedSubject.value = await pushService.getSubscribedSubjects();
+      notificationSubscribedSubject.value = await pushService
+          .getSubscribedSubjects();
 
       isLoadNotiSetting.value = true;
     } catch (e) {
@@ -87,7 +84,9 @@ class SettingController extends GetxController {
 
   Future<void> openPrivacyPolicy() async {
     await launchUrl(
-      Uri.parse("https://dimigo-din.notion.site/25f98f8027c680a79e3ecf1e0cb6c6ff?source=copy_link"),
+      Uri.parse(
+        "https://dimigo-din.notion.site/25f98f8027c680a79e3ecf1e0cb6c6ff?source=copy_link",
+      ),
       mode: LaunchMode.externalApplication,
     );
   }
@@ -95,7 +94,7 @@ class SettingController extends GetxController {
   Future<void> openOpenSourceLicenses() async {
     Get.toNamed(Routes.LICENSE);
   }
-  
+
   Future<void> logout() async {
     await authService.logout();
     Get.offAllNamed('/login');

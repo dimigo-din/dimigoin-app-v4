@@ -9,26 +9,17 @@ class LoginMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
     if (!Get.isRegistered<AuthService>()) {
-      return RouteSettings(
-        name: Routes.LOGIN,
-        arguments: {'redirect': route},
-      );
+      return RouteSettings(name: Routes.LOGIN, arguments: {'redirect': route});
     }
 
     final authService = Get.find<AuthService>();
-    
+
     if (!authService.isLoginSuccess) {
-      return RouteSettings(
-        name: Routes.LOGIN,
-        arguments: {'redirect': route},
-      );
+      return RouteSettings(name: Routes.LOGIN, arguments: {'redirect': route});
     }
 
     if (!authService.isPersonalInfoRegistered) {
-      return RouteSettings(
-        name: Routes.SIGNUP,
-        arguments: {'redirect': route},
-      );
+      return RouteSettings(name: Routes.SIGNUP, arguments: {'redirect': route});
     }
 
     return null;

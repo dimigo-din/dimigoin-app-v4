@@ -32,9 +32,7 @@ class DFChip extends StatelessWidget {
             ? colorTheme.coreBrandPrimary
             : colorTheme.coreBrandTertiary;
       case DFChipTheme.solid:
-        return status
-            ? colorTheme.solidBlue
-            : colorTheme.solidTranslucentBlue;
+        return status ? colorTheme.solidBlue : colorTheme.solidTranslucentBlue;
       case DFChipTheme.outlined:
         return status
             ? colorTheme.componentsFillInvertedPrimary
@@ -53,16 +51,34 @@ class DFChip extends StatelessWidget {
     switch (theme) {
       case DFChipTheme.accent:
         return status
-            ? textTheme.footnote.copyWith(color: colorTheme.contentInvertedPrimary, fontWeight: FontWeight.w700)
-            : textTheme.footnote.copyWith(color: colorTheme.coreBrandPrimary, fontWeight: FontWeight.w400);
+            ? textTheme.footnote.copyWith(
+                color: colorTheme.contentInvertedPrimary,
+                fontWeight: FontWeight.w700,
+              )
+            : textTheme.footnote.copyWith(
+                color: colorTheme.coreBrandPrimary,
+                fontWeight: FontWeight.w400,
+              );
       case DFChipTheme.solid:
         return status
-            ? textTheme.footnote.copyWith(color: colorTheme.contentInvertedPrimary, fontWeight: FontWeight.w700)
-            : textTheme.footnote.copyWith(color: colorTheme.solidBlue, fontWeight: FontWeight.w400);
+            ? textTheme.footnote.copyWith(
+                color: colorTheme.contentInvertedPrimary,
+                fontWeight: FontWeight.w700,
+              )
+            : textTheme.footnote.copyWith(
+                color: colorTheme.solidBlue,
+                fontWeight: FontWeight.w400,
+              );
       default:
         return status
-            ? textTheme.footnote.copyWith(color: colorTheme.contentInvertedPrimary, fontWeight: FontWeight.w700)
-            : textTheme.footnote.copyWith(color: colorTheme.contentStandardSecondary, fontWeight: FontWeight.w400);
+            ? textTheme.footnote.copyWith(
+                color: colorTheme.contentInvertedPrimary,
+                fontWeight: FontWeight.w700,
+              )
+            : textTheme.footnote.copyWith(
+                color: colorTheme.contentStandardSecondary,
+                fontWeight: FontWeight.w400,
+              );
     }
   }
 
@@ -70,10 +86,7 @@ class DFChip extends StatelessWidget {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
 
     if (theme == DFChipTheme.outlined && !status) {
-      return Border.all(
-        color: colorTheme.lineOutline,
-        width: 1,
-      );
+      return Border.all(color: colorTheme.lineOutline, width: 1);
     }
     return null;
   }
@@ -121,10 +134,7 @@ class DFChip extends StatelessWidget {
               buildLeading(context),
               const SizedBox(width: DFSpacing.spacing150),
             ],
-            Text(
-              label,
-              style: getTextStyle(context),
-            ),
+            Text(label, style: getTextStyle(context)),
             if (trailing != null) ...[
               const SizedBox(width: DFSpacing.spacing150),
               buildTrailing(context),

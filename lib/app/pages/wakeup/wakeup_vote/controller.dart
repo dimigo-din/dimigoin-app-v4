@@ -7,12 +7,15 @@ import 'package:get/get.dart';
 class WakeupVotePageController extends GetxController {
   final wakeupService = WakeupService();
 
-  final RxList<WakeupApplicationWithVote> wakeupApplications = <WakeupApplicationWithVote>[].obs;
-  final RxList<WakeupApplicationVotes> wakeupVotes = <WakeupApplicationVotes>[].obs;
-  final Rx<WakeupApplicationWithVote?> todayWakeup = Rx<WakeupApplicationWithVote?>(null);
+  final RxList<WakeupApplicationWithVote> wakeupApplications =
+      <WakeupApplicationWithVote>[].obs;
+  final RxList<WakeupApplicationVotes> wakeupVotes =
+      <WakeupApplicationVotes>[].obs;
+  final Rx<WakeupApplicationWithVote?> todayWakeup =
+      Rx<WakeupApplicationWithVote?>(null);
 
   @override
-  void onInit() async  {
+  void onInit() async {
     super.onInit();
     await fetchWakeupApplications();
     await fetchWakeupVotes();
@@ -43,24 +46,46 @@ class WakeupVotePageController extends GetxController {
     }
   }
 
-  Future<void> voteWakeupApplication(String applicationId, bool isUpvote) async {
+  Future<void> voteWakeupApplication(
+    String applicationId,
+    bool isUpvote,
+  ) async {
     try {
+      final isVoted = wakeupVotes.any(
+        (vote) =>
+            vote.wakeupSongApplication.id == applicationId &&
+            vote.upvote == isUpvote,
+      );
 
-      final isVoted = wakeupVotes.any((vote) => vote.wakeupSongApplication.id == applicationId && vote.upvote == isUpvote);
-
-      if(isVoted) {
+      if (isVoted) {
         DFSnackBar.info("투표 취소중입니다...");
         await wakeupService.deleteVoteWakeupApplication(
-          wakeupVotes.firstWhere((vote) => vote.wakeupSongApplication.id == applicationId && vote.upvote == isUpvote).id
+          wakeupVotes
+              .firstWhere(
+                (vote) =>
+                    vote.wakeupSongApplication.id == applicationId &&
+                    vote.upvote == isUpvote,
+              )
+              .id,
         );
         DFSnackBar.success("투표가 취소되었습니다.");
       } else {
         DFSnackBar.info("투표 중입니다...");
 
-        final isOtherVoted = wakeupVotes.any((vote) => vote.wakeupSongApplication.id == applicationId && vote.upvote == !isUpvote);
+        final isOtherVoted = wakeupVotes.any(
+          (vote) =>
+              vote.wakeupSongApplication.id == applicationId &&
+              vote.upvote == !isUpvote,
+        );
         if (isOtherVoted) {
           await wakeupService.deleteVoteWakeupApplication(
-            wakeupVotes.firstWhere((vote) => vote.wakeupSongApplication.id == applicationId && vote.upvote == !isUpvote).id
+            wakeupVotes
+                .firstWhere(
+                  (vote) =>
+                      vote.wakeupSongApplication.id == applicationId &&
+                      vote.upvote == !isUpvote,
+                )
+                .id,
           );
         }
 

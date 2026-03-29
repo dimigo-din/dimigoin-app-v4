@@ -24,10 +24,7 @@ class TimeTableWidget extends GetView<HomePageController> {
       decoration: BoxDecoration(
         color: colorTheme.componentsFillStandardPrimary,
         borderRadius: BorderRadius.circular(DFRadius.radius800),
-        border: Border.all(
-          color: colorTheme.lineOutline,
-          width: 1,
-        ),
+        border: Border.all(color: colorTheme.lineOutline, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +39,10 @@ class TimeTableWidget extends GetView<HomePageController> {
 
           Table(
             border: TableBorder(
-              horizontalInside: BorderSide(color: colorTheme.lineOutline, width: 1),
+              horizontalInside: BorderSide(
+                color: colorTheme.lineOutline,
+                width: 1,
+              ),
               verticalInside: BorderSide.none,
               top: BorderSide.none,
               bottom: BorderSide.none,
@@ -56,7 +56,10 @@ class TimeTableWidget extends GetView<HomePageController> {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       border: Border(
-                        right: BorderSide(color: colorTheme.lineOutline, width: 1),
+                        right: BorderSide(
+                          color: colorTheme.lineOutline,
+                          width: 1,
+                        ),
                       ),
                     ),
                     child: const Text(''),
@@ -82,10 +85,13 @@ class TimeTableWidget extends GetView<HomePageController> {
 
                 return TableRow(
                   children: [
-                     Container(
+                    Container(
                       decoration: BoxDecoration(
                         border: Border(
-                          right: BorderSide(color: colorTheme.lineOutline, width: 1),
+                          right: BorderSide(
+                            color: colorTheme.lineOutline,
+                            width: 1,
+                          ),
                         ),
                       ),
                       padding: const EdgeInsets.all(10),
@@ -142,13 +148,13 @@ class TimeTableWidget extends GetView<HomePageController> {
                                 ? colorTheme.coreBrandTertiary
                                 : Colors.transparent,
                           ),
-                            child: Center(
+                          child: Center(
                             child: Text(
                               subject.content.split('\n')[0],
                               style: textTheme.callout.copyWith(
-                              color: subject.temp
-                                ? colorTheme.contentStandardSecondary
-                                : colorTheme.contentStandardPrimary,
+                                color: subject.temp
+                                    ? colorTheme.contentStandardSecondary
+                                    : colorTheme.contentStandardPrimary,
                               ),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,

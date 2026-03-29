@@ -14,16 +14,13 @@ class PersonalStatusWidget extends GetView<HomePageController> {
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
     final textTheme = Theme.of(context).extension<DFTypography>()!;
-    
+
     return Container(
       padding: const EdgeInsets.all(DFSpacing.spacing400),
       decoration: BoxDecoration(
         color: colorTheme.componentsFillStandardPrimary,
         borderRadius: BorderRadius.circular(DFRadius.radius800),
-        border: Border.all(
-          color: colorTheme.lineOutline,
-          width: 1,
-        ),
+        border: Border.all(color: colorTheme.lineOutline, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +33,9 @@ class PersonalStatusWidget extends GetView<HomePageController> {
           ),
           const SizedBox(height: 10),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
+            padding: const EdgeInsets.symmetric(
+              horizontal: DFSpacing.spacing400,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -50,12 +49,16 @@ class PersonalStatusWidget extends GetView<HomePageController> {
                           color: colorTheme.contentStandardSecondary,
                         ),
                       ),
-                      Obx(() => Text(
-                        controller.stayApply.value?.staySeat ?? '없음',
-                        style: textTheme.headline.copyWith(
-                          color: controller.stayApply.value != null ? colorTheme.coreBrandPrimary : colorTheme.coreBrandSecondary,
+                      Obx(
+                        () => Text(
+                          controller.stayApply.value?.staySeat ?? '없음',
+                          style: textTheme.headline.copyWith(
+                            color: controller.stayApply.value != null
+                                ? colorTheme.coreBrandPrimary
+                                : colorTheme.coreBrandSecondary,
+                          ),
                         ),
-                      )),
+                      ),
                     ],
                   ),
                 ),
@@ -81,29 +84,39 @@ class PersonalStatusWidget extends GetView<HomePageController> {
                             ),
                           );
                         }
-                        
-                        final upcomingOutings = outings
-                          .where((outing) {
-                            if (outing.from == null) return false;
-                            try {
-                              return DateTime.parse(outing.from!).isAfter(now);
-                            } catch (e) {
-                              return false;
-                            }
-                          })
-                          .toList()
-                        ..sort((a, b) {
-                          try {
-                            return DateTime.parse(a.from!).compareTo(DateTime.parse(b.from!));
-                          } catch (e) {
-                            return 0;
-                          }
-                        });
+
+                        final upcomingOutings =
+                            outings.where((outing) {
+                              if (outing.from == null) return false;
+                              try {
+                                return DateTime.parse(
+                                  outing.from!,
+                                ).isAfter(now);
+                              } catch (e) {
+                                return false;
+                              }
+                            }).toList()..sort((a, b) {
+                              try {
+                                return DateTime.parse(
+                                  a.from!,
+                                ).compareTo(DateTime.parse(b.from!));
+                              } catch (e) {
+                                return 0;
+                              }
+                            });
 
                         return Text(
-                          upcomingOutings.isEmpty ? '없음' : DateFormat.Hm().format(OutingDateUtils.parseServerDateTime(upcomingOutings.first.from!)),
+                          upcomingOutings.isEmpty
+                              ? '없음'
+                              : DateFormat.Hm().format(
+                                  OutingDateUtils.parseServerDateTime(
+                                    upcomingOutings.first.from!,
+                                  ),
+                                ),
                           style: textTheme.headline.copyWith(
-                            color: upcomingOutings.isEmpty ? colorTheme.coreBrandSecondary : colorTheme.coreBrandPrimary,
+                            color: upcomingOutings.isEmpty
+                                ? colorTheme.coreBrandSecondary
+                                : colorTheme.coreBrandPrimary,
                           ),
                         );
                       }),
@@ -120,18 +133,23 @@ class PersonalStatusWidget extends GetView<HomePageController> {
                           color: colorTheme.contentStandardSecondary,
                         ),
                       ),
-                      Obx(() => Text(
-                        controller.laundryApply.value?.laundryTime.time ?? '없음',
-                        style: textTheme.headline.copyWith(
-                          color: controller.laundryApply.value != null ? colorTheme.coreBrandPrimary : colorTheme.coreBrandSecondary,
+                      Obx(
+                        () => Text(
+                          controller.laundryApply.value?.laundryTime.time ??
+                              '없음',
+                          style: textTheme.headline.copyWith(
+                            color: controller.laundryApply.value != null
+                                ? colorTheme.coreBrandPrimary
+                                : colorTheme.coreBrandSecondary,
+                          ),
                         ),
-                      )),
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

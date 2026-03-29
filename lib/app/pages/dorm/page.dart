@@ -26,35 +26,43 @@ class DormPage extends GetView<DormPageController> {
               const SizedBox(height: DFSpacing.spacing300),
               Row(
                 children: [
-                  Expanded(child: PageButtonWidget(
-                    icon: Icons.school_outlined,
-                    title: "잔류",
-                    onTap: () => controller.openStayPage(),
-                  )),
+                  Expanded(
+                    child: PageButtonWidget(
+                      icon: Icons.school_outlined,
+                      title: "잔류",
+                      onTap: () => controller.openStayPage(),
+                    ),
+                  ),
                   const SizedBox(width: 10),
-                  Expanded(child: PageButtonWidget(
-                    icon: Icons.home_work_outlined,
-                    title: "금귀",
-                    onTap: () => controller.openFrigoPage(),
-                  )),
+                  Expanded(
+                    child: PageButtonWidget(
+                      icon: Icons.home_work_outlined,
+                      title: "금귀",
+                      onTap: () => controller.openFrigoPage(),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 10),
               Row(
                 children: [
-                  Expanded(child: PageButtonWidget(
-                    icon: Icons.local_laundry_service_outlined,
-                    title: "세탁",
-                    onTap: () => controller.openLaundryPage(),
-                  )),
+                  Expanded(
+                    child: PageButtonWidget(
+                      icon: Icons.local_laundry_service_outlined,
+                      title: "세탁",
+                      onTap: () => controller.openLaundryPage(),
+                    ),
+                  ),
                   const SizedBox(width: 10),
-                  Expanded(child: PageButtonWidget(
-                    icon: Icons.music_note_outlined,
-                    title: "기상곡",
-                    onTap: () => controller.openWakeupPage(),
-                  )),
+                  Expanded(
+                    child: PageButtonWidget(
+                      icon: Icons.music_note_outlined,
+                      title: "기상곡",
+                      onTap: () => controller.openWakeupPage(),
+                    ),
+                  ),
                 ],
-              )
+              ),
               // TimeTableWidget(),
             ],
           ),

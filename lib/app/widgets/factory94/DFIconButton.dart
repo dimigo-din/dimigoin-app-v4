@@ -6,7 +6,15 @@ import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'DFBadge.dart';
 
 enum DFIconButtonSize { small, large }
-enum DFIconButtonTheme { grayscale, accent, solid, outlined, badged, badgedText }
+
+enum DFIconButtonTheme {
+  grayscale,
+  accent,
+  solid,
+  outlined,
+  badged,
+  badgedText,
+}
 
 class DFIconButton extends StatelessWidget {
   final DFIconButtonSize size;
@@ -64,7 +72,7 @@ class DFIconButton extends StatelessWidget {
 
   Color getIconStyle(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
-    
+
     switch (theme) {
       case DFIconButtonTheme.outlined:
         return colorTheme.contentStandardPrimary;
@@ -140,12 +148,19 @@ class DFIconButton extends StatelessWidget {
                 ),
               ),
 
-              if (theme == DFIconButtonTheme.badged || theme == DFIconButtonTheme.badgedText)
+              if (theme == DFIconButtonTheme.badged ||
+                  theme == DFIconButtonTheme.badgedText)
                 Positioned(
-                  top: theme == DFIconButtonTheme.badged ? -DFSpacing.spacing50 : -DFSpacing.spacing150,
-                  right: theme == DFIconButtonTheme.badged ? -DFSpacing.spacing50 : -DFSpacing.spacing150,
+                  top: theme == DFIconButtonTheme.badged
+                      ? -DFSpacing.spacing50
+                      : -DFSpacing.spacing150,
+                  right: theme == DFIconButtonTheme.badged
+                      ? -DFSpacing.spacing50
+                      : -DFSpacing.spacing150,
                   child: DFBadge(
-                    type: theme == DFIconButtonTheme.badged ? DFBadgeType.circular : DFBadgeType.circularText,
+                    type: theme == DFIconButtonTheme.badged
+                        ? DFBadgeType.circular
+                        : DFBadgeType.circularText,
                     label: badge ?? '',
                     theme: DFBadgeTheme.grayscale,
                   ),
@@ -156,6 +171,4 @@ class DFIconButton extends StatelessWidget {
       ),
     );
   }
-
-  
 }

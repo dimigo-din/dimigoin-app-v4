@@ -12,7 +12,8 @@ class LaundryService extends GetxController {
 
   AuthService authService = Get.find<AuthService>();
 
-  LaundryService({LaundryRepository? repository}) : repository = repository ?? LaundryRepository();
+  LaundryService({LaundryRepository? repository})
+    : repository = repository ?? LaundryRepository();
 
   @override
   Future<void> onInit() async {
@@ -20,8 +21,7 @@ class LaundryService extends GetxController {
     initialize();
   }
 
-  Future<void> initialize() async {
-  }
+  Future<void> initialize() async {}
 
   Future<LaundryTimeline> getLaundryTimeline() async {
     try {

@@ -232,42 +232,76 @@ class DFColors extends ThemeExtension<DFColors> {
       solidBlack: solidBlack ?? this.solidBlack,
       solidWhite: solidWhite ?? this.solidWhite,
       solidTranslucentRed: solidTranslucentRed ?? this.solidTranslucentRed,
-      solidTranslucentOrange: solidTranslucentOrange ?? this.solidTranslucentOrange,
-      solidTranslucentYellow: solidTranslucentYellow ?? this.solidTranslucentYellow,
-      solidTranslucentGreen: solidTranslucentGreen ?? this.solidTranslucentGreen,
+      solidTranslucentOrange:
+          solidTranslucentOrange ?? this.solidTranslucentOrange,
+      solidTranslucentYellow:
+          solidTranslucentYellow ?? this.solidTranslucentYellow,
+      solidTranslucentGreen:
+          solidTranslucentGreen ?? this.solidTranslucentGreen,
       solidTranslucentBlue: solidTranslucentBlue ?? this.solidTranslucentBlue,
-      solidTranslucentIndigo: solidTranslucentIndigo ?? this.solidTranslucentIndigo,
-      solidTranslucentPurple: solidTranslucentPurple ?? this.solidTranslucentPurple,
+      solidTranslucentIndigo:
+          solidTranslucentIndigo ?? this.solidTranslucentIndigo,
+      solidTranslucentPurple:
+          solidTranslucentPurple ?? this.solidTranslucentPurple,
       solidTranslucentPink: solidTranslucentPink ?? this.solidTranslucentPink,
-      solidTranslucentBrown: solidTranslucentBrown ?? this.solidTranslucentBrown,
-      solidTranslucentBlack: solidTranslucentBlack ?? this.solidTranslucentBlack,
-      solidTranslucentWhite: solidTranslucentWhite ?? this.solidTranslucentWhite,
-      backgroundStandardPrimary: backgroundStandardPrimary ?? this.backgroundStandardPrimary,
-      backgroundStandardSecondary: backgroundStandardSecondary ?? this.backgroundStandardSecondary,
-      backgroundInvertedPrimary: backgroundInvertedPrimary ?? this.backgroundInvertedPrimary,
-      backgroundInvertedSecondary: backgroundInvertedSecondary ?? this.backgroundInvertedSecondary,
-      contentStandardPrimary: contentStandardPrimary ?? this.contentStandardPrimary,
-      contentStandardSecondary: contentStandardSecondary ?? this.contentStandardSecondary,
-      contentStandardTertiary: contentStandardTertiary ?? this.contentStandardTertiary,
-      contentStandardQuaternary: contentStandardQuaternary ?? this.contentStandardQuaternary,
-      contentInvertedPrimary: contentInvertedPrimary ?? this.contentInvertedPrimary,
-      contentInvertedSecondary: contentInvertedSecondary ?? this.contentInvertedSecondary,
-      contentInvertedTertiary: contentInvertedTertiary ?? this.contentInvertedTertiary,
-      contentInvertedQuaternary: contentInvertedQuaternary ?? this.contentInvertedQuaternary,
+      solidTranslucentBrown:
+          solidTranslucentBrown ?? this.solidTranslucentBrown,
+      solidTranslucentBlack:
+          solidTranslucentBlack ?? this.solidTranslucentBlack,
+      solidTranslucentWhite:
+          solidTranslucentWhite ?? this.solidTranslucentWhite,
+      backgroundStandardPrimary:
+          backgroundStandardPrimary ?? this.backgroundStandardPrimary,
+      backgroundStandardSecondary:
+          backgroundStandardSecondary ?? this.backgroundStandardSecondary,
+      backgroundInvertedPrimary:
+          backgroundInvertedPrimary ?? this.backgroundInvertedPrimary,
+      backgroundInvertedSecondary:
+          backgroundInvertedSecondary ?? this.backgroundInvertedSecondary,
+      contentStandardPrimary:
+          contentStandardPrimary ?? this.contentStandardPrimary,
+      contentStandardSecondary:
+          contentStandardSecondary ?? this.contentStandardSecondary,
+      contentStandardTertiary:
+          contentStandardTertiary ?? this.contentStandardTertiary,
+      contentStandardQuaternary:
+          contentStandardQuaternary ?? this.contentStandardQuaternary,
+      contentInvertedPrimary:
+          contentInvertedPrimary ?? this.contentInvertedPrimary,
+      contentInvertedSecondary:
+          contentInvertedSecondary ?? this.contentInvertedSecondary,
+      contentInvertedTertiary:
+          contentInvertedTertiary ?? this.contentInvertedTertiary,
+      contentInvertedQuaternary:
+          contentInvertedQuaternary ?? this.contentInvertedQuaternary,
       lineDivider: lineDivider ?? this.lineDivider,
       lineOutline: lineOutline ?? this.lineOutline,
-      componentsFillStandardPrimary: componentsFillStandardPrimary ?? this.componentsFillStandardPrimary,
-      componentsFillStandardSecondary: componentsFillStandardSecondary ?? this.componentsFillStandardSecondary,
-      componentsFillStandardTertiary: componentsFillStandardTertiary ?? this.componentsFillStandardTertiary,
-      componentsFillInvertedPrimary: componentsFillInvertedPrimary ?? this.componentsFillInvertedPrimary,
-      componentsFillInvertedSecondary: componentsFillInvertedSecondary ?? this.componentsFillInvertedSecondary,
-      componentsFillInvertedTertiary: componentsFillInvertedTertiary ?? this.componentsFillInvertedTertiary,
-      componentsInteractiveHover: componentsInteractiveHover ?? this.componentsInteractiveHover,
-      componentsInteractiveFocused: componentsInteractiveFocused ?? this.componentsInteractiveFocused,
-      componentsInteractivePressed: componentsInteractivePressed ?? this.componentsInteractivePressed,
-      componentsTranslucentPrimary: componentsTranslucentPrimary ?? this.componentsTranslucentPrimary,
-      componentsTranslucentSecondary: componentsTranslucentSecondary ?? this.componentsTranslucentSecondary,
-      componentsTranslucentTertiary: componentsTranslucentTertiary ?? this.componentsTranslucentTertiary,
+      componentsFillStandardPrimary:
+          componentsFillStandardPrimary ?? this.componentsFillStandardPrimary,
+      componentsFillStandardSecondary:
+          componentsFillStandardSecondary ??
+          this.componentsFillStandardSecondary,
+      componentsFillStandardTertiary:
+          componentsFillStandardTertiary ?? this.componentsFillStandardTertiary,
+      componentsFillInvertedPrimary:
+          componentsFillInvertedPrimary ?? this.componentsFillInvertedPrimary,
+      componentsFillInvertedSecondary:
+          componentsFillInvertedSecondary ??
+          this.componentsFillInvertedSecondary,
+      componentsFillInvertedTertiary:
+          componentsFillInvertedTertiary ?? this.componentsFillInvertedTertiary,
+      componentsInteractiveHover:
+          componentsInteractiveHover ?? this.componentsInteractiveHover,
+      componentsInteractiveFocused:
+          componentsInteractiveFocused ?? this.componentsInteractiveFocused,
+      componentsInteractivePressed:
+          componentsInteractivePressed ?? this.componentsInteractivePressed,
+      componentsTranslucentPrimary:
+          componentsTranslucentPrimary ?? this.componentsTranslucentPrimary,
+      componentsTranslucentSecondary:
+          componentsTranslucentSecondary ?? this.componentsTranslucentSecondary,
+      componentsTranslucentTertiary:
+          componentsTranslucentTertiary ?? this.componentsTranslucentTertiary,
       coreBrandPrimary: coreBrandPrimary ?? this.coreBrandPrimary,
       coreBrandSecondary: coreBrandSecondary ?? this.coreBrandSecondary,
       coreBrandTertiary: coreBrandTertiary ?? this.coreBrandTertiary,
@@ -306,49 +340,213 @@ class DFColors extends ThemeExtension<DFColors> {
       solidBrown: Color.lerp(solidBrown, other.solidBrown, t)!,
       solidBlack: Color.lerp(solidBlack, other.solidBlack, t)!,
       solidWhite: Color.lerp(solidWhite, other.solidWhite, t)!,
-      solidTranslucentRed: Color.lerp(solidTranslucentRed, other.solidTranslucentRed, t)!,
-      solidTranslucentOrange: Color.lerp(solidTranslucentOrange, other.solidTranslucentOrange, t)!,
-      solidTranslucentYellow: Color.lerp(solidTranslucentYellow, other.solidTranslucentYellow, t)!,
-      solidTranslucentGreen: Color.lerp(solidTranslucentGreen, other.solidTranslucentGreen, t)!,
-      solidTranslucentBlue: Color.lerp(solidTranslucentBlue, other.solidTranslucentBlue, t)!,
-      solidTranslucentIndigo: Color.lerp(solidTranslucentIndigo, other.solidTranslucentIndigo, t)!,
-      solidTranslucentPurple: Color.lerp(solidTranslucentPurple, other.solidTranslucentPurple, t)!,
-      solidTranslucentPink: Color.lerp(solidTranslucentPink, other.solidTranslucentPink, t)!,
-      solidTranslucentBrown: Color.lerp(solidTranslucentBrown, other.solidTranslucentBrown, t)!,
-      solidTranslucentBlack: Color.lerp(solidTranslucentBlack, other.solidTranslucentBlack, t)!,
-      solidTranslucentWhite: Color.lerp(solidTranslucentWhite, other.solidTranslucentWhite, t)!,
-      backgroundStandardPrimary: Color.lerp(backgroundStandardPrimary, other.backgroundStandardPrimary, t)!,
-      backgroundStandardSecondary: Color.lerp(backgroundStandardSecondary, other.backgroundStandardSecondary, t)!,
-      backgroundInvertedPrimary: Color.lerp(backgroundInvertedPrimary, other.backgroundInvertedPrimary, t)!,
-      backgroundInvertedSecondary: Color.lerp(backgroundInvertedSecondary, other.backgroundInvertedSecondary, t)!,
-      contentStandardPrimary: Color.lerp(contentStandardPrimary, other.contentStandardPrimary, t)!,
-      contentStandardSecondary: Color.lerp(contentStandardSecondary, other.contentStandardSecondary, t)!,
-      contentStandardTertiary: Color.lerp(contentStandardTertiary, other.contentStandardTertiary, t)!,
-      contentStandardQuaternary: Color.lerp(contentStandardQuaternary, other.contentStandardQuaternary, t)!,
-      contentInvertedPrimary: Color.lerp(contentInvertedPrimary, other.contentInvertedPrimary, t)!,
-      contentInvertedSecondary: Color.lerp(contentInvertedSecondary, other.contentInvertedSecondary, t)!,
-      contentInvertedTertiary: Color.lerp(contentInvertedTertiary, other.contentInvertedTertiary, t)!,
-      contentInvertedQuaternary: Color.lerp(contentInvertedQuaternary, other.contentInvertedQuaternary, t)!,
+      solidTranslucentRed: Color.lerp(
+        solidTranslucentRed,
+        other.solidTranslucentRed,
+        t,
+      )!,
+      solidTranslucentOrange: Color.lerp(
+        solidTranslucentOrange,
+        other.solidTranslucentOrange,
+        t,
+      )!,
+      solidTranslucentYellow: Color.lerp(
+        solidTranslucentYellow,
+        other.solidTranslucentYellow,
+        t,
+      )!,
+      solidTranslucentGreen: Color.lerp(
+        solidTranslucentGreen,
+        other.solidTranslucentGreen,
+        t,
+      )!,
+      solidTranslucentBlue: Color.lerp(
+        solidTranslucentBlue,
+        other.solidTranslucentBlue,
+        t,
+      )!,
+      solidTranslucentIndigo: Color.lerp(
+        solidTranslucentIndigo,
+        other.solidTranslucentIndigo,
+        t,
+      )!,
+      solidTranslucentPurple: Color.lerp(
+        solidTranslucentPurple,
+        other.solidTranslucentPurple,
+        t,
+      )!,
+      solidTranslucentPink: Color.lerp(
+        solidTranslucentPink,
+        other.solidTranslucentPink,
+        t,
+      )!,
+      solidTranslucentBrown: Color.lerp(
+        solidTranslucentBrown,
+        other.solidTranslucentBrown,
+        t,
+      )!,
+      solidTranslucentBlack: Color.lerp(
+        solidTranslucentBlack,
+        other.solidTranslucentBlack,
+        t,
+      )!,
+      solidTranslucentWhite: Color.lerp(
+        solidTranslucentWhite,
+        other.solidTranslucentWhite,
+        t,
+      )!,
+      backgroundStandardPrimary: Color.lerp(
+        backgroundStandardPrimary,
+        other.backgroundStandardPrimary,
+        t,
+      )!,
+      backgroundStandardSecondary: Color.lerp(
+        backgroundStandardSecondary,
+        other.backgroundStandardSecondary,
+        t,
+      )!,
+      backgroundInvertedPrimary: Color.lerp(
+        backgroundInvertedPrimary,
+        other.backgroundInvertedPrimary,
+        t,
+      )!,
+      backgroundInvertedSecondary: Color.lerp(
+        backgroundInvertedSecondary,
+        other.backgroundInvertedSecondary,
+        t,
+      )!,
+      contentStandardPrimary: Color.lerp(
+        contentStandardPrimary,
+        other.contentStandardPrimary,
+        t,
+      )!,
+      contentStandardSecondary: Color.lerp(
+        contentStandardSecondary,
+        other.contentStandardSecondary,
+        t,
+      )!,
+      contentStandardTertiary: Color.lerp(
+        contentStandardTertiary,
+        other.contentStandardTertiary,
+        t,
+      )!,
+      contentStandardQuaternary: Color.lerp(
+        contentStandardQuaternary,
+        other.contentStandardQuaternary,
+        t,
+      )!,
+      contentInvertedPrimary: Color.lerp(
+        contentInvertedPrimary,
+        other.contentInvertedPrimary,
+        t,
+      )!,
+      contentInvertedSecondary: Color.lerp(
+        contentInvertedSecondary,
+        other.contentInvertedSecondary,
+        t,
+      )!,
+      contentInvertedTertiary: Color.lerp(
+        contentInvertedTertiary,
+        other.contentInvertedTertiary,
+        t,
+      )!,
+      contentInvertedQuaternary: Color.lerp(
+        contentInvertedQuaternary,
+        other.contentInvertedQuaternary,
+        t,
+      )!,
       lineDivider: Color.lerp(lineDivider, other.lineDivider, t)!,
       lineOutline: Color.lerp(lineOutline, other.lineOutline, t)!,
-      componentsFillStandardPrimary: Color.lerp(componentsFillStandardPrimary, other.componentsFillStandardPrimary, t)!,
-      componentsFillStandardSecondary: Color.lerp(componentsFillStandardSecondary, other.componentsFillStandardSecondary, t)!,
-      componentsFillStandardTertiary: Color.lerp(componentsFillStandardTertiary, other.componentsFillStandardTertiary, t)!,
-      componentsFillInvertedPrimary: Color.lerp(componentsFillInvertedPrimary, other.componentsFillInvertedPrimary, t)!,
-      componentsFillInvertedSecondary: Color.lerp(componentsFillInvertedSecondary, other.componentsFillInvertedSecondary, t)!,
-      componentsFillInvertedTertiary: Color.lerp(componentsFillInvertedTertiary, other.componentsFillInvertedTertiary, t)!,
-      componentsInteractiveHover: Color.lerp(componentsInteractiveHover, other.componentsInteractiveHover, t)!,
-      componentsInteractiveFocused: Color.lerp(componentsInteractiveFocused, other.componentsInteractiveFocused, t)!,
-      componentsInteractivePressed: Color.lerp(componentsInteractivePressed, other.componentsInteractivePressed, t)!,
-      componentsTranslucentPrimary: Color.lerp(componentsTranslucentPrimary, other.componentsTranslucentPrimary, t)!,
-      componentsTranslucentSecondary: Color.lerp(componentsTranslucentSecondary, other.componentsTranslucentSecondary, t)!,
-      componentsTranslucentTertiary: Color.lerp(componentsTranslucentTertiary, other.componentsTranslucentTertiary, t)!,
-      coreBrandPrimary: Color.lerp(coreBrandPrimary, other.coreBrandPrimary, t)!,
-      coreBrandSecondary: Color.lerp(coreBrandSecondary, other.coreBrandSecondary, t)!,
-      coreBrandTertiary: Color.lerp(coreBrandTertiary, other.coreBrandTertiary, t)!,
-      coreStatusPositive: Color.lerp(coreStatusPositive, other.coreStatusPositive, t)!,
-      coreStatusWarning: Color.lerp(coreStatusWarning, other.coreStatusWarning, t)!,
-      coreStatusNegative: Color.lerp(coreStatusNegative, other.coreStatusNegative, t)!,
+      componentsFillStandardPrimary: Color.lerp(
+        componentsFillStandardPrimary,
+        other.componentsFillStandardPrimary,
+        t,
+      )!,
+      componentsFillStandardSecondary: Color.lerp(
+        componentsFillStandardSecondary,
+        other.componentsFillStandardSecondary,
+        t,
+      )!,
+      componentsFillStandardTertiary: Color.lerp(
+        componentsFillStandardTertiary,
+        other.componentsFillStandardTertiary,
+        t,
+      )!,
+      componentsFillInvertedPrimary: Color.lerp(
+        componentsFillInvertedPrimary,
+        other.componentsFillInvertedPrimary,
+        t,
+      )!,
+      componentsFillInvertedSecondary: Color.lerp(
+        componentsFillInvertedSecondary,
+        other.componentsFillInvertedSecondary,
+        t,
+      )!,
+      componentsFillInvertedTertiary: Color.lerp(
+        componentsFillInvertedTertiary,
+        other.componentsFillInvertedTertiary,
+        t,
+      )!,
+      componentsInteractiveHover: Color.lerp(
+        componentsInteractiveHover,
+        other.componentsInteractiveHover,
+        t,
+      )!,
+      componentsInteractiveFocused: Color.lerp(
+        componentsInteractiveFocused,
+        other.componentsInteractiveFocused,
+        t,
+      )!,
+      componentsInteractivePressed: Color.lerp(
+        componentsInteractivePressed,
+        other.componentsInteractivePressed,
+        t,
+      )!,
+      componentsTranslucentPrimary: Color.lerp(
+        componentsTranslucentPrimary,
+        other.componentsTranslucentPrimary,
+        t,
+      )!,
+      componentsTranslucentSecondary: Color.lerp(
+        componentsTranslucentSecondary,
+        other.componentsTranslucentSecondary,
+        t,
+      )!,
+      componentsTranslucentTertiary: Color.lerp(
+        componentsTranslucentTertiary,
+        other.componentsTranslucentTertiary,
+        t,
+      )!,
+      coreBrandPrimary: Color.lerp(
+        coreBrandPrimary,
+        other.coreBrandPrimary,
+        t,
+      )!,
+      coreBrandSecondary: Color.lerp(
+        coreBrandSecondary,
+        other.coreBrandSecondary,
+        t,
+      )!,
+      coreBrandTertiary: Color.lerp(
+        coreBrandTertiary,
+        other.coreBrandTertiary,
+        t,
+      )!,
+      coreStatusPositive: Color.lerp(
+        coreStatusPositive,
+        other.coreStatusPositive,
+        t,
+      )!,
+      coreStatusWarning: Color.lerp(
+        coreStatusWarning,
+        other.coreStatusWarning,
+        t,
+      )!,
+      coreStatusNegative: Color.lerp(
+        coreStatusNegative,
+        other.coreStatusNegative,
+        t,
+      )!,
       syntaxComment: Color.lerp(syntaxComment, other.syntaxComment, t)!,
       syntaxFunction: Color.lerp(syntaxFunction, other.syntaxFunction, t)!,
       syntaxVariable: Color.lerp(syntaxVariable, other.syntaxVariable, t)!,
@@ -359,7 +557,11 @@ class DFColors extends ThemeExtension<DFColors> {
       calenarExam: Color.lerp(calenarExam, other.calenarExam, t)!,
       calendarHome: Color.lerp(calendarHome, other.calendarHome, t)!,
       calendarEvent: Color.lerp(calendarEvent, other.calendarEvent, t)!,
-      calendarVacation: Color.lerp(calendarVacation, other.calendarVacation, t)!,
+      calendarVacation: Color.lerp(
+        calendarVacation,
+        other.calendarVacation,
+        t,
+      )!,
       calendarStay: Color.lerp(calendarStay, other.calendarStay, t)!,
     );
   }

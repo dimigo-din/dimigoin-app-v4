@@ -29,8 +29,9 @@ class AppLoader {
         if (kIsWeb) {
           final siteKey = dotenv.env["RECAPTCHA_SITE_KEY"];
           if (siteKey != null && siteKey.isNotEmpty) {
-            await FirebaseAppCheck.instance
-              .activate(providerWeb: ReCaptchaEnterpriseProvider(siteKey));
+            await FirebaseAppCheck.instance.activate(
+              providerWeb: ReCaptchaEnterpriseProvider(siteKey),
+            );
           }
         } else {
           await FirebaseAppCheck.instance.activate(

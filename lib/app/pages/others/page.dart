@@ -7,8 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
-
 import '../../core/theme/colors.dart';
 import '../../core/theme/static.dart';
 import 'controller.dart';
@@ -40,51 +38,51 @@ class OthersPage extends GetView<OthersPageController> {
 
     return SafeArea(
       child: Padding(
-        padding:
-          const EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
+        padding: const EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(vertical: DFSpacing.spacing400, horizontal: DFSpacing.spacing300),
+              padding: const EdgeInsets.symmetric(
+                vertical: DFSpacing.spacing400,
+                horizontal: DFSpacing.spacing300,
+              ),
               decoration: BoxDecoration(
                 color: colorTheme.componentsFillStandardPrimary,
                 borderRadius: BorderRadius.circular(DFRadius.radius800),
-                border: Border.all(
-                  color: colorTheme.lineOutline,
-                  width: 1,
+                border: Border.all(color: colorTheme.lineOutline, width: 1),
+              ),
+              child: Obx(
+                () => DFItemList(
+                  title: authService.user?.name,
+                  subTitle:
+                      "${authService.user!.userGrade}학년 ${authService.user!.userClass}반",
+                  leading: DFAvatar(
+                    type: DFAvatarType.person,
+                    size: DFAvatarSize.large,
+                    fill: kIsWeb ? DFAvatarFill.icon : DFAvatarFill.image,
+                    image: Image.network(authService.user?.profileUrl ?? ''),
+                  ),
+                  trailing: DFIconButton(
+                    theme: DFIconButtonTheme.grayscale,
+                    icon: const Icon(Icons.settings),
+                    onPressed: controller.openSettingPage,
+                  ),
                 ),
               ),
-              child: Obx(() => DFItemList(
-                title: authService.user?.name,
-                subTitle: "${authService.user!.userGrade}학년 ${authService.user!.userClass}반",
-                leading: DFAvatar(
-                  type: DFAvatarType.person,
-                  size: DFAvatarSize.large,
-                  fill: kIsWeb ? DFAvatarFill.icon : DFAvatarFill.image,
-                  image: Image.network(authService.user?.profileUrl ?? ''),
-                ),
-                trailing: DFIconButton(
-                  theme: DFIconButtonTheme.grayscale,
-                  icon: const Icon(Icons.settings),
-                  onPressed: controller.openSettingPage,
-                ),
-              )),
             ),
             SizedBox(height: 20),
             _othersPageItem(
               title: "DIN에 문의하기",
-              onTap: () => controller.launchMenuUrl("https://pf.kakao.com/_fxhZen/chat"),
-            ),      
+              onTap: () =>
+                  controller.launchMenuUrl("https://pf.kakao.com/_fxhZen/chat"),
+            ),
             const Spacer(),
             Padding(
               padding: EdgeInsets.only(bottom: DFSpacing.spacing400),
               child: Text(
                 "Copyright $year. DIN Org. All rights reserved.",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 10,
-                ),
+                style: TextStyle(color: Colors.grey, fontSize: 10),
               ),
             ),
           ],

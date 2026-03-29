@@ -39,11 +39,7 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
       context: context,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            bottom: 24,
-          ),
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24),
           child: Column(
             children: [
               Text(
@@ -62,7 +58,9 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
                   type: DFAvatarType.classroom,
                   size: DFAvatarSize.large,
                   fill: DFAvatarFill.image,
-                  image: Image.network(video.snippet.thumbnails.defaultThumbnail.url),
+                  image: Image.network(
+                    video.snippet.thumbnails.defaultThumbnail.url,
+                  ),
                 ),
                 marquee: true,
               ),
@@ -78,7 +76,7 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
                   },
                 ),
               ),
-            ]
+            ],
           ),
         ),
       ],
@@ -102,37 +100,49 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
             const SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView(
-                child: Obx(() => Column(
-                  children: [
-                    ...(controller.youtubeSearchResults.toList())
-                    .map((video) => [
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => _showApplyBottomSheet(context, video),
-                        child: WakeupItem(
-                          title: cleanText(video.snippet.title),
-                          content: cleanText(video.snippet.channelTitle),
-                          leading: DFAvatar(
-                          type: DFAvatarType.classroom,
-                          size: DFAvatarSize.large,
-                          fill: DFAvatarFill.image,
-                          image: Image.network(video.snippet.thumbnails.defaultThumbnail.url),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      const DFDivider(
-                        size: DFDividerSize.small,
-                      ),
-                      const SizedBox(height: 5),
-                    ]).expand((element) => element).toList(),
-                  ],
-                )),
+                child: Obx(
+                  () => Column(
+                    children: [
+                      ...(controller.youtubeSearchResults.toList())
+                          .map(
+                            (video) => [
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () =>
+                                    _showApplyBottomSheet(context, video),
+                                child: WakeupItem(
+                                  title: cleanText(video.snippet.title),
+                                  content: cleanText(
+                                    video.snippet.channelTitle,
+                                  ),
+                                  leading: DFAvatar(
+                                    type: DFAvatarType.classroom,
+                                    size: DFAvatarSize.large,
+                                    fill: DFAvatarFill.image,
+                                    image: Image.network(
+                                      video
+                                          .snippet
+                                          .thumbnails
+                                          .defaultThumbnail
+                                          .url,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              const DFDivider(size: DFDividerSize.small),
+                              const SizedBox(height: 5),
+                            ],
+                          )
+                          .expand((element) => element),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
         ),
-      )
+      ),
     );
   }
 }

@@ -12,7 +12,7 @@ class MealService extends GetxController {
   final MealRepository repository;
 
   MealService({MealRepository? repository})
-      : repository = repository ?? MealRepository();
+    : repository = repository ?? MealRepository();
 
   @override
   void onInit() {
@@ -41,9 +41,7 @@ class MealService extends GetxController {
 
     try {
       final meals = await Future.wait<Meal?>(
-        dates
-            .map(_getMealOrNullOn404)
-            .toList(growable: false),
+        dates.map(_getMealOrNullOn404).toList(growable: false),
       );
 
       return List.generate(
@@ -51,7 +49,9 @@ class MealService extends GetxController {
         (index) => MealDayData(
           date: dates[index],
           dayLabel: _weekdayToKorean(dates[index].weekday),
-          menus: meals[index] == null ? const [] : convertToMenus(meals[index]!),
+          menus: meals[index] == null
+              ? const []
+              : convertToMenus(meals[index]!),
         ),
         growable: false,
       );
@@ -103,9 +103,9 @@ class MealService extends GetxController {
 
   List<String> _normalizeItems(List<String> items) {
     return items
-      .map((item) => item.trim())
-      .where((item) => item.isNotEmpty)
-      .toList(growable: false);
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList(growable: false);
   }
 
   List<DateTime> _buildWeekDates(DateTime baseDate) {

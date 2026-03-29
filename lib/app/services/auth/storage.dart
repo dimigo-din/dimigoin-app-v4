@@ -20,7 +20,10 @@ class AuthStorage {
   static const _keyDeviceId = "device_id";
 
   /// Save both access and refresh tokens
-  static Future<void> saveTokens(String accessToken, String refreshToken) async {
+  static Future<void> saveTokens(
+    String accessToken,
+    String refreshToken,
+  ) async {
     await _storage.write(key: _keyAccessToken, value: accessToken);
     await _storage.write(key: _keyRefreshToken, value: refreshToken);
   }
@@ -39,19 +42,28 @@ class AuthStorage {
     await _storage.write(key: _keyPersonalInformationName, value: info.name);
 
     if (info.userGrade != null) {
-      await _storage.write(key: _keyPersonalInformationGrade, value: info.userGrade.toString());
+      await _storage.write(
+        key: _keyPersonalInformationGrade,
+        value: info.userGrade.toString(),
+      );
     } else {
       await _storage.delete(key: _keyPersonalInformationGrade);
     }
 
     if (info.userClass != null) {
-      await _storage.write(key: _keyPersonalInformationClass, value: info.userClass.toString());
+      await _storage.write(
+        key: _keyPersonalInformationClass,
+        value: info.userClass.toString(),
+      );
     } else {
       await _storage.delete(key: _keyPersonalInformationClass);
     }
 
     if (info.gender != null) {
-      await _storage.write(key: _keyPersonalInformationGender, value: info.gender);
+      await _storage.write(
+        key: _keyPersonalInformationGender,
+        value: info.gender,
+      );
     } else {
       await _storage.delete(key: _keyPersonalInformationGender);
     }

@@ -36,10 +36,8 @@ class LaundryApplyPage extends GetView<LaundryPageController> {
                 onRefresh: () async {
                   await controller.fetchLaundryApplications();
                 },
-                child: Obx(() => ListView(
-                  children: _buildTimeSlotList(),
-                )),
-              )
+                child: Obx(() => ListView(children: _buildTimeSlotList())),
+              ),
             ),
           ],
         ),
@@ -62,10 +60,11 @@ class LaundryApplyPage extends GetView<LaundryPageController> {
 
     final selectedMachine = machines[selectedIndex];
 
-    final matchedTimes = controller.laundryTimeline.value!.times
-        .where((t) => (t.assigns).any((m) => m.id == selectedMachine.id))
-        .toList()
-      ..sort((a, b) => (a.time).compareTo(b.time));
+    final matchedTimes =
+        controller.laundryTimeline.value!.times
+            .where((t) => (t.assigns).any((m) => m.id == selectedMachine.id))
+            .toList()
+          ..sort((a, b) => (a.time).compareTo(b.time));
 
     final currentUserId = controller.authService.user?.id;
     final applications = controller.laundryApplications;

@@ -12,16 +12,16 @@ class StayService extends GetxController {
 
   AuthService authService = Get.find<AuthService>();
 
-  StayService({StayRepository? repository}) : repository = repository ?? StayRepository();
+  StayService({StayRepository? repository})
+    : repository = repository ?? StayRepository();
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    initialize(); 
+    initialize();
   }
 
-  Future<void> initialize() async {
-  }
+  Future<void> initialize() async {}
 
   Future<List<Stay>> getStay() async {
     try {
@@ -45,9 +45,19 @@ class StayService extends GetxController {
     }
   }
 
-  Future<StayApply> addStayApplication(String stayId, String seatId, List<Outing> outings, {String? noSeatReason}) async {
+  Future<StayApply> addStayApplication(
+    String stayId,
+    String seatId,
+    List<Outing> outings, {
+    String? noSeatReason,
+  }) async {
     try {
-      final response = await repository.addStayApplication(stayId, seatId, outings, noSeatReason: noSeatReason);
+      final response = await repository.addStayApplication(
+        stayId,
+        seatId,
+        outings,
+        noSeatReason: noSeatReason,
+      );
 
       return response;
     } on StayNotInApplyPeriodException catch (e) {

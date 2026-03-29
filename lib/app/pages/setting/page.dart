@@ -11,49 +11,41 @@ import 'package:get/get.dart';
 import 'controller.dart';
 
 class SettingPage extends GetView<SettingController> {
-  const SettingPage({Key? key}) : super(key: key);
+  const SettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
 
     return Container(
-      decoration: BoxDecoration(
-        color: colorTheme.backgroundStandardSecondary,
-      ),
+      decoration: BoxDecoration(color: colorTheme.backgroundStandardSecondary),
       child: SafeArea(
         top: false,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: colorTheme.backgroundStandardSecondary,
-          appBar: const DFAppBar(
-            title: '설정'
-          ),
+          appBar: const DFAppBar(title: '설정'),
           body: ListView(
             physics: const ClampingScrollPhysics(),
             children: [
               Column(
                 children: [
-                Visibility(
-                  visible: kIsWeb == false,
-                  child: Column(
-                  children: [
-                    const MenuHeader(
-                    title: "알림 설정",
+                  Visibility(
+                    visible: kIsWeb == false,
+                    child: Column(
+                      children: [
+                        const MenuHeader(title: "알림 설정"),
+                        Obx(
+                          () => Column(children: _buildNotificationSetting()),
+                        ),
+                        const SizedBox(height: DFSpacing.spacing300),
+                      ],
                     ),
-                    Obx(() => Column(
-                    children: _buildNotificationSetting(),
-                    )),
-                    const SizedBox(height: DFSpacing.spacing300),
-                  ],
                   ),
-                ),
                 ],
               ),
               if (kIsWeb == false) const DFDivider(size: DFDividerSize.medium),
-              const MenuHeader(
-                title: "앱 정보"
-              ),
+              const MenuHeader(title: "앱 정보"),
               MenuItem(
                 title: "개인정보 처리방침",
                 onTap: () => controller.openPrivacyPolicy(),
@@ -64,19 +56,22 @@ class SettingPage extends GetView<SettingController> {
               ),
               MenuItem(
                 title: "버전 정보",
-                trailing: Obx(() => Text(
-                  "v${controller.appVersion.value}",
-                  style: Theme.of(context).extension<DFTypography>()!.body.copyWith(
-                    color: colorTheme.contentStandardSecondary,
-                    fontWeight: FontWeight.w400,
+                trailing: Obx(
+                  () => Text(
+                    "v${controller.appVersion.value}",
+                    style: Theme.of(context)
+                        .extension<DFTypography>()!
+                        .body
+                        .copyWith(
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        ),
                   ),
-                )),
+                ),
               ),
               const SizedBox(height: DFSpacing.spacing300),
               const DFDivider(size: DFDividerSize.medium),
-              const MenuHeader(
-                title: "계정 정보"
-              ),
+              const MenuHeader(title: "계정 정보"),
               MenuItem(
                 title: "로그아웃",
                 trailing: GestureDetector(
@@ -99,7 +94,9 @@ class SettingPage extends GetView<SettingController> {
       return MenuItem(
         title: noti.description,
         trailing: Obx(() {
-          final subscribed = controller.notificationSubscribedSubject.contains(noti.id);
+          final subscribed = controller.notificationSubscribedSubject.contains(
+            noti.id,
+          );
           return DFControl(
             type: DFControlType.toggle,
             status: subscribed,
@@ -111,7 +108,6 @@ class SettingPage extends GetView<SettingController> {
     }).toList();
   }
 }
-
 
 class MenuItem extends StatelessWidget {
   final String? title;
@@ -177,10 +173,7 @@ class MenuItem extends StatelessWidget {
 class MenuHeader extends StatelessWidget {
   final String? title;
 
-  const MenuHeader({
-    super.key,
-    this.title,
-  });
+  const MenuHeader({super.key, this.title});
 
   @override
   Widget build(BuildContext context) {

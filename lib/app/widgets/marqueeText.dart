@@ -93,7 +93,7 @@ class _MarqueeTextState extends State<MarqueeText>
 
     return SizedBox(
       height: 30,
-        child: Marquee(
+      child: Marquee(
         text: widget.text,
         style: widget.style,
         pauseAfterRound: widget.pauseDuration,

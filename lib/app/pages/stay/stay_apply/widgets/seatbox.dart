@@ -9,8 +9,23 @@ import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 class SeatUtils {
   static List<List<String>> generateTable() {
     List<List<String>> table = [];
-    const columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
-    
+    const columns = [
+      'A',
+      'B',
+      'C',
+      'D',
+      'E',
+      'F',
+      'G',
+      'H',
+      'I',
+      'J',
+      'K',
+      'L',
+      'M',
+      'N',
+    ];
+
     for (String col in columns) {
       List<String> rowSeats = [];
       for (int row = 1; row <= 18; row++) {
@@ -18,7 +33,7 @@ class SeatUtils {
       }
       table.add(rowSeats);
     }
-    
+
     return table;
   }
 
@@ -27,7 +42,7 @@ class SeatUtils {
     if (parts.length != 2) return false;
 
     final start = parts[0]; // "A1"
-    final end = parts[1];   // "N9"
+    final end = parts[1]; // "N9"
 
     // 좌석 파싱 (예: "A1" -> column: "A", row: 1)
     final seatMatch = RegExp(r'^([A-Z]+)(\d+)$').firstMatch(seat);
@@ -58,7 +73,7 @@ class SeatUtils {
     final colCode = col.codeUnitAt(0);
     final startCode = start.codeUnitAt(0);
     final endCode = end.codeUnitAt(0);
-    
+
     return colCode >= startCode && colCode <= endCode;
   }
 }
@@ -74,7 +89,7 @@ class SeatSelectionWidget extends StatefulWidget {
   final VoidCallback? onNoSeatSelected;
 
   const SeatSelectionWidget({
-    Key? key,
+    super.key,
     required this.currentStay,
     this.initialSelectedSeat,
     required this.currentUserGrade,
@@ -83,7 +98,7 @@ class SeatSelectionWidget extends StatefulWidget {
     required this.isApplied,
     required this.onSeatConfirmed,
     this.onNoSeatSelected,
-  }) : super(key: key);
+  });
 
   @override
   State<SeatSelectionWidget> createState() => _SeatSelectionWidgetState();
@@ -116,7 +131,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
 
   void _onNoSeatPressed() {
     if (widget.isApplied) return;
-    
+
     setState(() {
       _selectedSeat = null;
     });
@@ -142,7 +157,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
             ),
           ),
         ),
-        
+
         Positioned(
           left: 0,
           right: 0,
@@ -171,7 +186,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
                 subTitle: '내가 선택한 좌석',
                 trailing: Row(
                   children: [
-                    if(widget.isApplied == false) ...[
+                    if (widget.isApplied == false) ...[
                       DFButton(
                         label: "미선택",
                         theme: DFButtonTheme.accent,
@@ -182,11 +197,13 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
                       DFButton(
                         label: "선택하기",
                         theme: DFButtonTheme.accent,
-                        onPressed: _selectedSeat != null ? _onConfirmPressed : null,
+                        onPressed: _selectedSeat != null
+                            ? _onConfirmPressed
+                            : null,
                       ),
-                    ]
+                    ],
                   ],
-                )
+                ),
               ),
             ),
           ),
@@ -203,7 +220,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
 
     return staySeat.any((seatPreset) {
       return seatPreset.target == myTarget &&
-             SeatUtils.isInRange(seatPreset.range, seat);
+          SeatUtils.isInRange(seatPreset.range, seat);
     });
   }
 
@@ -212,9 +229,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
     if (stayApply == null) return null;
 
     try {
-      return stayApply.firstWhere(
-        (apply) => apply.staySeat == seat,
-      );
+      return stayApply.firstWhere((apply) => apply.staySeat == seat);
     } catch (e) {
       return null;
     }
@@ -223,7 +238,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
   List<Widget> _buildGroupedRows(BuildContext context) {
     final table = SeatUtils.generateTable();
     List<Widget> groupedWidgets = [];
-    
+
     for (int i = 0; i < table.length; i += 2) {
       List<List<String>> group = table.sublist(
         i,
@@ -274,7 +289,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
     final owner = _getSeatOwner(seat);
     final isTaken = owner != null;
     final isMine = owner?.user.id == widget.currentUserId;
-    
+
     Color backgroundColor;
     Color textColor;
 

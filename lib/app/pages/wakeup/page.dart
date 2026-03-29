@@ -14,17 +14,13 @@ class WakeupPage extends GetView<WakeupPageController> {
   @override
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
-    
+
     return Container(
-      decoration: BoxDecoration(
-        color: colorTheme.backgroundStandardSecondary,
-      ),
+      decoration: BoxDecoration(color: colorTheme.backgroundStandardSecondary),
       child: SafeArea(
         top: false,
         child: Scaffold(
-          appBar: DFAppBar(
-            title: '기상곡',
-          ),
+          appBar: DFAppBar(title: '기상곡'),
           body: Padding(
             padding: EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
             child: Column(
@@ -41,14 +37,13 @@ class WakeupPage extends GetView<WakeupPageController> {
                   },
                 ),
                 Expanded(
-                  child: Obx(() => IndexedStack(
-                    index: controller.selectedIndex.value,
-                    children: [
-                      WakeupVotePage(),
-                      WakeupApplyPage(),
-                    ],
-                  ))
-                )
+                  child: Obx(
+                    () => IndexedStack(
+                      index: controller.selectedIndex.value,
+                      children: [WakeupVotePage(), WakeupApplyPage()],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

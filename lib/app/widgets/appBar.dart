@@ -29,33 +29,30 @@ class DFAppBar extends StatelessWidget implements PreferredSizeWidget {
       toolbarHeight: 80,
       elevation: 0,
       leading: hasBackButton
-        ? IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 20,
-              color: colorTheme.contentStandardTertiary,
-            ),
-            onPressed: onBackPressed ?? () {
-              Navigator.of(context).maybePop();
-            },
-          )
-        : const SizedBox(width: kToolbarHeight),
-      title: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: DFSpacing.spacing400,
-        ),
-        child: title != null
-          ? Text(
-              title!,
-              style: textTheme.title.copyWith(
-                color: colorTheme.contentStandardPrimary,
-                fontWeight: FontWeight.w700,
+          ? IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 20,
+                color: colorTheme.contentStandardTertiary,
               ),
+              onPressed:
+                  onBackPressed ??
+                  () {
+                    Navigator.of(context).maybePop();
+                  },
             )
-          : Image.asset(
-            'assets/images/dimigoin_icon.png',
-            height: 35,
-          ),
+          : const SizedBox(width: kToolbarHeight),
+      title: Padding(
+        padding: const EdgeInsets.symmetric(vertical: DFSpacing.spacing400),
+        child: title != null
+            ? Text(
+                title!,
+                style: textTheme.title.copyWith(
+                  color: colorTheme.contentStandardPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+              )
+            : Image.asset('assets/images/dimigoin_icon.png', height: 35),
       ),
       actions: actions,
     );

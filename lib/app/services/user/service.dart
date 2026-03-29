@@ -11,16 +11,16 @@ class UserService extends GetxController {
 
   AuthService authService = Get.find<AuthService>();
 
-  UserService({UserRepository? repository}) : repository = repository ?? UserRepository();
+  UserService({UserRepository? repository})
+    : repository = repository ?? UserRepository();
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    initialize(); 
+    initialize();
   }
 
-  Future<void> initialize() async {
-  }
+  Future<void> initialize() async {}
 
   Future<Timetable> getTimeline(int userGrade, int userClass) async {
     try {

@@ -38,8 +38,9 @@ class _DFCalendarState extends State<DFCalendar> {
     return Center(
       child: Text(
         label,
-        style:
-            textTheme.body.copyWith(color: colorTheme.contentStandardSecondary),
+        style: textTheme.body.copyWith(
+          color: colorTheme.contentStandardSecondary,
+        ),
       ),
     );
   }
@@ -64,8 +65,8 @@ class _DFCalendarState extends State<DFCalendar> {
         color: isPrimaryHighlight
             ? colorTheme.coreBrandPrimary
             : (isHighlighted
-                ? colorTheme.coreBrandSecondary
-                : Colors.transparent),
+                  ? colorTheme.coreBrandSecondary
+                  : Colors.transparent),
         borderRadius: BorderRadius.circular(DFRadius.radius300),
       ),
       child: Column(
@@ -74,7 +75,9 @@ class _DFCalendarState extends State<DFCalendar> {
           Text(
             '${day.day}',
             style: textTheme.callout.copyWith(
-              color: isHighlighted ? colorTheme.solidWhite : colorTheme.contentStandardPrimary,
+              color: isHighlighted
+                  ? colorTheme.solidWhite
+                  : colorTheme.contentStandardPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -87,16 +90,15 @@ class _DFCalendarState extends State<DFCalendar> {
                   final event = eventList[index];
 
                   return Container(
-                    margin: EdgeInsets.only(
-                      left: index == 0 ? 0 : 2,
-                    ),
+                    margin: EdgeInsets.only(left: index == 0 ? 0 : 2),
                     width: 5,
                     height: 5,
                     decoration: BoxDecoration(
                       color: switch (event.type) {
                         CalendarEventType.exam => colorTheme.calenarExam,
                         CalendarEventType.home => colorTheme.calendarHome,
-                        CalendarEventType.vacation => colorTheme.calendarVacation,
+                        CalendarEventType.vacation =>
+                          colorTheme.calendarVacation,
                         CalendarEventType.event => colorTheme.calendarEvent,
                         CalendarEventType.stay => colorTheme.calendarStay,
                       },
@@ -127,7 +129,11 @@ class _DFCalendarState extends State<DFCalendar> {
               color: colorTheme.contentStandardSecondary,
               onPressed: () {
                 setState(() {
-                  _focusedDay = DateTime(_focusedDay.year, _focusedDay.month - 1, 1);
+                  _focusedDay = DateTime(
+                    _focusedDay.year,
+                    _focusedDay.month - 1,
+                    1,
+                  );
                 });
               },
             ),
@@ -147,7 +153,11 @@ class _DFCalendarState extends State<DFCalendar> {
               color: colorTheme.contentStandardSecondary,
               onPressed: () {
                 setState(() {
-                  _focusedDay = DateTime(_focusedDay.year, _focusedDay.month + 1, 1);
+                  _focusedDay = DateTime(
+                    _focusedDay.year,
+                    _focusedDay.month + 1,
+                    1,
+                  );
                 });
               },
             ),
@@ -212,9 +222,7 @@ class _DFCalendarState extends State<DFCalendar> {
             },
           ),
           headerVisible: false,
-          calendarStyle: const CalendarStyle(
-            outsideDaysVisible: false,
-          ),
+          calendarStyle: const CalendarStyle(outsideDaysVisible: false),
           rowHeight: 60,
         ),
       ],

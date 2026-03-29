@@ -30,13 +30,9 @@ class FrigoRepository {
     String url = '/student/frigo';
 
     try {
-      await api.post(url, data: {
-        'timing': timing,
-        'reason': reason,
-      });
+      await api.post(url, data: {'timing': timing, 'reason': reason});
     } on DioException catch (e) {
-
-      if(e.response?.data['code'] == 'FrigoPeriod_NotExistsForGrade') {
+      if (e.response?.data['code'] == 'FrigoPeriod_NotExistsForGrade') {
         throw FrigoPeriodNotExistsForGradeException();
       } else if (e.response?.data['code'] == 'FrigoPeriod_NotInApplyPeriod') {
         throw FrigoPeriodNotInApplyPeriodException();

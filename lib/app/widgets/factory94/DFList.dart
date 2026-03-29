@@ -5,6 +5,7 @@ import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 
 enum DFValueListType { horizontal, vertical }
+
 enum DFValueListTheme { disabled, outlined, active }
 
 class DFValueList extends StatelessWidget {
@@ -40,10 +41,7 @@ class DFValueList extends StatelessWidget {
           DFValueListTheme.active => colorTheme.coreBrandPrimary,
         },
         borderRadius: BorderRadius.circular(DFRadius.radius500),
-        border: Border.all(
-          color: colorTheme.lineOutline,
-          width: 1,
-        ),
+        border: Border.all(color: colorTheme.lineOutline, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,8 +55,10 @@ class DFValueList extends StatelessWidget {
                     subTitle!,
                     style: textTheme.callout.copyWith(
                       color: switch (theme) {
-                        DFValueListTheme.disabled => colorTheme.contentStandardQuaternary,
-                        DFValueListTheme.outlined => colorTheme.contentStandardTertiary,
+                        DFValueListTheme.disabled =>
+                          colorTheme.contentStandardQuaternary,
+                        DFValueListTheme.outlined =>
+                          colorTheme.contentStandardTertiary,
                         DFValueListTheme.active => colorTheme.solidWhite,
                       },
                       fontWeight: FontWeight.w400,
@@ -71,8 +71,10 @@ class DFValueList extends StatelessWidget {
                     title,
                     style: textTheme.body.copyWith(
                       color: switch (theme) {
-                        DFValueListTheme.disabled => colorTheme.contentStandardPrimary,
-                        DFValueListTheme.outlined => colorTheme.contentStandardPrimary,
+                        DFValueListTheme.disabled =>
+                          colorTheme.contentStandardPrimary,
+                        DFValueListTheme.outlined =>
+                          colorTheme.contentStandardPrimary,
                         DFValueListTheme.active => colorTheme.solidWhite,
                       },
                       fontWeight: FontWeight.w700,
@@ -85,9 +87,12 @@ class DFValueList extends StatelessWidget {
                     content!,
                     style: textTheme.callout.copyWith(
                       color: switch (theme) {
-                        DFValueListTheme.disabled => colorTheme.contentStandardQuaternary,
-                        DFValueListTheme.outlined => colorTheme.contentStandardTertiary,
-                        DFValueListTheme.active => colorTheme.contentStandardTertiary,
+                        DFValueListTheme.disabled =>
+                          colorTheme.contentStandardQuaternary,
+                        DFValueListTheme.outlined =>
+                          colorTheme.contentStandardTertiary,
+                        DFValueListTheme.active =>
+                          colorTheme.contentStandardTertiary,
                       },
                       fontWeight: switch (theme) {
                         DFValueListTheme.disabled => FontWeight.w500,
@@ -98,9 +103,8 @@ class DFValueList extends StatelessWidget {
                   ),
                 ],
               ],
-            )
-          ]
-          else ...[
+            ),
+          ] else ...[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -109,8 +113,10 @@ class DFValueList extends StatelessWidget {
                     title,
                     style: textTheme.headline.copyWith(
                       color: switch (theme) {
-                        DFValueListTheme.disabled => colorTheme.contentStandardPrimary,
-                        DFValueListTheme.outlined => colorTheme.contentStandardPrimary,
+                        DFValueListTheme.disabled =>
+                          colorTheme.contentStandardPrimary,
+                        DFValueListTheme.outlined =>
+                          colorTheme.contentStandardPrimary,
                         DFValueListTheme.active => colorTheme.solidWhite,
                       },
                       fontWeight: FontWeight.w700,
@@ -123,8 +129,10 @@ class DFValueList extends StatelessWidget {
                     subTitle!,
                     style: textTheme.footnote.copyWith(
                       color: switch (theme) {
-                        DFValueListTheme.disabled => colorTheme.contentStandardQuaternary,
-                        DFValueListTheme.outlined => colorTheme.contentStandardTertiary,
+                        DFValueListTheme.disabled =>
+                          colorTheme.contentStandardQuaternary,
+                        DFValueListTheme.outlined =>
+                          colorTheme.contentStandardTertiary,
                         DFValueListTheme.active => colorTheme.solidWhite,
                       },
                       fontWeight: FontWeight.w400,
@@ -139,17 +147,19 @@ class DFValueList extends StatelessWidget {
                 content!,
                 style: textTheme.paragraphSmall.copyWith(
                   color: switch (theme) {
-                    DFValueListTheme.disabled => colorTheme.contentStandardQuaternary,
-                    DFValueListTheme.outlined => colorTheme.contentStandardSecondary,
+                    DFValueListTheme.disabled =>
+                      colorTheme.contentStandardQuaternary,
+                    DFValueListTheme.outlined =>
+                      colorTheme.contentStandardSecondary,
                     DFValueListTheme.active => colorTheme.solidWhite,
                   },
                   fontWeight: FontWeight.w400,
                 ),
               ),
-            ]
-          ]
+            ],
+          ],
         ],
-      )
+      ),
     );
   }
 }
@@ -173,7 +183,7 @@ class DFItemList extends StatelessWidget {
     this.content,
     this.leading,
     this.trailing,
-    this.marquee = false
+    this.marquee = false,
   });
 
   @override
@@ -193,7 +203,11 @@ class DFItemList extends StatelessWidget {
         children: [
           if (leading != null) ...[
             leading!,
-            SizedBox(width: size == DFItemListSize.large ? DFSpacing.spacing400 : DFSpacing.spacing300),
+            SizedBox(
+              width: size == DFItemListSize.large
+                  ? DFSpacing.spacing400
+                  : DFSpacing.spacing300,
+            ),
           ],
           Expanded(
             child: Column(
@@ -205,98 +219,102 @@ class DFItemList extends StatelessWidget {
                     MarqueeText(
                       text: subTitle!,
                       style: size == DFItemListSize.large
-                        ? textTheme.body.copyWith(
-                          color: colorTheme.contentStandardSecondary,
-                          fontWeight: FontWeight.w400,
-                        )
-                        : textTheme.footnote.copyWith(
-                          color: colorTheme.contentStandardSecondary,
-                          fontWeight: FontWeight.w400,
-                        ),
+                          ? textTheme.body.copyWith(
+                              color: colorTheme.contentStandardSecondary,
+                              fontWeight: FontWeight.w400,
+                            )
+                          : textTheme.footnote.copyWith(
+                              color: colorTheme.contentStandardSecondary,
+                              fontWeight: FontWeight.w400,
+                            ),
                       velocity: 30.0,
                     ),
-                  ] else ... [
+                  ] else ...[
                     Text(
                       subTitle!,
                       style: size == DFItemListSize.large
-                        ? textTheme.body.copyWith(
-                          color: colorTheme.contentStandardSecondary,
-                          fontWeight: FontWeight.w400,
-                        )
-                        : textTheme.footnote.copyWith(
-                          color: colorTheme.contentStandardSecondary,
-                          fontWeight: FontWeight.w400,
-                        ),
+                          ? textTheme.body.copyWith(
+                              color: colorTheme.contentStandardSecondary,
+                              fontWeight: FontWeight.w400,
+                            )
+                          : textTheme.footnote.copyWith(
+                              color: colorTheme.contentStandardSecondary,
+                              fontWeight: FontWeight.w400,
+                            ),
                     ),
-                  ]
+                  ],
                 ],
                 if (title != null) ...[
                   if (marquee) ...[
                     MarqueeText(
                       text: title!,
                       style: size == DFItemListSize.large
-                        ? textTheme.headline.copyWith(
-                          color: colorTheme.contentStandardPrimary,
-                          fontWeight: FontWeight.w700,
-                        )
-                        : textTheme.body.copyWith(
-                          color: colorTheme.contentStandardPrimary,
-                          fontWeight: FontWeight.w700,
-                        ),
+                          ? textTheme.headline.copyWith(
+                              color: colorTheme.contentStandardPrimary,
+                              fontWeight: FontWeight.w700,
+                            )
+                          : textTheme.body.copyWith(
+                              color: colorTheme.contentStandardPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
                     ),
-                  ] else ... [
+                  ] else ...[
                     Text(
                       title!,
                       style: size == DFItemListSize.large
-                        ? textTheme.headline.copyWith(
-                          color: colorTheme.contentStandardPrimary,
-                          fontWeight: FontWeight.w700,
-                        )
-                        : textTheme.body.copyWith(
-                          color: colorTheme.contentStandardPrimary,
-                          fontWeight: FontWeight.w700,
-                        ),
+                          ? textTheme.headline.copyWith(
+                              color: colorTheme.contentStandardPrimary,
+                              fontWeight: FontWeight.w700,
+                            )
+                          : textTheme.body.copyWith(
+                              color: colorTheme.contentStandardPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
                     ),
-                  ]
+                  ],
                 ],
                 if (content != null) ...[
                   if (marquee) ...[
                     MarqueeText(
                       text: content!,
                       style: size == DFItemListSize.large
-                        ? textTheme.paragraphLarge.copyWith(
-                          color: colorTheme.contentStandardSecondary,
-                          fontWeight: FontWeight.w400,
-                        )
-                        : textTheme.paragraphSmall.copyWith(
-                          color: colorTheme.contentStandardSecondary,
-                          fontWeight: FontWeight.w400,
-                        ),
+                          ? textTheme.paragraphLarge.copyWith(
+                              color: colorTheme.contentStandardSecondary,
+                              fontWeight: FontWeight.w400,
+                            )
+                          : textTheme.paragraphSmall.copyWith(
+                              color: colorTheme.contentStandardSecondary,
+                              fontWeight: FontWeight.w400,
+                            ),
                     ),
                   ] else ...[
                     Text(
                       content!,
                       style: size == DFItemListSize.large
-                        ? textTheme.paragraphLarge.copyWith(
-                          color: colorTheme.contentStandardSecondary,
-                          fontWeight: FontWeight.w400,
-                        )
-                        : textTheme.paragraphSmall.copyWith(
-                          color: colorTheme.contentStandardSecondary,
-                          fontWeight: FontWeight.w400,
-                        ),
+                          ? textTheme.paragraphLarge.copyWith(
+                              color: colorTheme.contentStandardSecondary,
+                              fontWeight: FontWeight.w400,
+                            )
+                          : textTheme.paragraphSmall.copyWith(
+                              color: colorTheme.contentStandardSecondary,
+                              fontWeight: FontWeight.w400,
+                            ),
                     ),
-                  ]
+                  ],
                 ],
               ],
             ),
           ),
           if (trailing != null) ...[
-            SizedBox(width: size == DFItemListSize.large ? DFSpacing.spacing400 : DFSpacing.spacing300),
+            SizedBox(
+              width: size == DFItemListSize.large
+                  ? DFSpacing.spacing400
+                  : DFSpacing.spacing300,
+            ),
             trailing!,
           ],
         ],
-      )
+      ),
     );
   }
 }

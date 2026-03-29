@@ -24,7 +24,9 @@ class LoginPage extends GetView<LoginPageController> {
         body: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: DFSpacing.spacing900),
+              padding: const EdgeInsets.symmetric(
+                horizontal: DFSpacing.spacing900,
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -32,7 +34,11 @@ class LoginPage extends GetView<LoginPageController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset('assets/images/dimigoin_icon.png', width: 30, height: 30),
+                      Image.asset(
+                        'assets/images/dimigoin_icon.png',
+                        width: 30,
+                        height: 30,
+                      ),
                       const SizedBox(width: DFSpacing.spacing200),
                       Text(
                         '디미고인',
@@ -56,18 +62,22 @@ class LoginPage extends GetView<LoginPageController> {
                         decoration: BoxDecoration(
                           color: colorTheme.coreBrandPrimary,
                           border: Border(
-                            bottom: BorderSide(
-                              color: colorTheme.lineOutline,
-                            ),
+                            bottom: BorderSide(color: colorTheme.lineOutline),
                           ),
-                          borderRadius: BorderRadius.circular(DFRadius.radius300),
+                          borderRadius: BorderRadius.circular(
+                            DFRadius.radius300,
+                          ),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(DFSpacing.spacing200),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SvgPicture.asset('assets/icons/google.svg'  , width: 24, height: 24),
+                              SvgPicture.asset(
+                                'assets/icons/google.svg',
+                                width: 24,
+                                height: 24,
+                              ),
                               const SizedBox(width: DFSpacing.spacing300),
                               Text(
                                 "디미고 구글 계정으로 로그인",
@@ -78,7 +88,7 @@ class LoginPage extends GetView<LoginPageController> {
                               ),
                             ],
                           ),
-                        )
+                        ),
                       ),
                     ),
                   ),
@@ -87,9 +97,7 @@ class LoginPage extends GetView<LoginPageController> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       GestureDetector(
-                        onTap: () => {
-                          controller.openLoginHelpPage(),
-                        },
+                        onTap: () => {controller.openLoginHelpPage()},
                         child: Text(
                           "로그인에 도움이 필요하신가요?",
                           style: textTheme.footnote.copyWith(
@@ -98,9 +106,9 @@ class LoginPage extends GetView<LoginPageController> {
                             decorationColor: colorTheme.contentStandardTertiary,
                           ),
                         ),
-                      )
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

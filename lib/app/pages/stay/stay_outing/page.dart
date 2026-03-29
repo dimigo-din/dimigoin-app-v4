@@ -38,11 +38,11 @@ class StayOutingPage extends GetView<StayPageController> {
 
             // 외출 목록
             Expanded(
-              child: Obx(() => SingleChildScrollView(
-                child: Column(
-                  children: _buildFilteredOutingList(),
+              child: Obx(
+                () => SingleChildScrollView(
+                  child: Column(children: _buildFilteredOutingList()),
                 ),
-              )),
+              ),
             ),
             const SizedBox(height: DFSpacing.spacing300),
 
@@ -68,9 +68,7 @@ class StayOutingPage extends GetView<StayPageController> {
       return [];
     }
 
-    final days = OutingDateUtils.getOutingDays(
-      controller.selectedStay.value!,
-    );
+    final days = OutingDateUtils.getOutingDays(controller.selectedStay.value!);
     final selectedDay = days[controller.selectedStayOutingDay.value];
 
     return controller.currentStayOutings
@@ -80,14 +78,12 @@ class StayOutingPage extends GetView<StayPageController> {
           final outingDate = OutingDateUtils.parseServerDateTime(outing.from!);
           return OutingDateUtils.isSameDay(outingDate, selectedDay);
         })
-        .map((outing) => OutingListItem(
-              outing: outing,
-              onTap: () => _showOutingBottomSheet(
-                Get.context!,
-                true,
-                outing,
-              ),
-            ))
+        .map(
+          (outing) => OutingListItem(
+            outing: outing,
+            onTap: () => _showOutingBottomSheet(Get.context!, true, outing),
+          ),
+        )
         .toList();
   }
 
@@ -96,13 +92,11 @@ class StayOutingPage extends GetView<StayPageController> {
     bool isEditing,
     dynamic outing,
   ) {
-    if(controller.selectedStay.value == null){
+    if (controller.selectedStay.value == null) {
       return;
     }
 
-    final days = OutingDateUtils.getOutingDays(
-      controller.selectedStay.value!,
-    );
+    final days = OutingDateUtils.getOutingDays(controller.selectedStay.value!);
     final selectedDate = days[controller.selectedStayOutingDay.value];
 
     OutingFormBottomSheet.show(

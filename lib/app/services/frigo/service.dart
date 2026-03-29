@@ -12,16 +12,16 @@ class FrigoService extends GetxController {
 
   AuthService authService = Get.find<AuthService>();
 
-  FrigoService({FrigoRepository? repository}) : repository = repository ?? FrigoRepository();
+  FrigoService({FrigoRepository? repository})
+    : repository = repository ?? FrigoRepository();
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    initialize(); 
+    initialize();
   }
 
-  Future<void> initialize() async {
-  }
+  Future<void> initialize() async {}
 
   Future<Frigo> getFrigoApplication() async {
     try {

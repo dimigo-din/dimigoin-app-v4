@@ -8,11 +8,7 @@ class Thumbnail {
   final int? width;
   final int? height;
 
-  Thumbnail({
-    required this.url,
-    this.width,
-    this.height,
-  });
+  Thumbnail({required this.url, this.width, this.height});
 
   factory Thumbnail.fromJson(Map<String, dynamic> json) =>
       _$ThumbnailFromJson(json);
@@ -42,10 +38,7 @@ class VideoId {
   final String kind;
   final String? videoId;
 
-  VideoId({
-    required this.kind,
-    this.videoId,
-  });
+  VideoId({required this.kind, this.videoId});
 
   factory VideoId.fromJson(Map<String, dynamic> json) =>
       _$VideoIdFromJson(json);
@@ -103,10 +96,7 @@ class PageInfo {
   final int totalResults;
   final int resultsPerPage;
 
-  PageInfo({
-    required this.totalResults,
-    required this.resultsPerPage,
-  });
+  PageInfo({required this.totalResults, required this.resultsPerPage});
 
   factory PageInfo.fromJson(Map<String, dynamic> json) =>
       _$PageInfoFromJson(json);

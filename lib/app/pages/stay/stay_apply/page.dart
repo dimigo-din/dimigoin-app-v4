@@ -25,7 +25,8 @@ class StayApplyPage extends GetView<StayPageController> {
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.8,
           child: SeatSelectionWidget(
-            currentStay: controller.stayList[controller.selectedStayIndex.value],
+            currentStay:
+                controller.stayList[controller.selectedStayIndex.value],
             initialSelectedSeat: controller.selectedSeat.value,
             currentUserGrade: authService.user!.userGrade.toString(),
             currentUserGender: authService.user!.gender.toString(),
@@ -57,17 +58,24 @@ class StayApplyPage extends GetView<StayPageController> {
               child: Column(
                 children: [
                   // 잔류 일정 선택 헤더
-                  Obx(() => StayScheduleSelector(
-                    title: controller.stayList.isEmpty
-                        ? "잔류 일정 없음"
-                        : controller.stayList[controller.selectedStayIndex.value].name,
-                    onTap: () => controller.stayList.isNotEmpty ? StaySelectionBottomSheet.show(
-                      context: context,
-                      stayList: controller.stayList,
-                      selectedStayIndex: controller.selectedStayIndex.value,
-                      onStaySelected: controller.selectStay,
-                    ) : null,
-                  )),
+                  Obx(
+                    () => StayScheduleSelector(
+                      title: controller.stayList.isEmpty
+                          ? "잔류 일정 없음"
+                          : controller
+                                .stayList[controller.selectedStayIndex.value]
+                                .name,
+                      onTap: () => controller.stayList.isNotEmpty
+                          ? StaySelectionBottomSheet.show(
+                              context: context,
+                              stayList: controller.stayList,
+                              selectedStayIndex:
+                                  controller.selectedStayIndex.value,
+                              onStaySelected: controller.selectStay,
+                            )
+                          : null,
+                    ),
+                  ),
                   const SizedBox(height: DFSpacing.spacing600),
 
                   // 좌석 선택 카드
@@ -115,7 +123,7 @@ class StayApplyPage extends GetView<StayPageController> {
                                 },
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     );
@@ -129,24 +137,24 @@ class StayApplyPage extends GetView<StayPageController> {
               if (controller.stayList.isEmpty) {
                 return const SizedBox();
               }
-              
+
               return SizedBox(
                 width: double.infinity,
                 child: controller.isApplied.value == false
-                  ? DFButton(
-                    onPressed: () => controller.addStayApplication(),
-                    label: "잔류 신청",
-                    size: DFButtonSize.large,
-                    theme: DFButtonTheme.accent,
-                    style: DFButtonStyle.primary,
-                  )
-                  : DFButton(
-                    onPressed: () => controller.deleteStayApplication(),
-                    label: "잔류 신청 취소",
-                    size: DFButtonSize.large,
-                    theme: DFButtonTheme.accent,
-                    style: DFButtonStyle.secondary,
-                  ),
+                    ? DFButton(
+                        onPressed: () => controller.addStayApplication(),
+                        label: "잔류 신청",
+                        size: DFButtonSize.large,
+                        theme: DFButtonTheme.accent,
+                        style: DFButtonStyle.primary,
+                      )
+                    : DFButton(
+                        onPressed: () => controller.deleteStayApplication(),
+                        label: "잔류 신청 취소",
+                        size: DFButtonSize.large,
+                        theme: DFButtonTheme.accent,
+                        style: DFButtonStyle.secondary,
+                      ),
               );
             }),
           ],

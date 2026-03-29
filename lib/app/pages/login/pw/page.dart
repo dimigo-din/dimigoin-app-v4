@@ -33,7 +33,11 @@ class PWLoginPage extends GetView<PWLoginPageController> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset('assets/images/dimigoin_icon.png', width: 30, height: 30),
+                        Image.asset(
+                          'assets/images/dimigoin_icon.png',
+                          width: 30,
+                          height: 30,
+                        ),
                         SizedBox(width: DFSpacing.spacing200),
                         Text(
                           '디미고인',
@@ -73,7 +77,9 @@ class PWLoginPage extends GetView<PWLoginPageController> {
                                   color: colorTheme.lineOutline,
                                 ),
                               ),
-                              borderRadius: BorderRadius.circular(DFRadius.radius300),
+                              borderRadius: BorderRadius.circular(
+                                DFRadius.radius300,
+                              ),
                             ),
                             child: Padding(
                               padding: EdgeInsets.all(DFSpacing.spacing200),
@@ -85,8 +91,8 @@ class PWLoginPage extends GetView<PWLoginPageController> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              )
-                            )
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -106,7 +112,7 @@ class PWLoginPage extends GetView<PWLoginPageController> {
             ),
           ],
         ),
-      )
+      ),
     );
   }
 }

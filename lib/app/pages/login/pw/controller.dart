@@ -14,7 +14,10 @@ class PWLoginPageController extends GetxController {
 
   Future<void> loginWithPassword() async {
     try {
-      bool success = await authService.loginWithPassword(email.value, password.value);
+      bool success = await authService.loginWithPassword(
+        email.value,
+        password.value,
+      );
 
       if (success && authService.isLoginSuccess) {
         if (authService.isPersonalInfoRegistered) {
@@ -35,5 +38,4 @@ class PWLoginPageController extends GetxController {
       DFSnackBar.error('알 수 없는 오류가 발생했습니다. 다시 시도해주세요.');
     }
   }
-
 }

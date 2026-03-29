@@ -56,7 +56,7 @@ class LaundryPageController extends GetxController {
   Future<void> filterLaundryMachines() async {
     final user = authService.user!;
     final userGrade = user.userGrade;
-    final userGender = _normalizeGender(user!.gender!);
+    final userGender = _normalizeGender(user.gender!);
 
     final times = laundryTimeline.value!.times;
 

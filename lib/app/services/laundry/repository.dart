@@ -46,10 +46,7 @@ class LaundryRepository {
     try {
       await api.post(
         url,
-        data: {
-          'time': timeId,
-          'machine': machineId,
-        },
+        data: {'time': timeId, 'machine': machineId},
         middlewares: [AppCheckMiddleware()],
       );
 

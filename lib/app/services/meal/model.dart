@@ -35,7 +35,7 @@ class MealMenu {
   factory MealMenu.fromJson(Map<String, dynamic> json) =>
       _$MealMenuFromJson(json);
   Map<String, dynamic> toJson() => _$MealMenuToJson(this);
-} 
+}
 
 enum MealType { breakfast, lunch, dinner }
 

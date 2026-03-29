@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 
-import 'model.dart';
 import 'repository.dart';
 
 class CalendarService extends GetxController {
@@ -18,5 +17,4 @@ class CalendarService extends GetxController {
   }
 
   Future<void> initialize() async {}
-
 }
