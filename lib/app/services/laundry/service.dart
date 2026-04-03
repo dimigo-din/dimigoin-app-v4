@@ -4,13 +4,23 @@ import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:get/get.dart';
 
-import 'model.dart';
 import 'repository.dart';
+import 'state.dart';
 
 class LaundryService extends GetxController {
   final LaundryRepository repository;
 
   AuthService authService = Get.find<AuthService>();
+
+  final Rx<LaundryTimelineState> _laundryTimelineState = Rx<LaundryTimelineState>(
+    const LaundryTimelineInitial(),
+  );
+  LaundryTimelineState get laundryTimelineState => _laundryTimelineState.value;
+
+  final Rx<LaundryApplyState> _laundryApplyState = Rx<LaundryApplyState>(
+    const LaundryApplyInitial(),
+  );
+  LaundryApplyState get laundryApplyState => _laundryApplyState.value;
 
   LaundryService({LaundryRepository? repository})
     : repository = repository ?? LaundryRepository();
@@ -23,24 +33,25 @@ class LaundryService extends GetxController {
 
   Future<void> initialize() async {}
 
-  Future<LaundryTimeline> getLaundryTimeline() async {
+  Future<void> getLaundryTimeline() async {
     try {
       final response = await repository.getLaundryTimeline();
 
-      return response;
+      _laundryTimelineState.value = LaundryTimelineSuccess(response);
     } catch (e) {
       log(e.toString());
       rethrow;
     }
   }
 
-  Future<List<LaundryApply>> getLaundryApplications() async {
+  Future<void> getLaundryApplications() async {
     try {
       final response = await repository.getLaundryApplications();
 
-      return response;
+      _laundryApplyState.value = LaundryApplySuccess(response);
     } catch (e) {
       log(e.toString());
+      _laundryApplyState.value = LaundryApplyFailure(Exception(e.toString()));
       rethrow;
     }
   }
@@ -50,6 +61,7 @@ class LaundryService extends GetxController {
       await repository.applyLaundry(timeId, machineId);
     } catch (e) {
       log(e.toString());
+      _laundryApplyState.value = LaundryApplyFailure(Exception(e.toString()));
       rethrow;
     }
   }

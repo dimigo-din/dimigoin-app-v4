@@ -37,8 +37,6 @@ class StayRepository {
     try {
       DFHttpResponse response = await api.get(url);
 
-      print(response.data['data']);
-
       return (response.data['data'] as List)
           .map((e) => StayApply.fromJson(e))
           .toList();

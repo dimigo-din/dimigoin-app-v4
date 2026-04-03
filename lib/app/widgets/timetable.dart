@@ -3,11 +3,13 @@ import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:dimigoin_app_v4/app/pages/home/controller.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
+import 'package:dimigoin_app_v4/app/services/user/model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class TimeTableWidget extends GetView<HomePageController> {
-  TimeTableWidget({super.key});
+  final Timetable timetable;
+  TimeTableWidget({super.key, required this.timetable});
 
   final AuthService authService = Get.find<AuthService>();
 
@@ -106,62 +108,44 @@ class TimeTableWidget extends GetView<HomePageController> {
                     ),
 
                     ...List.generate(days.length, (dayIndex) {
-                      return Obx(() {
-                        final timetable = controller.timetable.value;
+                      final daySchedule = timetable.schedule[dayIndex];
 
-                        if (timetable == null) {
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Center(
-                              child: Text(
-                                '',
-                                style: textTheme.callout.copyWith(
-                                  color: colorTheme.contentStandardSecondary,
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-
-                        final daySchedule = timetable.schedule[dayIndex];
-
-                        if (periodIndex >= daySchedule.length) {
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Center(
-                              child: Text(
-                                '',
-                                style: textTheme.callout.copyWith(
-                                  color: colorTheme.contentStandardSecondary,
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-
-                        final subject = daySchedule[periodIndex];
-
-                        return Container(
+                      if (periodIndex >= daySchedule.length) {
+                        return Padding(
                           padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: subject.temp
-                                ? colorTheme.coreBrandTertiary
-                                : Colors.transparent,
-                          ),
                           child: Center(
                             child: Text(
-                              subject.content.split('\n')[0],
+                              '',
                               style: textTheme.callout.copyWith(
-                                color: subject.temp
-                                    ? colorTheme.contentStandardSecondary
-                                    : colorTheme.contentStandardPrimary,
+                                color: colorTheme.contentStandardSecondary,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
                             ),
                           ),
                         );
-                      });
+                      }
+
+                      final subject = daySchedule[periodIndex];
+
+                      return Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: subject.temp
+                              ? colorTheme.coreBrandTertiary
+                              : Colors.transparent,
+                        ),
+                        child: Center(
+                          child: Text(
+                            subject.content.split('\n')[0],
+                            style: textTheme.callout.copyWith(
+                              color: subject.temp
+                                  ? colorTheme.contentStandardSecondary
+                                  : colorTheme.contentStandardPrimary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                      );
                     }),
                   ],
                 );

@@ -17,7 +17,10 @@ class WakeupApplyPageController extends GetxController {
   final RxList<WakeupApplication> wakeupApplications =
       <WakeupApplication>[].obs;
 
+  final RxBool isLoadingSearch = false.obs;
+
   Future<void> searchYoutubeVideo() async {
+    isLoadingSearch.value = true;
     try {
       final result = await wakeupService.searchYoutube(
         youtubeSearchQuery.value,
@@ -27,6 +30,7 @@ class WakeupApplyPageController extends GetxController {
           .where((item) => item.id.videoId != null)
           .toList();
       youtubeSearchResults.assignAll(videoResults);
+      isLoadingSearch.value = false;
     } catch (e) {
       rethrow;
     }

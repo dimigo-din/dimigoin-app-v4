@@ -1,4 +1,7 @@
+import 'package:dimigoin_app_v4/app/services/user/state.dart';
+import 'package:dimigoin_app_v4/app/widgets/animated_cross_fade.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFHeader.dart';
+import 'package:dimigoin_app_v4/app/widgets/shimmer_loading_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/theme/static.dart';
@@ -20,7 +23,25 @@ class DormPage extends GetView<DormPageController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const PersonalStatusWidget(),
+              Obx(
+                () => DFAnimatedCrossFade(
+                  duration: const Duration(milliseconds: 300),
+                  firstChild: (_) => const DFShimmerLoadingBox(
+                    height: 104,
+                    borderRadius: DFRadius.radius800,
+                  ),
+                  secondChild: (_) => PersonalStatusWidget(
+                    userApply:
+                        (controller.userService.userApplyState
+                                as UserApplySuccess)
+                            .userApply,
+                  ),
+                  crossFadeState:
+                      controller.userService.userApplyState is! UserApplySuccess
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                ),
+              ),
               const SizedBox(height: DFSpacing.spacing700),
               const DFHeader(title: "신청하기"),
               const SizedBox(height: DFSpacing.spacing300),

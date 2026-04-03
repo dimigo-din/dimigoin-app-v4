@@ -1,10 +1,13 @@
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
+import 'package:dimigoin_app_v4/app/services/frigo/state.dart';
+import 'package:dimigoin_app_v4/app/widgets/animated_cross_fade.dart';
 import 'package:dimigoin_app_v4/app/widgets/appBar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFInputField.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFOptionPicker.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
+import 'package:dimigoin_app_v4/app/widgets/shimmer_loading_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -37,11 +40,20 @@ class FrigoPage extends GetView<FrigoController> {
                       DFInputField(
                         title: "금요귀가 신청 사유",
                         inputs: [
-                          DFInput(
-                            controller: controller.frigoReasonTEC,
-                            placeholder: "금요귀가 신청 사유를 입력하세요",
-                            type: DFInputType.normal,
-                          ),
+                          Obx(() => DFAnimatedCrossFade(
+                            duration: const Duration(milliseconds: 300),
+                            firstChild: (_) => const DFShimmerLoadingBox(
+                              height: 50,
+                            ),
+                            secondChild: (_) => DFInput(
+                              controller: controller.frigoReasonTEC,
+                              placeholder: "금요귀가 신청 사유를 입력하세요",
+                              type: DFInputType.normal,
+                            ),
+                            crossFadeState: controller.frigoService.frigoState is! FrigoSuccess
+                                ? CrossFadeState.showFirst
+                                : CrossFadeState.showSecond,
+                          ))
                         ],
                       ),
                       const SizedBox(height: DFSpacing.spacing600),
@@ -63,22 +75,31 @@ class FrigoPage extends GetView<FrigoController> {
                         ),
                       ),
                       Obx(
-                        () => DFOptionPicker(
-                          type: DFOptionPickerType.quadruple,
-                          currentIndex:
-                              controller.selectedFrigoTimingIndex.value,
-                          options: const [
-                            DFOptionData(label: "종례 후"),
-                            DFOptionData(label: "저녁시간"),
-                            DFOptionData(label: "야자 1타임 후"),
-                            DFOptionData(label: "야자 2타임 후"),
-                          ],
-                          onChanged: (index) {
-                            if (controller.isApplied.value) return;
+                        () => DFAnimatedCrossFade(
+                          duration: const Duration(milliseconds: 300),
+                          firstChild: (_) => const DFShimmerLoadingBox(
+                            height: 120,
+                          ),
+                          secondChild: (_) => DFOptionPicker(
+                            type: DFOptionPickerType.quadruple,
+                            currentIndex:
+                                controller.selectedFrigoTimingIndex.value,
+                            options: const [
+                              DFOptionData(label: "종례 후"),
+                              DFOptionData(label: "저녁시간"),
+                              DFOptionData(label: "야자 1타임 후"),
+                              DFOptionData(label: "야자 2타임 후"),
+                            ],
+                            onChanged: (index) {
+                              if (controller.isApplied.value) return;
 
-                            controller.selectedFrigoTimingIndex.value = index;
-                          },
-                        ),
+                              controller.selectedFrigoTimingIndex.value = index;
+                            },
+                          ),
+                          crossFadeState: controller.frigoService.frigoState is! FrigoSuccess
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
+                        )
                       ),
                     ],
                   ),
@@ -86,22 +107,34 @@ class FrigoPage extends GetView<FrigoController> {
                 SizedBox(
                   width: double.infinity,
                   child: Obx(
-                    () => DFButton(
-                      label: controller.frigoApplication.value != null
-                          ? "금요귀가 신청 취소"
-                          : "금요귀가 신청",
-                      size: DFButtonSize.large,
-                      theme: DFButtonTheme.accent,
-                      style: controller.frigoApplication.value != null
-                          ? DFButtonStyle.secondary
-                          : DFButtonStyle.primary,
-                      onPressed: () {
-                        if (controller.frigoApplication.value != null) {
-                          controller.deleteFrigoApplication();
-                        } else {
-                          controller.addFrigoApplication();
-                        }
-                      },
+                    () => DFAnimatedCrossFade(
+                      duration: const Duration(milliseconds: 300),
+                      firstChild: (_) => const DFShimmerLoadingBox(
+                        height: 56,
+                      ),
+                      secondChild: (_) => SizedBox(
+                        width: double.infinity,
+                        child: DFButton(
+                          label: controller.isApplied.value
+                              ? "금요귀가 신청 취소"
+                              : "금요귀가 신청",
+                          size: DFButtonSize.large,
+                          theme: DFButtonTheme.accent,
+                          style: controller.isApplied.value
+                              ? DFButtonStyle.secondary
+                              : DFButtonStyle.primary,
+                          onPressed: () {
+                            if (controller.isApplied.value) {
+                              controller.deleteFrigoApplication();
+                            } else {
+                              controller.addFrigoApplication();
+                            }
+                          },
+                        ),
+                      ),
+                      crossFadeState: controller.frigoService.frigoState is! FrigoSuccess
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
                     ),
                   ),
                 ),

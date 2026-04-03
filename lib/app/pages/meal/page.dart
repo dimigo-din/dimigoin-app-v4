@@ -1,7 +1,11 @@
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
+import 'package:dimigoin_app_v4/app/services/meal/model.dart';
+import 'package:dimigoin_app_v4/app/services/meal/state.dart';
+import 'package:dimigoin_app_v4/app/widgets/animated_cross_fade.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSegmentControl.dart';
+import 'package:dimigoin_app_v4/app/widgets/shimmer_loading_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -32,17 +36,48 @@ class MealPage extends GetView<MealPageController> {
                   children: [
                     const SizedBox(height: DFSpacing.spacing200),
                     DFSegmentControl(
-                      segments: controller.mealDays
-                          .map((day) => DFSegment(label: day.dayLabel))
+                      segments: MealPageController.dayLabels
+                          .map((day) => DFSegment(label: day))
                           .toList(),
                       initialIndex: controller.selectedDayIndex.value,
                       onChanged: controller.selectDay,
                     ),
                     const SizedBox(height: DFSpacing.spacing550),
-                    if (controller.isLoading.value)
-                      const Center(child: CircularProgressIndicator())
-                    else
-                      ...controller.meals.map((meal) => _MealCard(meal: meal)),
+                    Obx(
+                      () => DFAnimatedCrossFade(
+                        duration: const Duration(milliseconds: 300),
+                        animateSize: false,
+                        firstChild: (_) => Column(
+                          children: List.generate(
+                            3,
+                            (index) => const Padding(
+                              padding: EdgeInsets.only(
+                                bottom: DFSpacing.spacing500,
+                              ),
+                              child: DFShimmerLoadingBox(height: 100),
+                            ),
+                          ),
+                        ),
+                        secondChild: (context) => controller.meals.isEmpty
+                            ? const Center(
+                                child: Text('급식 정보가 없습니다.'),
+                              )
+                            : Column(
+                                children: controller.meals.map(
+                                  (meal) => _MealCard(
+                                    meal: meal,
+                                    highlighted: controller.isHighlightedMeal(
+                                      meal.type,
+                                      controller.selectedDate,
+                                    ),
+                                  ),
+                                ).toList(),
+                              ),
+                        crossFadeState: controller.mealService.mealStateRx.value is! MealSuccess
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                      )
+                    ),
                     // SizedBox(
                     //   width: double.infinity,
                     //   child: DFButton(
@@ -65,9 +100,10 @@ class MealPage extends GetView<MealPageController> {
 }
 
 class _MealCard extends StatelessWidget {
-  final MealMenu meal;
+  final MealMenuData meal;
+  final bool highlighted;
 
-  const _MealCard({required this.meal});
+  const _MealCard({required this.meal, required this.highlighted});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +111,7 @@ class _MealCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: DFSpacing.spacing500),
       child: DFValueList(
         type: DFValueListType.vertical,
-        theme: meal.highlighted
+        theme: highlighted
             ? DFValueListTheme.active
             : DFValueListTheme.outlined,
         title: meal.title,

@@ -3,8 +3,11 @@ import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:dimigoin_app_v4/app/core/utils/text_cleaner.dart';
 import 'package:dimigoin_app_v4/app/services/wakeup/model.dart';
+import 'package:dimigoin_app_v4/app/services/wakeup/state.dart';
+import 'package:dimigoin_app_v4/app/widgets/animated_cross_fade.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFAvatar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFDivider.dart';
+import 'package:dimigoin_app_v4/app/widgets/shimmer_loading_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,7 +27,26 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
         child: Column(
           children: [
             _buildTodayWakeupSection(context),
-            Expanded(child: _buildApplicationsList(context)),
+            Expanded(child: Obx(() => DFAnimatedCrossFade(
+              duration: const Duration(milliseconds: 300),
+              firstChild: (_) => Column(
+                children: List.generate(
+                  3,
+                  (index) => const Column(
+                    children: [
+                      SizedBox(height: 5),
+                      DFShimmerLoadingBox(height: 72),
+                      SizedBox(height: 5),
+                    ],
+                  ),
+                ),
+              ),
+              secondChild: (_) => _buildApplicationsList(context),
+              crossFadeState: controller.wakeupService.wakeupState is! WakeupSuccess ||
+                              controller.wakeupService.wakeupVoteState is! WakeupVoteSuccess
+                  ? CrossFadeState.showFirst
+                  : CrossFadeState.showSecond,
+            ))),
           ],
         ),
       ),
@@ -72,11 +94,18 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
 
   Widget _buildApplicationsList(BuildContext context) {
     return Obx(() {
-      if (controller.wakeupApplications.isEmpty) {
+
+      final List<WakeupApplicationWithVote> wakeupApplications
+        = (controller.wakeupService.wakeupState as WakeupSuccess).wakeups;
+
+      final List<WakeupApplicationVotes> wakeupVotes
+        = (controller.wakeupService.wakeupVoteState as WakeupVoteSuccess).votes;
+
+      if (wakeupApplications.isEmpty) {
         return _buildEmptyState(context);
       }
 
-      final sortedApplications = controller.wakeupApplications.toList()
+      final sortedApplications = wakeupApplications.toList()
         ..sort((a, b) => b.up.compareTo(a.up));
 
       return ListView.separated(
@@ -89,7 +118,11 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
           ],
         ),
         itemBuilder: (_, index) {
-          return _buildApplicationItem(sortedApplications[index]);
+          final current = sortedApplications[index];
+          final vote = wakeupVotes.firstWhereOrNull(
+            (v) => v.wakeupSongApplication.id == current.id,
+          );
+          return _buildApplicationItem(current, vote);
         },
       );
     });
@@ -111,7 +144,10 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
     );
   }
 
-  Widget _buildApplicationItem(WakeupApplicationWithVote application) {
+  Widget _buildApplicationItem(
+    WakeupApplicationWithVote application,
+    WakeupApplicationVotes? vote,
+  ) {
     return WakeupItem(
       title: TextCleaner.cleanText(application.videoTitle),
       content: TextCleaner.cleanText(application.videoChannel ?? ''),
@@ -124,39 +160,31 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
           image: Image.network(application.videoThumbnail ?? ''),
         ),
       ),
-      trailing: _buildVoteButtons(application),
+      trailing: _buildVoteButtons(
+        application,
+        vote,
+      ),
     );
   }
 
-  Widget _buildVoteButtons(WakeupApplicationWithVote application) {
+  Widget _buildVoteButtons(
+    WakeupApplicationWithVote application,
+    WakeupApplicationVotes? vote,
+  ) {
     return Column(
       children: [
-        Obx(
-          () => WakeupVoteButton(
-            count: application.up,
-            isUpvote: true,
-            onPressed: () =>
-                controller.voteWakeupApplication(application.id, true),
-            isVoted: controller.wakeupVotes.any(
-              (vote) =>
-                  vote.wakeupSongApplication.id == application.id &&
-                  vote.upvote == true,
-            ),
-          ),
+        WakeupVoteButton(
+          count: application.up,
+          isUpvote: true,
+          onPressed: () => controller.voteWakeupApplication(application.id, true),
+          isVoted: vote?.upvote == true,
         ),
         const SizedBox(height: DFSpacing.spacing100),
-        Obx(
-          () => WakeupVoteButton(
-            count: application.down,
-            isUpvote: false,
-            onPressed: () =>
-                controller.voteWakeupApplication(application.id, false),
-            isVoted: controller.wakeupVotes.any(
-              (vote) =>
-                  vote.wakeupSongApplication.id == application.id &&
-                  vote.upvote == false,
-            ),
-          ),
+        WakeupVoteButton(
+          count: application.down,
+          isUpvote: false,
+          onPressed: () => controller.voteWakeupApplication(application.id, false),
+          isVoted: vote?.upvote == false,
         ),
       ],
     );
