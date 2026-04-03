@@ -24,75 +24,80 @@ class MealPage extends GetView<MealPageController> {
         top: false,
         child: Scaffold(
           backgroundColor: colorTheme.backgroundStandardSecondary,
-          body: SingleChildScrollView(
-            child: Obx(() {
-              return Padding(
-                padding: const EdgeInsets.only(
-                  left: DFSpacing.spacing400,
-                  right: DFSpacing.spacing400,
-                  bottom: DFSpacing.spacing500,
+          body: Column(
+            children: [
+              const SizedBox(height: DFSpacing.spacing200),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
+                child: DFSegmentControl(
+                  segments: MealPageController.dayLabels
+                      .map((day) => DFSegment(label: day))
+                      .toList(),
+                  initialIndex: controller.selectedDayIndex.value,
+                  onChanged: controller.selectDay,
                 ),
-                child: Column(
-                  children: [
-                    const SizedBox(height: DFSpacing.spacing200),
-                    DFSegmentControl(
-                      segments: MealPageController.dayLabels
-                          .map((day) => DFSegment(label: day))
-                          .toList(),
-                      initialIndex: controller.selectedDayIndex.value,
-                      onChanged: controller.selectDay,
-                    ),
-                    const SizedBox(height: DFSpacing.spacing550),
-                    Obx(
-                      () => DFAnimatedCrossFade(
-                        duration: const Duration(milliseconds: 300),
-                        animateSize: false,
-                        firstChild: (_) => Column(
-                          children: List.generate(
-                            3,
-                            (index) => const Padding(
-                              padding: EdgeInsets.only(
-                                bottom: DFSpacing.spacing500,
+              ),
+              const SizedBox(height: DFSpacing.spacing550),
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: DFSpacing.spacing400,
+                    right: DFSpacing.spacing400,
+                    bottom: DFSpacing.spacing500,
+                  ),
+                  child: Column(
+                    children: [
+                      Obx(
+                        () => DFAnimatedCrossFade(
+                          duration: const Duration(milliseconds: 300),
+                          animateSize: false,
+                          firstChild: (_) => Column(
+                            children: List.generate(
+                              3,
+                              (index) => const Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: DFSpacing.spacing500,
+                                ),
+                                child: DFShimmerLoadingBox(height: 100),
                               ),
-                              child: DFShimmerLoadingBox(height: 100),
                             ),
                           ),
-                        ),
-                        secondChild: (context) => controller.meals.isEmpty
-                            ? const Center(
-                                child: Text('급식 정보가 없습니다.'),
-                              )
-                            : Column(
-                                children: controller.meals.map(
-                                  (meal) => _MealCard(
-                                    meal: meal,
-                                    highlighted: controller.isHighlightedMeal(
-                                      meal.type,
-                                      controller.selectedDate,
+                          secondChild: (context) => controller.meals.isEmpty
+                              ? const Center(
+                                  child: Text('급식 정보가 없습니다.'),
+                                )
+                              : Column(
+                                  children: controller.meals.map(
+                                    (meal) => _MealCard(
+                                      meal: meal,
+                                      highlighted: controller.isHighlightedMeal(
+                                        meal.type,
+                                        controller.selectedDate,
+                                      ),
                                     ),
-                                  ),
-                                ).toList(),
-                              ),
-                        crossFadeState: controller.mealService.mealStateRx.value is! MealSuccess
-                            ? CrossFadeState.showFirst
-                            : CrossFadeState.showSecond,
-                      )
-                    ),
-                    // SizedBox(
-                    //   width: double.infinity,
-                    //   child: DFButton(
-                    //     label: "간편식 신청",
-                    //     size: DFButtonSize.large,
-                    //     theme: DFButtonTheme.accent,
-                    //     style: DFButtonStyle.primary,
-                    //     onPressed: () {},
-                    //   ),
-                    // ),
-                  ],
+                                  ).toList(),
+                                ),
+                          crossFadeState: controller.mealService.mealStateRx.value is! MealSuccess
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
+                        )
+                      ),
+                      // SizedBox(
+                      //   width: double.infinity,
+                      //   child: DFButton(
+                      //     label: "간편식 신청",
+                      //     size: DFButtonSize.large,
+                      //     theme: DFButtonTheme.accent,
+                      //     style: DFButtonStyle.primary,
+                      //     onPressed: () {},
+                      //   ),
+                      // ),
+                    ],
+                  ),
                 ),
-              );
-            }),
-          ),
+              ),
+            ],
+          ), 
         ),
       ),
     );
