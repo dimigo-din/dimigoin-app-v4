@@ -45,29 +45,36 @@ class LaundryApplyPage extends GetView<LaundryPageController> {
                 onRefresh: () async {
                   await controller.fetchLaundryApplications();
                 },
-                child: Obx(() => DFAnimatedCrossFade(
-                  duration: const Duration(milliseconds: 300),
-                  firstChild: (_) => Column(
-                    children: List.generate(
-                      3,
-                      (index) => const Padding(
-                        padding: EdgeInsets.only(bottom: 8),
-                        child: DFShimmerLoadingBox(height: 58),
+                child: Obx(() {
+                  final selectedIndex = laundryType == LaundryMachineType.washer
+                      ? controller.selectedWasherIndex.value
+                      : controller.selectedDryerIndex.value;
+
+                  return DFAnimatedCrossFade(
+                    duration: const Duration(milliseconds: 300),
+                    firstChild: (_) => Column(
+                      children: List.generate(
+                        3,
+                        (index) => const Padding(
+                          padding: EdgeInsets.only(bottom: 8),
+                          child: DFShimmerLoadingBox(height: 58),
+                        ),
                       ),
                     ),
-                  ),
-                  secondChild: (_) => ListView(
-                    children: _buildTimeSlotList(
-                      (controller.laundryService.laundryTimelineState as LaundryTimelineSuccess).timeline,
-                      (controller.laundryService.laundryApplyState as LaundryApplySuccess).applications,
+                    secondChild: (_) => ListView(
+                      key: ValueKey('laundry-time-slots-${laundryType.name}-$selectedIndex'),
+                      children: _buildTimeSlotList(
+                        (controller.laundryService.laundryTimelineState as LaundryTimelineSuccess).timeline,
+                        (controller.laundryService.laundryApplyState as LaundryApplySuccess).applications,
+                      ),
                     ),
-                  ),
-                  crossFadeState:
-                      controller.laundryService.laundryTimelineState is! LaundryTimelineSuccess ||
-                      controller.laundryService.laundryApplyState is! LaundryApplySuccess
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                )),
+                    crossFadeState:
+                        controller.laundryService.laundryTimelineState is! LaundryTimelineSuccess ||
+                        controller.laundryService.laundryApplyState is! LaundryApplySuccess
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  );
+                }),
               ),
             ),
           ],
