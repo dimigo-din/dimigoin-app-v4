@@ -105,19 +105,23 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
                 child: Obx(
                   () => DFAnimatedCrossFade(
                     duration: const Duration(milliseconds: 300),
+                    animateSize: false,
+                    alignment: AlignmentDirectional.topStart,
                     firstChild: (_) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: List.generate(
                         10,
-                        (index) => const Column(
-                          children: [
-                            SizedBox(height: 5),
-                            DFShimmerLoadingBox(height: 72),
-                            SizedBox(height: 5),
-                          ],
+                        (index) => const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: DFShimmerLoadingBox(
+                            height: 72,
+                            width: double.infinity,
+                          ),
                         ),
                       ),
                     ),
                     secondChild: (_) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         ...(controller.youtubeSearchResults.toList())
                             .map(
