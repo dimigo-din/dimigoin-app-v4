@@ -80,21 +80,23 @@ class FrigoPage extends GetView<FrigoController> {
                           firstChild: (_) => const DFShimmerLoadingBox(
                             height: 120,
                           ),
-                          secondChild: (_) => DFOptionPicker(
-                            type: DFOptionPickerType.quadruple,
-                            currentIndex:
-                                controller.selectedFrigoTimingIndex.value,
-                            options: const [
-                              DFOptionData(label: "종례 후"),
-                              DFOptionData(label: "저녁시간"),
-                              DFOptionData(label: "야자 1타임 후"),
-                              DFOptionData(label: "야자 2타임 후"),
-                            ],
-                            onChanged: (index) {
-                              if (controller.isApplied.value) return;
+                          secondChild: (_) => Obx(
+                            () => DFOptionPicker(
+                              type: DFOptionPickerType.quadruple,
+                              currentIndex:
+                                  controller.selectedFrigoTimingIndex.value,
+                              options: const [
+                                DFOptionData(label: "종례 후"),
+                                DFOptionData(label: "저녁시간"),
+                                DFOptionData(label: "야자 1타임 후"),
+                                DFOptionData(label: "야자 2타임 후"),
+                              ],
+                              onChanged: (index) {
+                                if (controller.isApplied.value) return;
 
-                              controller.selectedFrigoTimingIndex.value = index;
-                            },
+                                controller.selectedFrigoTimingIndex.value = index;
+                              },
+                            ),
                           ),
                           crossFadeState: controller.frigoService.frigoState is! FrigoSuccess
                               ? CrossFadeState.showFirst
@@ -114,22 +116,24 @@ class FrigoPage extends GetView<FrigoController> {
                       ),
                       secondChild: (_) => SizedBox(
                         width: double.infinity,
-                        child: DFButton(
-                          label: controller.isApplied.value
-                              ? "금요귀가 신청 취소"
-                              : "금요귀가 신청",
-                          size: DFButtonSize.large,
-                          theme: DFButtonTheme.accent,
-                          style: controller.isApplied.value
-                              ? DFButtonStyle.secondary
-                              : DFButtonStyle.primary,
-                          onPressed: () {
-                            if (controller.isApplied.value) {
-                              controller.deleteFrigoApplication();
-                            } else {
-                              controller.addFrigoApplication();
-                            }
-                          },
+                        child: Obx(
+                          () => DFButton(
+                            label: controller.isApplied.value
+                                ? "금요귀가 신청 취소"
+                                : "금요귀가 신청",
+                            size: DFButtonSize.large,
+                            theme: DFButtonTheme.accent,
+                            style: controller.isApplied.value
+                                ? DFButtonStyle.secondary
+                                : DFButtonStyle.primary,
+                            onPressed: () {
+                              if (controller.isApplied.value) {
+                                controller.deleteFrigoApplication();
+                              } else {
+                                controller.addFrigoApplication();
+                              }
+                            },
+                          ),
                         ),
                       ),
                       crossFadeState: controller.frigoService.frigoState is! FrigoSuccess

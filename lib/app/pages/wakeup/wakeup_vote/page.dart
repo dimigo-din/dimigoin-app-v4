@@ -18,6 +18,14 @@ import 'widgets/wakeup_vote_button.dart';
 class WakeupVotePage extends GetView<WakeupVotePageController> {
   const WakeupVotePage({super.key});
 
+  static const Widget _loadingShimmer = Column(
+    children: [
+      SizedBox(height: 5),
+      DFShimmerLoadingBox(height: 72),
+      SizedBox(height: 5),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,30 +36,32 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
           children: [
             _buildTodayWakeupSection(context),
             Expanded(
-              child: Obx(
-                () => DFAnimatedCrossFade(
+              child: Obx(() {
+                final wakeupState = controller.wakeupService.wakeupState;
+                final wakeupVoteState =
+                    controller.wakeupService.wakeupVoteState;
+
+                final isLoaded =
+                    wakeupState is WakeupSuccess &&
+                    wakeupVoteState is WakeupVoteSuccess;
+
+                return DFAnimatedCrossFade(
                   duration: const Duration(milliseconds: 300),
                   firstChild: (_) => Column(
-                children: List.generate(
-                  3,
-                  (index) => const Column(
-                    children: [
-                      SizedBox(height: 5),
-                      DFShimmerLoadingBox(height: 72),
-                      SizedBox(height: 5),
-                    ],
+                    children: List.generate(3, (_) => _loadingShimmer),
                   ),
-                ),
-              ),
-                  secondChild: (_) => _buildApplicationsList(context),
-                  crossFadeState:
-                      controller.wakeupService.wakeupState is! WakeupSuccess ||
-                          controller.wakeupService.wakeupVoteState
-                              is! WakeupVoteSuccess
-                      ? CrossFadeState.showFirst
-                      : CrossFadeState.showSecond,
-                ),
-              ),
+                  secondChild: (_) => isLoaded
+                      ? _buildApplicationsList(
+                          context,
+                          wakeupState,
+                          wakeupVoteState,
+                        )
+                      : const SizedBox.shrink(),
+                  crossFadeState: isLoaded
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                );
+              }),
             ),
           ],
         ),
@@ -98,39 +108,38 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
     });
   }
 
-  Widget _buildApplicationsList(BuildContext context) {
-    return Obx(() {
-      final List<WakeupApplicationWithVote> wakeupApplications =
-          (controller.wakeupService.wakeupState as WakeupSuccess).wakeups;
+  Widget _buildApplicationsList(
+    BuildContext context,
+    WakeupSuccess wakeupState,
+    WakeupVoteSuccess wakeupVoteState,
+  ) {
+    final wakeupApplications = wakeupState.wakeups;
+    final wakeupVotes = wakeupVoteState.votes;
 
-      final List<WakeupApplicationVotes> wakeupVotes =
-          (controller.wakeupService.wakeupVoteState as WakeupVoteSuccess).votes;
+    if (wakeupApplications.isEmpty) {
+      return _buildEmptyState(context);
+    }
 
-      if (wakeupApplications.isEmpty) {
-        return _buildEmptyState(context);
-      }
+    final sortedApplications = wakeupApplications.toList()
+      ..sort((a, b) => b.up.compareTo(a.up));
 
-      final sortedApplications = wakeupApplications.toList()
-        ..sort((a, b) => b.up.compareTo(a.up));
-
-      return ListView.separated(
-        itemCount: sortedApplications.length,
-        separatorBuilder: (_, _) => const Column(
-          children: [
-            SizedBox(height: 5),
-            DFDivider(size: DFDividerSize.small),
-            SizedBox(height: 5),
-          ],
-        ),
-        itemBuilder: (_, index) {
-          final current = sortedApplications[index];
-          final vote = wakeupVotes.firstWhereOrNull(
-            (v) => v.wakeupSongApplication.id == current.id,
-          );
-          return _buildApplicationItem(current, vote);
-        },
-      );
-    });
+    return ListView.separated(
+      itemCount: sortedApplications.length,
+      separatorBuilder: (_, _) => const Column(
+        children: [
+          SizedBox(height: 5),
+          DFDivider(size: DFDividerSize.small),
+          SizedBox(height: 5),
+        ],
+      ),
+      itemBuilder: (_, index) {
+        final current = sortedApplications[index];
+        final vote = wakeupVotes.firstWhereOrNull(
+          (v) => v.wakeupSongApplication.id == current.id,
+        );
+        return _buildApplicationItem(current, vote);
+      },
+    );
   }
 
   Widget _buildEmptyState(BuildContext context) {

@@ -30,9 +30,10 @@ class WakeupApplyPageController extends GetxController {
           .where((item) => item.id.videoId != null)
           .toList();
       youtubeSearchResults.assignAll(videoResults);
-      isLoadingSearch.value = false;
     } catch (e) {
       rethrow;
+    } finally {
+      isLoadingSearch.value = false;
     }
   }
 
