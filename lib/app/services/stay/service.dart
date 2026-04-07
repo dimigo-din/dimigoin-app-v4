@@ -116,18 +116,14 @@ class StayService extends GetxController {
   }
 
   Future<void> getStayOuting(String id) async {
-    print('Getting stay outing for stay ID: $id');
     _stayOutingState.value = const StayOutingLoading();
     try {
       final response = await repository.getStayOuting(id);
-
-      print(response);
 
       _stayOutingState.value = StayOutingSuccess(response);
     } catch (e) {
       _stayOutingState.value = StayOutingFailure(e.toString());
       log(e.toString());
-      print(e.toString());
       rethrow;
     }
   }

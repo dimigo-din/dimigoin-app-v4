@@ -26,24 +26,26 @@ class StayOutingPage extends GetView<StayPageController> {
         child: Column(
           children: [
             // 날짜 선택기
-            Obx(() => DFAnimatedCrossFade(
-              duration: const Duration(milliseconds: 300),
-              firstChild: (_) => const DFShimmerLoadingBox(height: 20),
-              secondChild: (_) {
-                if (controller.selectedStay.value == null) {
-                  return const SizedBox();
-                }
+            Obx(
+              () => DFAnimatedCrossFade(
+                duration: const Duration(milliseconds: 300),
+                firstChild: (_) => const DFShimmerLoadingBox(height: 20),
+                secondChild: (_) {
+                  if (controller.selectedStay.value == null) {
+                    return const SizedBox();
+                  }
 
-                final days = OutingDateUtils.getOutingDays(
-                  controller.selectedStay.value!,
-                );
+                  final days = OutingDateUtils.getOutingDays(
+                    controller.selectedStay.value!,
+                  );
 
-                return OutingDateSelector(dates: days);
-              },
-              crossFadeState: controller.stayService.stayState is! StaySuccess
-                  ? CrossFadeState.showFirst
-                  : CrossFadeState.showSecond,
-            )),
+                  return OutingDateSelector(dates: days);
+                },
+                crossFadeState: controller.stayService.stayState is! StaySuccess
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+              ),
+            ),
             const SizedBox(height: DFSpacing.spacing300),
 
             // 외출 목록
@@ -55,7 +57,10 @@ class StayOutingPage extends GetView<StayPageController> {
                   secondChild: (_) => SingleChildScrollView(
                     child: Column(children: _buildFilteredOutingList()),
                   ),
-                  crossFadeState: controller.stayService.stayOutingState is! StaySuccess && controller.isApplied.value
+                  crossFadeState:
+                      controller.stayService.stayOutingState
+                              is! StayOutingSuccess &&
+                          controller.isApplied.value
                       ? CrossFadeState.showFirst
                       : CrossFadeState.showSecond,
                 ),
@@ -64,23 +69,28 @@ class StayOutingPage extends GetView<StayPageController> {
             const SizedBox(height: DFSpacing.spacing300),
 
             // 외출 추가 버튼
-            Obx(() => DFAnimatedCrossFade(
-              duration: const Duration(milliseconds: 300),
-              firstChild: (_) => const DFShimmerLoadingBox(height: 56),
-              secondChild: (_) => SizedBox(
-                width: double.infinity,
-                child: DFButton(
-                  label: "외출 추가",
-                  size: DFButtonSize.large,
-                  theme: DFButtonTheme.accent,
-                  style: DFButtonStyle.primary,
-                  onPressed: () => _showOutingBottomSheet(context, false, null),
+            Obx(
+              () => DFAnimatedCrossFade(
+                duration: const Duration(milliseconds: 300),
+                firstChild: (_) => const DFShimmerLoadingBox(height: 56),
+                secondChild: (_) => SizedBox(
+                  width: double.infinity,
+                  child: DFButton(
+                    label: "외출 추가",
+                    size: DFButtonSize.large,
+                    theme: DFButtonTheme.accent,
+                    style: DFButtonStyle.primary,
+                    onPressed: () =>
+                        _showOutingBottomSheet(context, false, null),
+                  ),
                 ),
+                crossFadeState:
+                    controller.stayService.stayApplyState is! StayApplySuccess &&
+                        controller.isApplied.value
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
               ),
-              crossFadeState: controller.stayService.stayApplyState is! StaySuccess && controller.isApplied.value
-                  ? CrossFadeState.showFirst
-                  : CrossFadeState.showSecond,
-            ))
+            ),
           ],
         ),
       ),
