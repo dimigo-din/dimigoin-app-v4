@@ -27,9 +27,11 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
         child: Column(
           children: [
             _buildTodayWakeupSection(context),
-            Expanded(child: Obx(() => DFAnimatedCrossFade(
-              duration: const Duration(milliseconds: 300),
-              firstChild: (_) => Column(
+            Expanded(
+              child: Obx(
+                () => DFAnimatedCrossFade(
+                  duration: const Duration(milliseconds: 300),
+                  firstChild: (_) => Column(
                 children: List.generate(
                   3,
                   (index) => const Column(
@@ -41,12 +43,16 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
                   ),
                 ),
               ),
-              secondChild: (_) => _buildApplicationsList(context),
-              crossFadeState: controller.wakeupService.wakeupState is! WakeupSuccess ||
-                              controller.wakeupService.wakeupVoteState is! WakeupVoteSuccess
-                  ? CrossFadeState.showFirst
-                  : CrossFadeState.showSecond,
-            ))),
+                  secondChild: (_) => _buildApplicationsList(context),
+                  crossFadeState:
+                      controller.wakeupService.wakeupState is! WakeupSuccess ||
+                          controller.wakeupService.wakeupVoteState
+                              is! WakeupVoteSuccess
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -94,12 +100,11 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
 
   Widget _buildApplicationsList(BuildContext context) {
     return Obx(() {
+      final List<WakeupApplicationWithVote> wakeupApplications =
+          (controller.wakeupService.wakeupState as WakeupSuccess).wakeups;
 
-      final List<WakeupApplicationWithVote> wakeupApplications
-        = (controller.wakeupService.wakeupState as WakeupSuccess).wakeups;
-
-      final List<WakeupApplicationVotes> wakeupVotes
-        = (controller.wakeupService.wakeupVoteState as WakeupVoteSuccess).votes;
+      final List<WakeupApplicationVotes> wakeupVotes =
+          (controller.wakeupService.wakeupVoteState as WakeupVoteSuccess).votes;
 
       if (wakeupApplications.isEmpty) {
         return _buildEmptyState(context);
@@ -160,10 +165,7 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
           image: Image.network(application.videoThumbnail ?? ''),
         ),
       ),
-      trailing: _buildVoteButtons(
-        application,
-        vote,
-      ),
+      trailing: _buildVoteButtons(application, vote),
     );
   }
 
@@ -176,14 +178,16 @@ class WakeupVotePage extends GetView<WakeupVotePageController> {
         WakeupVoteButton(
           count: application.up,
           isUpvote: true,
-          onPressed: () => controller.voteWakeupApplication(application.id, true),
+          onPressed: () =>
+              controller.voteWakeupApplication(application.id, true),
           isVoted: vote?.upvote == true,
         ),
         const SizedBox(height: DFSpacing.spacing100),
         WakeupVoteButton(
           count: application.down,
           isUpvote: false,
-          onPressed: () => controller.voteWakeupApplication(application.id, false),
+          onPressed: () =>
+              controller.voteWakeupApplication(application.id, false),
           isVoted: vote?.upvote == false,
         ),
       ],
