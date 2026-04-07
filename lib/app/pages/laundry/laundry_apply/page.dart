@@ -55,9 +55,8 @@ class LaundryApplyPage extends GetView<LaundryPageController> {
                     firstChild: (_) => Column(
                       children: List.generate(
                         3,
-                        (index) => const Padding(
-                          padding: EdgeInsets.only(bottom: 8),
-                          child: DFShimmerLoadingBox(height: 58),
+                        (index) => const DFShimmerLoadingBox(
+                          child: LaundryTimeSlotCardLayout(),
                         ),
                       ),
                     ),

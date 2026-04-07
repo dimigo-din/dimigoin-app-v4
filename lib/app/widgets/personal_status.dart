@@ -154,3 +154,66 @@ class PersonalStatusWidget extends GetView<HomePageController> {
     );
   }
 }
+
+class PersonalStatusWidgetLayout extends StatelessWidget {
+  const PersonalStatusWidgetLayout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorTheme = Theme.of(context).extension<DFColors>()!;
+    final textTheme = Theme.of(context).extension<DFTypography>()!;
+
+    return Container(
+      padding: const EdgeInsets.all(DFSpacing.spacing400),
+      decoration: BoxDecoration(
+        color: colorTheme.componentsFillStandardPrimary,
+        borderRadius: BorderRadius.circular(DFRadius.radius800),
+        border: Border.all(color: colorTheme.lineOutline, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('내 신청', style: textTheme.caption),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: DFSpacing.spacing400,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text('내 좌석', style: textTheme.callout),
+                      Text('없음', style: textTheme.headline),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text('외출', style: textTheme.callout),
+                      Text('없음', style: textTheme.headline),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text('세탁', style: textTheme.callout),
+                      Text('없음', style: textTheme.headline),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

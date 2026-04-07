@@ -46,3 +46,20 @@ class LaundryTimeSlotCard extends StatelessWidget {
     }
   }
 }
+
+class LaundryTimeSlotCardLayout extends StatelessWidget {
+  const LaundryTimeSlotCardLayout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: DFValueList(
+        type: DFValueListType.horizontal,
+        theme: DFValueListTheme.active,
+        title: "",
+        content: "",
+      ),
+    );
+  }
+}

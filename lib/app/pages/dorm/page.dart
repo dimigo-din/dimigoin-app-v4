@@ -27,8 +27,8 @@ class DormPage extends GetView<DormPageController> {
                 () => DFAnimatedCrossFade(
                   duration: const Duration(milliseconds: 300),
                   firstChild: (_) => const DFShimmerLoadingBox(
-                    height: 104,
                     borderRadius: DFRadius.radius800,
+                    child: PersonalStatusWidgetLayout(),
                   ),
                   secondChild: (_) => PersonalStatusWidget(
                     userApply:
