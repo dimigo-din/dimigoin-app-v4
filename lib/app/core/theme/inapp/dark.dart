@@ -21,10 +21,12 @@ ThemeData darkThemeData = ThemeData(
     centerTitle: false,
   ),
   textSelectionTheme: TextSelectionThemeData(
-      selectionColor: _darkTheme.colors.coreBrandPrimary.withAlpha(100),
-      selectionHandleColor: _darkTheme.colors.coreBrandPrimary),
-  cupertinoOverrideTheme:
-      CupertinoThemeData(primaryColor: _darkTheme.colors.coreBrandPrimary),
+    selectionColor: _darkTheme.colors.coreBrandPrimary.withAlpha(100),
+    selectionHandleColor: _darkTheme.colors.coreBrandPrimary,
+  ),
+  cupertinoOverrideTheme: CupertinoThemeData(
+    primaryColor: _darkTheme.colors.coreBrandPrimary,
+  ),
   scaffoldBackgroundColor: _darkTheme.colors.backgroundStandardSecondary,
   canvasColor: _darkTheme.colors.solidBlack,
   extensions: [_darkTheme.colors, _darkTheme.textStyle],

@@ -14,13 +14,16 @@ class FrigoRepository {
 
   FrigoRepository({ApiProvider? api}) : api = api ?? Get.find<ApiProvider>();
 
-  Future<Frigo> getFrigoApplication() async {
+  Future<Frigo?> getFrigoApplication() async {
     String url = '/student/frigo';
 
     try {
       DFHttpResponse response = await api.get(url);
 
-      return Frigo.fromJson(response.data['data']);
+      final data = response.data['data'];
+      if (data == null) return null;
+      
+      return Frigo.fromJson(data);
     } on DioException {
       rethrow;
     }
@@ -30,13 +33,9 @@ class FrigoRepository {
     String url = '/student/frigo';
 
     try {
-      await api.post(url, data: {
-        'timing': timing,
-        'reason': reason,
-      });
+      await api.post(url, data: {'timing': timing, 'reason': reason});
     } on DioException catch (e) {
-
-      if(e.response?.data['code'] == 'FrigoPeriod_NotExistsForGrade') {
+      if (e.response?.data['code'] == 'FrigoPeriod_NotExistsForGrade') {
         throw FrigoPeriodNotExistsForGradeException();
       } else if (e.response?.data['code'] == 'FrigoPeriod_NotInApplyPeriod') {
         throw FrigoPeriodNotInApplyPeriodException();

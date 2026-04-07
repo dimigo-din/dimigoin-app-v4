@@ -16,15 +16,11 @@ class StayPage extends GetView<StayPageController> {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
 
     return Container(
-      decoration: BoxDecoration(
-        color: colorTheme.backgroundStandardSecondary,
-      ),
+      decoration: BoxDecoration(color: colorTheme.backgroundStandardSecondary),
       child: SafeArea(
         top: false,
         child: Scaffold(
-          appBar: DFAppBar(
-            title: '잔류',
-          ),
+          appBar: DFAppBar(title: '잔류'),
           body: Padding(
             padding: EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
             child: Column(
@@ -41,14 +37,13 @@ class StayPage extends GetView<StayPageController> {
                   },
                 ),
                 Expanded(
-                  child: Obx(() => IndexedStack(
-                    index: controller.selectedIndex.value,
-                    children: [
-                      StayApplyPage(),
-                      StayOutingPage(),
-                    ],
-                  ))
-                )
+                  child: Obx(
+                    () => IndexedStack(
+                      index: controller.selectedIndex.value,
+                      children: [StayApplyPage(), StayOutingPage()],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

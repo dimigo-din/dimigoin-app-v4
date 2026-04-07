@@ -2,32 +2,8 @@ import 'dart:developer';
 
 import 'package:dimigoin_app_v4/app/services/meal/model.dart';
 import 'package:dimigoin_app_v4/app/services/meal/service.dart';
+import 'package:dimigoin_app_v4/app/services/meal/state.dart';
 import 'package:get/get.dart';
-
-class MealMenu {
-  final String title;
-  final String time;
-  final List<String> regular;
-  final List<String> simple;
-  final bool highlighted;
-
-  const MealMenu({
-    required this.title,
-    required this.time,
-    required this.regular,
-    required this.simple,
-    this.highlighted = false,
-  });
-}
-
-class MealDay {
-  final String dayLabel;
-  final List<MealMenu> meals;
-
-  const MealDay({required this.dayLabel, required this.meals});
-
-  String? get label => null;
-}
 
 class MealPageController extends GetxController {
   final MealService _mealService;
@@ -36,23 +12,22 @@ class MealPageController extends GetxController {
     : _mealService = mealService ?? MealService();
 
   final RxInt selectedDayIndex = 0.obs;
-  final RxList<MealDay> mealDays = RxList<MealDay>(_defaultMealDays());
-  final RxBool isLoading = true.obs;
-  final RxBool hasLoadError = false.obs;
+  static const List<String> dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+
+  MealService get mealService => _mealService;
+  DateTime get selectedDate => _dateByDayIndex(selectedDayIndex.value);
+
+  List<MealMenuData> get meals {
+    final state = _mealService.mealState;
+    if (state is MealSuccess) return state.meal;
+    return const [];
+  }
 
   @override
   Future<void> onInit() async {
     super.onInit();
     selectedDayIndex.value = _todayIndexByKst();
-    await fetchWeeklyMeals();
-  }
-
-  List<MealMenu> get meals {
-    if (mealDays.isEmpty) return const [];
-
-    final index = selectedDayIndex.value;
-    final safeIndex = (index < 0 || index >= mealDays.length) ? 0 : index;
-    return mealDays[safeIndex].meals;
+    await fetchSelectedDayMeals();
   }
 
   MealType getCurrentMealType() {
@@ -68,63 +43,49 @@ class MealPageController extends GetxController {
     }
   }
 
-  bool isHighlightedMeal(MealType mealType, MealDayData dayData) {
+  bool isHighlightedMeal(MealType mealType, DateTime dayDate) {
     final currentMealType = getCurrentMealType();
-    return mealType == currentMealType && DateTime.now().toUtc().add(const Duration(hours: 9)).day == dayData.date.day;
+    return mealType == currentMealType && _isTodayKst(dayDate);
   }
 
-  Future<void> fetchWeeklyMeals() async {
-    isLoading.value = true;
-    hasLoadError.value = false;
-
+  Future<void> fetchSelectedDayMeals() async {
     try {
-      final weeklyMealMenus = await _mealService.getWeeklyMealMenus();
-      mealDays.value = weeklyMealMenus
-          .map(
-            (dayData) => MealDay(
-              dayLabel: dayData.dayLabel,
-              meals: dayData.menus
-                  .map(
-                    (menuData) => MealMenu(
-                      title: menuData.title,
-                      time: menuData.time,
-                      regular: menuData.regular,
-                      simple: menuData.simple,
-                      highlighted: isHighlightedMeal(menuData.type, dayData),
-                    ),
-                  )
-                  .toList(growable: false),
-            ),
-          )
-          .toList(growable: false);
+      await _mealService.getMeal(selectedDate);
     } catch (e, stackTrace) {
-      hasLoadError.value = true;
-      mealDays.value = _defaultMealDays();
-      log('Error fetching weekly meals: $e', stackTrace: stackTrace);
-    } finally {
-      isLoading.value = false;
+      log(
+        'Error fetching meals for day index ${selectedDayIndex.value}: $e',
+        stackTrace: stackTrace,
+      );
     }
   }
 
-  void selectDay(int index) {
-    if (index < 0 || index >= mealDays.length) return;
+  Future<void> selectDay(int index) async {
+    if (index < 0 || index >= dayLabels.length) return;
     selectedDayIndex.value = index;
-  }
-
-  static List<MealDay> _defaultMealDays() {
-    return const [
-      MealDay(dayLabel: '월', meals: []),
-      MealDay(dayLabel: '화', meals: []),
-      MealDay(dayLabel: '수', meals: []),
-      MealDay(dayLabel: '목', meals: []),
-      MealDay(dayLabel: '금', meals: []),
-      MealDay(dayLabel: '토', meals: []),
-      MealDay(dayLabel: '일', meals: []),
-    ];
+    await fetchSelectedDayMeals();
   }
 
   int _todayIndexByKst() {
     final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
     return nowKst.weekday - DateTime.monday;
+  }
+
+  DateTime _weekStartByKst() {
+    final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
+    final normalizedNow = DateTime(nowKst.year, nowKst.month, nowKst.day);
+    return normalizedNow.subtract(
+      Duration(days: normalizedNow.weekday - DateTime.monday),
+    );
+  }
+
+  DateTime _dateByDayIndex(int dayIndex) {
+    return _weekStartByKst().add(Duration(days: dayIndex));
+  }
+
+  bool _isTodayKst(DateTime date) {
+    final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
+    return date.year == nowKst.year &&
+        date.month == nowKst.month &&
+        date.day == nowKst.day;
   }
 }

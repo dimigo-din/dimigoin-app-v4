@@ -14,17 +14,13 @@ class LaundryPage extends GetView<LaundryPageController> {
   @override
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
-    
+
     return Container(
-      decoration: BoxDecoration(
-        color: colorTheme.backgroundStandardSecondary,
-      ),
+      decoration: BoxDecoration(color: colorTheme.backgroundStandardSecondary),
       child: SafeArea(
         top: false,
         child: Scaffold(
-          appBar: DFAppBar(
-            title: '세탁',
-          ),
+          appBar: DFAppBar(title: '세탁'),
           body: Padding(
             padding: EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
             child: Column(
@@ -41,14 +37,18 @@ class LaundryPage extends GetView<LaundryPageController> {
                   },
                 ),
                 Expanded(
-                  child: Obx(() => IndexedStack(
-                    index: controller.selectedIndex.value,
-                    children: [
-                      LaundryApplyPage(laundryType: LaundryMachineType.washer,),
-                      LaundryApplyPage(laundryType: LaundryMachineType.dryer,),
-                    ],
-                  ))
-                )
+                  child: Obx(
+                    () => IndexedStack(
+                      index: controller.selectedIndex.value,
+                      children: [
+                        LaundryApplyPage(
+                          laundryType: LaundryMachineType.washer,
+                        ),
+                        LaundryApplyPage(laundryType: LaundryMachineType.dryer),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

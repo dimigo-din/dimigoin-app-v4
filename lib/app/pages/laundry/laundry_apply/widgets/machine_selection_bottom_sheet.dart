@@ -14,47 +14,44 @@ class MachineSelectionBottomSheet {
 
     DFAnimatedBottomSheet.show(
       context: context,
-      padding: const EdgeInsets.only(
-        left: 20,
-        right: 20,
-        bottom: 24,
-      ),
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24),
       children: [
         ...controller.laundryMachines
             .where((machine) => machine.type == laundryType)
             .map((machine) {
-          final machines = controller.laundryMachines
-              .where((m) => m.type == laundryType)
-              .toList();
+              final machines = controller.laundryMachines
+                  .where((m) => m.type == laundryType)
+                  .toList();
 
-          final selectedIndex = laundryType == LaundryMachineType.washer
-              ? controller.selectedWasherIndex.value
-              : controller.selectedDryerIndex.value;
+              final selectedIndex = laundryType == LaundryMachineType.washer
+                  ? controller.selectedWasherIndex.value
+                  : controller.selectedDryerIndex.value;
 
-          final isSelected = machines.isNotEmpty &&
-              selectedIndex < machines.length &&
-              machine == machines[selectedIndex];
+              final isSelected =
+                  machines.isNotEmpty &&
+                  selectedIndex < machines.length &&
+                  machine == machines[selectedIndex];
 
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: GestureDetector(
-              onTap: () {
-                controller.selectLaundryMachine(laundryType, machine);
-                Navigator.pop(context);
-              },
-              child: DFValueList(
-                type: DFValueListType.horizontal,
-                theme: isSelected
-                    ? DFValueListTheme.active
-                    : DFValueListTheme.outlined,
-                title: machine.name,
-                content: machine.type == LaundryMachineType.washer
-                    ? "세탁기"
-                    : "건조기",
-              ),
-            ),
-          );
-        }).toList(),
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: GestureDetector(
+                  onTap: () {
+                    controller.selectLaundryMachine(laundryType, machine);
+                    Navigator.pop(context);
+                  },
+                  child: DFValueList(
+                    type: DFValueListType.horizontal,
+                    theme: isSelected
+                        ? DFValueListTheme.active
+                        : DFValueListTheme.outlined,
+                    title: machine.name,
+                    content: machine.type == LaundryMachineType.washer
+                        ? "세탁기"
+                        : "건조기",
+                  ),
+                ),
+              );
+            }),
       ],
     );
   }

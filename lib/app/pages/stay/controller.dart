@@ -5,6 +5,7 @@ import 'package:dimigoin_app_v4/app/pages/home/controller.dart';
 import 'package:dimigoin_app_v4/app/pages/stay/stay_outing/utils/outing_date_utils.dart';
 import 'package:dimigoin_app_v4/app/services/stay/model.dart';
 import 'package:dimigoin_app_v4/app/services/stay/service.dart';
+import 'package:dimigoin_app_v4/app/services/stay/state.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -125,7 +126,15 @@ class StayPageController extends GetxController {
   }
 
   Future<void> fetchStayList([String? preferredStayId]) async {
-    final stays = await stayService.getStay();
+    await stayService.getStay();
+
+    if(stayService.stayState is! StaySuccess) {
+      stayList.clear();
+      return;
+    }
+
+    final stays = (stayService.stayState as StaySuccess).stays;
+
     final sortedStays = [...stays]
       ..sort(
         (a, b) =>
@@ -180,8 +189,13 @@ class StayPageController extends GetxController {
   }
 
   Future<void> fetchStayApply() async {
-    final applications = await stayService.getStayApplication();
-    stayApplyList.assignAll(applications);
+    await stayService.getStayApplication();
+
+    if (stayService.stayApplyState is StayApplySuccess) {
+      stayApplyList.assignAll((stayService.stayApplyState as StayApplySuccess).stayApplies);
+    } else {
+      stayApplyList.clear();
+    }
   }
 
   Future<void> addStayApplication() async {
@@ -268,11 +282,16 @@ class StayPageController extends GetxController {
     }
 
     try {
-      final outings = await stayService.getStayOuting(currentStayApply.id);
-      currentStayOutings.assignAll(outings);
+      await stayService.getStayOuting(currentStayApply.id);
+      if (stayService.stayOutingState is StayOutingSuccess) {
+        currentStayOutings.assignAll((stayService.stayOutingState as StayOutingSuccess).outings);
+      } else {
+        currentStayOutings.clear();
+      }
     } catch (e) {
       currentStayOutings.clear();
       log('Error fetching stay outings: $e');
+      print('asdfasf');
     }
   }
 

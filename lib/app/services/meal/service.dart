@@ -1,18 +1,23 @@
 import 'dart:developer';
 
-import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
 import 'model.dart';
 import 'repository.dart';
+import 'state.dart';
 
 class MealService extends GetxController {
-  static const int _daysPerWeek = 7;
-
   final MealRepository repository;
+  final Map<String, List<MealMenuData>> _mealCache = {};
+
+  final Rx<MealState> _mealState = Rx<MealState>(
+    const MealInitial(),
+  );
+  MealState get mealState => _mealState.value;
+  Rx<MealState> get mealStateRx => _mealState;
 
   MealService({MealRepository? repository})
-      : repository = repository ?? MealRepository();
+    : repository = repository ?? MealRepository();
 
   @override
   void onInit() {
@@ -22,52 +27,23 @@ class MealService extends GetxController {
 
   Future<void> initialize() async {}
 
-  Future<Meal> getMeal({DateTime? date}) async {
+  Future<void> getMeal(DateTime date) async {
+    final dateKey = _toDateKeyString(date);
+    
+    if (_mealCache.containsKey(dateKey)) {
+      _mealState.value = MealSuccess(_mealCache[dateKey]!);
+      return;
+    }
+
+    _mealState.value = const MealLoading();
     try {
-      return await repository.getMeal(date: _toApiDate(date));
+      final meal = await repository.getMeal(date: _toApiDate(date));
+      final menus = convertToMenus(meal);
+      _mealCache[dateKey] = menus;
+      _mealState.value = MealSuccess(menus);
     } catch (e) {
       log(e.toString());
-      rethrow;
-    }
-  }
-
-  Future<List<MealMenuData>> getMealMenus({DateTime? date}) async {
-    final meal = await getMeal(date: date);
-    return convertToMenus(meal);
-  }
-
-  Future<List<MealDayData>> getWeeklyMealMenus({DateTime? baseDate}) async {
-    final dates = _buildWeekDates(baseDate ?? DateTime.now());
-
-    try {
-      final meals = await Future.wait<Meal?>(
-        dates
-            .map(_getMealOrNullOn404)
-            .toList(growable: false),
-      );
-
-      return List.generate(
-        dates.length,
-        (index) => MealDayData(
-          date: dates[index],
-          dayLabel: _weekdayToKorean(dates[index].weekday),
-          menus: meals[index] == null ? const [] : convertToMenus(meals[index]!),
-        ),
-        growable: false,
-      );
-    } catch (e) {
-      log(e.toString());
-      rethrow;
-    }
-  }
-
-  Future<Meal?> _getMealOrNullOn404(DateTime date) async {
-    try {
-      return await repository.getMeal(date: _toApiDate(date));
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        return null;
-      }
+      _mealState.value = MealFailure(Exception(e.toString()));
       rethrow;
     }
   }
@@ -103,22 +79,9 @@ class MealService extends GetxController {
 
   List<String> _normalizeItems(List<String> items) {
     return items
-      .map((item) => item.trim())
-      .where((item) => item.isNotEmpty)
-      .toList(growable: false);
-  }
-
-  List<DateTime> _buildWeekDates(DateTime baseDate) {
-    final normalizedBaseDate = _normalizeKstDate(baseDate);
-    final weekStart = normalizedBaseDate.subtract(
-      Duration(days: normalizedBaseDate.weekday - DateTime.monday),
-    );
-
-    return List.generate(
-      _daysPerWeek,
-      (index) => weekStart.add(Duration(days: index)),
-      growable: false,
-    );
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList(growable: false);
   }
 
   DateTime _normalizeKstDate(DateTime dateTime) {
@@ -136,17 +99,10 @@ class MealService extends GetxController {
     return '$year-$month-$day';
   }
 
-  String _weekdayToKorean(int weekday) {
-    const labels = {
-      DateTime.monday: '월',
-      DateTime.tuesday: '화',
-      DateTime.wednesday: '수',
-      DateTime.thursday: '목',
-      DateTime.friday: '금',
-      DateTime.saturday: '토',
-      DateTime.sunday: '일',
-    };
-
-    return labels[weekday] ?? '';
+  String _toDateKeyString(DateTime date) {
+    final year = date.year.toString().padLeft(4, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+    return '$year-$month-$day';
   }
 }

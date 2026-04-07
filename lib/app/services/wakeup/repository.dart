@@ -42,14 +42,14 @@ class WakeupRepository {
     }
   }
 
-  Future<void> voteWakeupApplication(String applicationId, bool isUpvote) async {
+  Future<void> voteWakeupApplication(
+    String applicationId,
+    bool isUpvote,
+  ) async {
     String url = '/student/wakeup/vote';
 
     try {
-      await api.post(url, data: {
-        'songId': applicationId,
-        'upvote': isUpvote,
-      });
+      await api.post(url, data: {'songId': applicationId, 'upvote': isUpvote});
     } on DioException {
       rethrow;
     }
@@ -59,9 +59,7 @@ class WakeupRepository {
     String url = '/student/wakeup/vote';
 
     try {
-      await api.delete(url, queryParameters: {
-        'id': voteId,
-      });
+      await api.delete(url, queryParameters: {'id': voteId});
     } on DioException {
       rethrow;
     }
@@ -71,9 +69,10 @@ class WakeupRepository {
     String url = '/student/wakeup/search';
 
     try {
-      DFHttpResponse response = await api.get(url, queryParameters: {
-        'query': query,
-      });
+      DFHttpResponse response = await api.get(
+        url,
+        queryParameters: {'query': query},
+      );
 
       return YoutubeSearchResult.fromJson(response.data['data']);
     } on DioException {
@@ -85,9 +84,7 @@ class WakeupRepository {
     String url = '/student/wakeup';
 
     try {
-      await api.post(url, data: {
-        'videoId': youtubeVideoId,
-      });
+      await api.post(url, data: {'videoId': youtubeVideoId});
     } on DioException catch (e) {
       if (e.response?.data['code'] == 'ResourceAlreadyExists') {
         throw ResourceAlreadyExists();
@@ -98,7 +95,7 @@ class WakeupRepository {
       rethrow;
     }
   }
-  
+
   Future<WakeupApplicationWithVote?> getWakeupHistory() async {
     String url = '/wakeup/history';
 
@@ -106,10 +103,10 @@ class WakeupRepository {
       final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
       final date = nowKst.toIso8601String().substring(0, 10);
 
-      DFHttpResponse response = await api.get(url, queryParameters: {
-        'date': date,
-        'gender': authService.user!.gender,
-      });
+      DFHttpResponse response = await api.get(
+        url,
+        queryParameters: {'date': date, 'gender': authService.user!.gender},
+      );
       return WakeupApplicationWithVote.fromJson(response.data['data']);
     } on DioException {
       rethrow;

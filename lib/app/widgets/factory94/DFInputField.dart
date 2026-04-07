@@ -77,7 +77,8 @@ class _DFInputState extends State<DFInput> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? TextEditingController(text: widget.content ?? '');
+    _controller =
+        widget.controller ?? TextEditingController(text: widget.content ?? '');
     _focusNode = FocusNode()
       ..addListener(() {
         setState(() {
@@ -121,7 +122,7 @@ class _DFInputState extends State<DFInput> {
 
   void _updateDisplayText() {
     String text = '';
-    
+
     switch (widget.mode) {
       case DFInputMode.date:
         if (_selectedDate != null) {
@@ -131,7 +132,7 @@ class _DFInputState extends State<DFInput> {
         break;
       case DFInputMode.time:
         if (_selectedTime != null) {
-          text = widget.timeFormat != null 
+          text = widget.timeFormat != null
               ? _formatTime(_selectedTime!, widget.timeFormat!)
               : _selectedTime!.format(context);
         }
@@ -140,13 +141,14 @@ class _DFInputState extends State<DFInput> {
         if (_selectedDateTime != null) {
           final dateFormat = widget.dateFormat ?? 'yyyy-MM-dd';
           final timeFormat = widget.timeFormat ?? 'HH:mm';
-          text = '${DateFormat(dateFormat).format(_selectedDateTime!)} ${DateFormat(timeFormat).format(_selectedDateTime!)}';
+          text =
+              '${DateFormat(dateFormat).format(_selectedDateTime!)} ${DateFormat(timeFormat).format(_selectedDateTime!)}';
         }
         break;
       case DFInputMode.text:
         return;
     }
-    
+
     if (text.isNotEmpty) {
       _controller.text = text;
     }
@@ -154,7 +156,13 @@ class _DFInputState extends State<DFInput> {
 
   String _formatTime(TimeOfDay time, String format) {
     final now = DateTime.now();
-    final dateTime = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    final dateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      time.hour,
+      time.minute,
+    );
     return DateFormat(format).format(dateTime);
   }
 
@@ -165,10 +173,7 @@ class _DFInputState extends State<DFInput> {
       firstDate: widget.firstDate ?? DateTime(1900),
       lastDate: widget.lastDate ?? DateTime(2100),
       builder: (context, child) {
-        return Theme(
-          data: Theme.of(context),
-          child: child!,
-        );
+        return Theme(data: Theme.of(context), child: child!);
       },
     );
 
@@ -186,10 +191,7 @@ class _DFInputState extends State<DFInput> {
       context: context,
       initialTime: _selectedTime ?? TimeOfDay.now(),
       builder: (context, child) {
-        return Theme(
-          data: Theme.of(context),
-          child: child!,
-        );
+        return Theme(data: Theme.of(context), child: child!);
       },
     );
 
@@ -209,24 +211,20 @@ class _DFInputState extends State<DFInput> {
       firstDate: widget.firstDate ?? DateTime(1900),
       lastDate: widget.lastDate ?? DateTime(2100),
       builder: (context, child) {
-        return Theme(
-          data: Theme.of(context),
-          child: child!,
-        );
+        return Theme(data: Theme.of(context), child: child!);
       },
     );
 
     if (pickedDate != null) {
       if (!mounted) return;
-      
+
       final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.fromDateTime(_selectedDateTime ?? DateTime.now()),
+        initialTime: TimeOfDay.fromDateTime(
+          _selectedDateTime ?? DateTime.now(),
+        ),
         builder: (context, child) {
-          return Theme(
-            data: Theme.of(context),
-            child: child!,
-          );
+          return Theme(data: Theme.of(context), child: child!);
         },
       );
 
@@ -238,7 +236,7 @@ class _DFInputState extends State<DFInput> {
           pickedTime.hour,
           pickedTime.minute,
         );
-        
+
         setState(() {
           _selectedDateTime = dateTime;
           _updateDisplayText();
@@ -323,7 +321,7 @@ class _DFInputState extends State<DFInput> {
     if (widget.trailing != null) {
       return buildTrailing(context);
     }
-    
+
     IconData icon;
     switch (widget.mode) {
       case DFInputMode.date:
@@ -338,7 +336,7 @@ class _DFInputState extends State<DFInput> {
       case DFInputMode.text:
         return const SizedBox();
     }
-    
+
     return Icon(icon, size: 24, color: getPlaceholderColor(context));
   }
 
@@ -438,8 +436,8 @@ class _DFInputState extends State<DFInput> {
                     width: 24,
                     height: 24,
                     child: GestureDetector(
-                      onTap: isPickerMode 
-                          ? _handleTap 
+                      onTap: isPickerMode
+                          ? _handleTap
                           : (widget.onTapTrailing ?? () {}),
                       child: FittedBox(
                         fit: BoxFit.contain,
@@ -462,12 +460,7 @@ class DFInputField extends StatelessWidget {
   final String? subLabel;
   final List<Widget>? inputs;
 
-  const DFInputField({
-    super.key,
-    this.title,
-    this.subLabel,
-    this.inputs,
-  });
+  const DFInputField({super.key, this.title, this.subLabel, this.inputs});
 
   @override
   Widget build(BuildContext context) {
@@ -497,11 +490,7 @@ class DFInputField extends StatelessWidget {
               ),
             ),
           ],
-          if (inputs != null) ...[
-            Column(
-              children: inputs!,
-            ),
-          ],
+          if (inputs != null) ...[Column(children: inputs!)],
           if (subLabel != null) ...[
             Padding(
               padding: const EdgeInsets.only(
@@ -519,7 +508,7 @@ class DFInputField extends StatelessWidget {
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ],
       ),

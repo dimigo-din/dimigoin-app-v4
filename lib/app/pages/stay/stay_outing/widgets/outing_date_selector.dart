@@ -8,10 +8,7 @@ import '../../controller.dart';
 class OutingDateSelector extends StatelessWidget {
   final List<DateTime> dates;
 
-  const OutingDateSelector({
-    super.key,
-    required this.dates,
-  });
+  const OutingDateSelector({super.key, required this.dates});
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +23,15 @@ class OutingDateSelector extends StatelessWidget {
                 left: i == 0 ? 0 : DFSpacing.spacing200 / 2,
                 right: i == dates.length - 1 ? 0 : DFSpacing.spacing200 / 2,
               ),
-              child: Obx(() => DFChip(
-                label: DateFormat('M월 d일').format(dates[i]),
-                status: controller.selectedStayOutingDay.value == i,
-                onTap: () {
-                  controller.selectedStayOutingDay.value = i;
-                },
-              )),
+              child: Obx(
+                () => DFChip(
+                  label: DateFormat('M월 d일').format(dates[i]),
+                  status: controller.selectedStayOutingDay.value == i,
+                  onTap: () {
+                    controller.selectedStayOutingDay.value = i;
+                  },
+                ),
+              ),
             ),
           ),
       ],

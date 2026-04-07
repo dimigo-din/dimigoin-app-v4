@@ -26,10 +26,10 @@ class AuthRepository {
     String url = '/auth/login/password';
 
     try {
-      DFHttpResponse response = await api.post(url, data: {
-        'email': email,
-        'password': password,
-      });
+      DFHttpResponse response = await api.post(
+        url,
+        data: {'email': email, 'password': password},
+      );
 
       LoginToken loginToken = LoginToken.fromJson(response.data['data']);
 
@@ -49,10 +49,12 @@ class AuthRepository {
     String url = '/auth/login/google';
 
     try {
-      final redirectUri = '${Uri.base.scheme}://${Uri.base.host}${Uri.base.hasPort ? ':${Uri.base.port}' : ''}/login';
-      DFHttpResponse response = await api.get(url, queryParameters: {
-        'redirect_uri': redirectUri,
-      });
+      final redirectUri =
+          '${Uri.base.scheme}://${Uri.base.host}${Uri.base.hasPort ? ':${Uri.base.port}' : ''}/login';
+      DFHttpResponse response = await api.get(
+        url,
+        queryParameters: {'redirect_uri': redirectUri},
+      );
 
       String oauthUrl = response.data['data'];
 
@@ -66,11 +68,12 @@ class AuthRepository {
     String url = '/auth/login/google/callback';
 
     try {
-      final redirectUri = '${Uri.base.scheme}://${Uri.base.host}${Uri.base.hasPort ? ':${Uri.base.port}' : ''}/login';
-      DFHttpResponse response = await api.post(url, data: {
-        'code': code,
-        'redirect_uri': redirectUri,
-      });
+      final redirectUri =
+          '${Uri.base.scheme}://${Uri.base.host}${Uri.base.hasPort ? ':${Uri.base.port}' : ''}/login';
+      DFHttpResponse response = await api.post(
+        url,
+        data: {'code': code, 'redirect_uri': redirectUri},
+      );
 
       LoginToken loginToken = LoginToken.fromJson(response.data['data']);
 
@@ -90,9 +93,7 @@ class AuthRepository {
     String url = '/auth/login/google/callback/app';
 
     try {
-      DFHttpResponse response = await api.post(url, data: {
-        'idToken': idToken,
-      });
+      DFHttpResponse response = await api.post(url, data: {'idToken': idToken});
 
       LoginToken loginToken = LoginToken.fromJson(response.data['data']);
 
@@ -112,9 +113,10 @@ class AuthRepository {
     String url = '/auth/refresh';
 
     try {
-      DFHttpResponse response = await api.post(url, data: {
-        'refreshToken': refreshToken,
-      });
+      DFHttpResponse response = await api.post(
+        url,
+        data: {'refreshToken': refreshToken},
+      );
 
       LoginToken loginToken = LoginToken.fromJson(response.data['data']);
 
@@ -124,15 +126,18 @@ class AuthRepository {
     }
   }
 
-  Future<LoginToken> signUpPersonalInformation(int grade, int classNum, String gender) async {
+  Future<LoginToken> signUpPersonalInformation(
+    int grade,
+    int classNum,
+    String gender,
+  ) async {
     String url = '/auth/signup';
 
     try {
-      DFHttpResponse response = await api.post(url, data: {
-        'grade': grade,
-        'class': classNum,
-        'gender': gender,
-      });
+      DFHttpResponse response = await api.post(
+        url,
+        data: {'grade': grade, 'class': classNum, 'gender': gender},
+      );
 
       LoginToken loginToken = LoginToken.fromJson(response.data['data']);
 

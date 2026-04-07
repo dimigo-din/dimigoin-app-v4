@@ -17,7 +17,7 @@ class DFSnackBar {
     Duration duration = const Duration(seconds: 3),
   }) async {
     final currentId = ++_requestId;
-    
+
     await _ensureOverlayReady();
 
     _autoCloseTimer?.cancel();
@@ -109,7 +109,7 @@ class DFSnackBar {
         isDismissible: false, // 추가: 사용자가 임의로 닫지 못하게
         dismissDirection: DismissDirection.none, // 추가: 스와이프 닫기 방지
       );
-      
+
       // 스낵바가 성공적으로 생성된 후 짧은 대기
       await Future.delayed(const Duration(milliseconds: 50));
     } catch (e) {
@@ -145,7 +145,7 @@ class DFSnackBar {
         } catch (e) {
           // GetX 내부 오류 무시
         }
-        
+
         if (!completer.isCompleted) {
           completer.complete();
         }
@@ -155,34 +155,62 @@ class DFSnackBar {
     });
   }
 
-  static void success(String content, {Duration duration = const Duration(seconds: 3)}) {
+  static void success(
+    String content, {
+    Duration duration = const Duration(seconds: 3),
+  }) {
     open(
       content,
-      leading: const Icon(Icons.check_circle_outline_rounded, color: Color(0xFF10B981), size: 20),
+      leading: const Icon(
+        Icons.check_circle_outline_rounded,
+        color: Color(0xFF10B981),
+        size: 20,
+      ),
       duration: duration,
     );
   }
 
-  static void error(String content, {Duration duration = const Duration(seconds: 3)}) {
+  static void error(
+    String content, {
+    Duration duration = const Duration(seconds: 3),
+  }) {
     open(
       content,
-      leading: const Icon(Icons.error_outline_rounded, color: Color(0xFFEF4444), size: 20),
+      leading: const Icon(
+        Icons.error_outline_rounded,
+        color: Color(0xFFEF4444),
+        size: 20,
+      ),
       duration: duration,
     );
   }
 
-  static void info(String content, {Duration duration = const Duration(seconds: 3)}) {
+  static void info(
+    String content, {
+    Duration duration = const Duration(seconds: 3),
+  }) {
     open(
       content,
-      leading: const Icon(Icons.info_outline_rounded, color: Color(0xFF3B82F6), size: 20),
+      leading: const Icon(
+        Icons.info_outline_rounded,
+        color: Color(0xFF3B82F6),
+        size: 20,
+      ),
       duration: duration,
     );
   }
 
-  static void warning(String content, {Duration duration = const Duration(seconds: 3)}) {
+  static void warning(
+    String content, {
+    Duration duration = const Duration(seconds: 3),
+  }) {
     open(
       content,
-      leading: const Icon(Icons.warning_amber_rounded, color: Color(0xFFF59E0B), size: 20),
+      leading: const Icon(
+        Icons.warning_amber_rounded,
+        color: Color(0xFFF59E0B),
+        size: 20,
+      ),
       duration: duration,
     );
   }

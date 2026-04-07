@@ -18,9 +18,10 @@ class StayRepository {
     String url = '/student/stay';
 
     try {
-      DFHttpResponse response = await api.get(url, queryParameters: {
-        'grade': authService.user?.userGrade,
-      });
+      DFHttpResponse response = await api.get(
+        url,
+        queryParameters: {'grade': authService.user?.userGrade},
+      );
 
       return (response.data['data'] as List)
           .map((e) => Stay.fromJson(e))
@@ -36,8 +37,6 @@ class StayRepository {
     try {
       DFHttpResponse response = await api.get(url);
 
-      print(response.data['data']);
-
       return (response.data['data'] as List)
           .map((e) => StayApply.fromJson(e))
           .toList();
@@ -45,28 +44,36 @@ class StayRepository {
       rethrow;
     }
   }
-  
-  Future<StayApply> addStayApplication(String stayId, String seatId, List<Outing> outings, {String? noSeatReason}) async {
+
+  Future<StayApply> addStayApplication(
+    String stayId,
+    String seatId,
+    List<Outing> outings, {
+    String? noSeatReason,
+  }) async {
     String url = '/student/stay/apply';
 
     try {
-      DFHttpResponse response = await api.post(url, data: {
-        'stay': stayId,
-        'stay_seat': seatId == '' || seatId.isEmpty ? noSeatReason : seatId,
-        'grade': authService.user?.userGrade,
-        'gender': authService.user?.gender,
-        'outing': outings.map((outing) => outing.toJson()).toList(),
-      });
+      DFHttpResponse response = await api.post(
+        url,
+        data: {
+          'stay': stayId,
+          'stay_seat': seatId == '' || seatId.isEmpty ? noSeatReason : seatId,
+          'grade': authService.user?.userGrade,
+          'gender': authService.user?.gender,
+          'outing': outings.map((outing) => outing.toJson()).toList(),
+        },
+      );
 
       return StayApply.fromJson(response.data['data']);
     } on DioException catch (e) {
-      if(e.response?.data['code'] == 'Stay_NotInApplyPeriod') {
+      if (e.response?.data['code'] == 'Stay_NotInApplyPeriod') {
         throw StayNotInApplyPeriodException();
-      } else if(e.response?.data['code'] == 'Stay_AlreadyApplied') {
+      } else if (e.response?.data['code'] == 'Stay_AlreadyApplied') {
         throw StayAlreadyAppliedException();
-      } else if(e.response?.data['code'] == 'StaySeat_Duplication') {
+      } else if (e.response?.data['code'] == 'StaySeat_Duplication') {
         throw StaySeatDuplicationException();
-      } else if(e.response?.data['code'] == 'StaySeat_NotAllowed') {
+      } else if (e.response?.data['code'] == 'StaySeat_NotAllowed') {
         throw StaySeatNotAllowedException();
       }
 
@@ -78,11 +85,10 @@ class StayRepository {
     String url = '/student/stay/apply';
 
     try {
-      await api.delete(url, queryParameters: {
-        'id': id,
-        'grade': authService.user?.userGrade,
-      });
-
+      await api.delete(
+        url,
+        queryParameters: {'id': id, 'grade': authService.user?.userGrade},
+      );
     } on DioException catch (e) {
       if (e.response?.data['code'] == 'Resource_NotFound') {
         throw ResourceNotFoundException();
@@ -93,17 +99,17 @@ class StayRepository {
       }
 
       rethrow;
-    } 
+    }
   }
 
   Future<List<Outing>> getStayOuting(String id) async {
     String url = '/student/stay/outing';
 
     try {
-      DFHttpResponse response = await api.get(url, queryParameters: {
-        'id': id,
-        'grade': authService.user?.userGrade,
-      });
+      DFHttpResponse response = await api.get(
+        url,
+        queryParameters: {'id': id, 'grade': authService.user?.userGrade},
+      );
 
       return (response.data['data'] as List)
           .map((e) => Outing.fromJson(e))
@@ -117,20 +123,22 @@ class StayRepository {
     String url = '/student/stay/outing';
 
     try {
-      DFHttpResponse response = await api.post(url, data: {
-        'apply_id': stayId,
-        'outing': outing.toJson(),
-        'grade': authService.user?.userGrade,
-      });
+      DFHttpResponse response = await api.post(
+        url,
+        data: {
+          'apply_id': stayId,
+          'outing': outing.toJson(),
+          'grade': authService.user?.userGrade,
+        },
+      );
 
       return Outing.fromJson(response.data['data']);
     } on DioException catch (e) {
-
-      if(e.response?.data['code'] == 'Stay_NotInApplyPeriod') {
+      if (e.response?.data['code'] == 'Stay_NotInApplyPeriod') {
         throw StayNotInApplyPeriodException();
-      } else if(e.response?.data['code'] == 'PermissionDenied_Resource') {
+      } else if (e.response?.data['code'] == 'PermissionDenied_Resource') {
         throw PermissionDeniedResourceException();
-      } else if(e.response?.data['code'] == 'ProvidedTime_Invalid') {
+      } else if (e.response?.data['code'] == 'ProvidedTime_Invalid') {
         throw ProvidedTimeInvalidException();
       }
 
@@ -142,20 +150,22 @@ class StayRepository {
     String url = '/student/stay/outing';
 
     try {
-      DFHttpResponse response = await api.patch(url, data: {
-        'outing_id': outingId,
-        'outing': outing.toJson(),
-        'grade': authService.user?.userGrade,
-      });
+      DFHttpResponse response = await api.patch(
+        url,
+        data: {
+          'outing_id': outingId,
+          'outing': outing.toJson(),
+          'grade': authService.user?.userGrade,
+        },
+      );
 
       return Outing.fromJson(response.data['data']);
     } on DioException catch (e) {
-
-      if(e.response?.data['code'] == 'Stay_NotInApplyPeriod') {
+      if (e.response?.data['code'] == 'Stay_NotInApplyPeriod') {
         throw StayNotInApplyPeriodException();
-      } else if(e.response?.data['code'] == 'PermissionDenied_Resource') {
+      } else if (e.response?.data['code'] == 'PermissionDenied_Resource') {
         throw PermissionDeniedResourceException();
-      } else if(e.response?.data['code'] == 'ProvidedTime_Invalid') {
+      } else if (e.response?.data['code'] == 'ProvidedTime_Invalid') {
         throw ProvidedTimeInvalidException();
       }
 
@@ -167,15 +177,14 @@ class StayRepository {
     String url = '/student/stay/outing';
 
     try {
-      await api.delete(url, queryParameters: {
-        'id': outingId,
-        'grade': authService.user?.userGrade,
-      });
+      await api.delete(
+        url,
+        queryParameters: {'id': outingId, 'grade': authService.user?.userGrade},
+      );
     } on DioException catch (e) {
-
-      if(e.response?.data['code'] == 'Stay_NotInApplyPeriod') {
+      if (e.response?.data['code'] == 'Stay_NotInApplyPeriod') {
         throw StayNotInApplyPeriodException();
-      } else if(e.response?.data['code'] == 'PermissionDenied_Resource') {
+      } else if (e.response?.data['code'] == 'PermissionDenied_Resource') {
         throw PermissionDeniedResourceException();
       }
 

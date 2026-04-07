@@ -68,8 +68,9 @@ class _DFGestureDetectorWithFillInteractionState
                     margin: widget.effectPadding,
                     decoration: BoxDecoration(
                       color: colorTheme.contentStandardPrimary,
-                      borderRadius:
-                          BorderRadius.circular(widget.effectBorderRadius),
+                      borderRadius: BorderRadius.circular(
+                        widget.effectBorderRadius,
+                      ),
                     ),
                   ),
                 ),

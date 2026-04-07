@@ -10,16 +10,14 @@ import 'package:get/get.dart';
 import 'controller.dart';
 
 class SignupPage extends GetView<SignupPageController> {
-  SignupPage({super.key});
+  const SignupPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
 
     return Container(
-      decoration: BoxDecoration(
-        color: colorTheme.backgroundStandardSecondary,
-      ),
+      decoration: BoxDecoration(color: colorTheme.backgroundStandardSecondary),
       child: SafeArea(
         top: false,
         child: Scaffold(
@@ -41,7 +39,10 @@ class SignupPage extends GetView<SignupPageController> {
             ),
           ),
           body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: DFSpacing.spacing400, vertical: DFSpacing.spacing500),
+            padding: EdgeInsets.symmetric(
+              horizontal: DFSpacing.spacing400,
+              vertical: DFSpacing.spacing500,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -56,75 +57,83 @@ class SignupPage extends GetView<SignupPageController> {
                       DFInputField(
                         title: "학년 선택",
                         inputs: [
-                          Obx(() => DFOptionPicker(
-                            type: DFOptionPickerType.sextuple,
-                            currentIndex: controller.selectedGrade.value,
-                            options: [
-                              DFOptionData(label: "1학년"),
-                              DFOptionData(label: "2학년"),
-                              DFOptionData(label: "3학년"),
-                            ],
-                            onChanged: (index) {
-                              controller.selectedGrade.value = index;
-                              controller.checkCanSubmit();
-                            },
-                          )),
+                          Obx(
+                            () => DFOptionPicker(
+                              type: DFOptionPickerType.sextuple,
+                              currentIndex: controller.selectedGrade.value,
+                              options: [
+                                DFOptionData(label: "1학년"),
+                                DFOptionData(label: "2학년"),
+                                DFOptionData(label: "3학년"),
+                              ],
+                              onChanged: (index) {
+                                controller.selectedGrade.value = index;
+                                controller.checkCanSubmit();
+                              },
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: DFSpacing.spacing600),
                       DFInputField(
                         title: "반 선택",
                         inputs: [
-                          Obx(() => DFOptionPicker(
-                            type: DFOptionPickerType.sextuple,
-                            currentIndex: controller.selectedClass.value,
-                            options: [
-                              DFOptionData(label: "1반"),
-                              DFOptionData(label: "2반"),
-                              DFOptionData(label: "3반"),
-                              DFOptionData(label: "4반"),
-                              DFOptionData(label: "5반"),
-                              DFOptionData(label: "6반"),
-                            ],
-                            onChanged: (index) {
-                              controller.selectedClass.value = index;
-                              controller.checkCanSubmit();
-                            },
-                          )),
+                          Obx(
+                            () => DFOptionPicker(
+                              type: DFOptionPickerType.sextuple,
+                              currentIndex: controller.selectedClass.value,
+                              options: [
+                                DFOptionData(label: "1반"),
+                                DFOptionData(label: "2반"),
+                                DFOptionData(label: "3반"),
+                                DFOptionData(label: "4반"),
+                                DFOptionData(label: "5반"),
+                                DFOptionData(label: "6반"),
+                              ],
+                              onChanged: (index) {
+                                controller.selectedClass.value = index;
+                                controller.checkCanSubmit();
+                              },
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: DFSpacing.spacing600),
                       DFInputField(
                         title: "성별 선택",
                         inputs: [
-                          Obx(() => DFOptionPicker(
-                            type: DFOptionPickerType.doubleHorizontal,
-                            currentIndex: controller.selectedGender.value,
-                            options: [
-                              DFOptionData(label: "남"),
-                              DFOptionData(label: "여"),
-                            ],
-                            onChanged: (index) {
-                              controller.selectedGender.value = index;
-                              controller.checkCanSubmit();
-                            },
-                          )),
+                          Obx(
+                            () => DFOptionPicker(
+                              type: DFOptionPickerType.doubleHorizontal,
+                              currentIndex: controller.selectedGender.value,
+                              options: [
+                                DFOptionData(label: "남"),
+                                DFOptionData(label: "여"),
+                              ],
+                              onChanged: (index) {
+                                controller.selectedGender.value = index;
+                                controller.checkCanSubmit();
+                              },
+                            ),
+                          ),
                         ],
                       ),
                     ],
                   ),
                 ),
-                Obx(() => SizedBox(
-                  width: double.infinity,
-                  child: DFButton(
-                    label: "입력 완료",
-                    size: DFButtonSize.large,
-                    theme: DFButtonTheme.accent,
-                    style: DFButtonStyle.primary,
-                    disabled: !controller.canSubmit.value,
-                    onPressed: () => controller.submitPersonalInfo(),
+                Obx(
+                  () => SizedBox(
+                    width: double.infinity,
+                    child: DFButton(
+                      label: "입력 완료",
+                      size: DFButtonSize.large,
+                      theme: DFButtonTheme.accent,
+                      style: DFButtonStyle.primary,
+                      disabled: !controller.canSubmit.value,
+                      onPressed: () => controller.submitPersonalInfo(),
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ),

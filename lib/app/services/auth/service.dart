@@ -33,14 +33,18 @@ class AuthService extends GetxController {
     final u = _user.value;
     if (u == null) return false;
 
-    return u!.userGrade != null && u!.userClass != null && u!.gender != null && u.gender!.isNotEmpty;
+    return u.userGrade != null &&
+        u.userClass != null &&
+        u.gender != null &&
+        u.gender!.isNotEmpty;
   }
 
   final Completer<void> _initCompleter = Completer<void>();
   Future<void> get initComplete => _initCompleter.future;
 
-  AuthService({AuthRepository? repository}) : repository = repository ?? AuthRepository();
-  
+  AuthService({AuthRepository? repository})
+    : repository = repository ?? AuthRepository();
+
   static const _uuid = Uuid();
 
   @override
@@ -73,8 +77,8 @@ class AuthService extends GetxController {
       final GoogleSignIn signIn = GoogleSignIn.instance;
       await signIn.initialize(
         clientId: Platform.isIOS
-          ? dotenv.env['GOOGLE_IOS_CLIENT_ID']
-          : dotenv.env['GOOGLE_ANDROID_CLIENT_ID'],
+            ? dotenv.env['GOOGLE_IOS_CLIENT_ID']
+            : dotenv.env['GOOGLE_ANDROID_CLIENT_ID'],
         serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
       );
     }
@@ -95,18 +99,15 @@ class AuthService extends GetxController {
     final Uri url = Uri.parse('https://dimiauth.findflag.kr');
     launchUrl(url, mode: LaunchMode.externalApplication);
   }
-  
+
   Future<String?> _signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? account = await GoogleSignIn.instance.authenticate();
-      
-      if (account == null) {
-        return null;
-      }
-      
-      final GoogleSignInAuthentication auth = await account.authentication;
+      final GoogleSignInAccount account = await GoogleSignIn.instance
+          .authenticate();
+
+      final GoogleSignInAuthentication auth = account.authentication;
       final String? idToken = auth.idToken;
-      
+
       if (idToken == null) {
         throw IdTokenNullException();
       }
@@ -149,7 +150,11 @@ class AuthService extends GetxController {
       final redirectUri = await repository.getGoogleOAuthUrl();
       final Uri oauthUri = Uri.parse(redirectUri);
 
-      return await launchUrl(oauthUri, mode: LaunchMode.platformDefault, webOnlyWindowName: '_self');
+      return await launchUrl(
+        oauthUri,
+        mode: LaunchMode.platformDefault,
+        webOnlyWindowName: '_self',
+      );
     } on Exception catch (e) {
       log(e.toString());
       rethrow;
@@ -213,9 +218,13 @@ class AuthService extends GetxController {
       id: decode['id'].toString(),
       profileUrl: decode['picture'].toString(),
       name: decode['name'].toString(),
-      userGrade: decode['grade'] != null ? int.parse(decode['grade'].toString()) : null,
-      userClass: decode['class'] != null ? int.parse(decode['class'].toString()) : null,
-      gender: decode['gender'] != null ? decode['gender'].toString() : null,
+      userGrade: decode['grade'] != null
+          ? int.parse(decode['grade'].toString())
+          : null,
+      userClass: decode['class'] != null
+          ? int.parse(decode['class'].toString())
+          : null,
+      gender: decode['gender']?.toString(),
     );
 
     await AuthStorage.savePersonalInformation(user);
@@ -252,9 +261,17 @@ class AuthService extends GetxController {
     return true;
   }
 
-  Future<bool> signUpPersonalInformation(int grade, int classNum, String gender) async {
+  Future<bool> signUpPersonalInformation(
+    int grade,
+    int classNum,
+    String gender,
+  ) async {
     try {
-      final token = await repository.signUpPersonalInformation(grade, classNum, gender);
+      final token = await repository.signUpPersonalInformation(
+        grade,
+        classNum,
+        gender,
+      );
 
       await _handleLoginSuccess(token);
     } catch (e) {

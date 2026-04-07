@@ -7,11 +7,11 @@ class StaggeredAnimationItem extends StatelessWidget {
   final Animation<double> animation;
 
   const StaggeredAnimationItem({
-    Key? key,
+    super.key,
     required this.child,
     required this.index,
     required this.animation,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +50,11 @@ class DFAnimatedBottomSheet extends StatefulWidget {
   final double? height;
 
   const DFAnimatedBottomSheet({
-    Key? key,
+    super.key,
     required this.children,
     this.height,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   State<DFAnimatedBottomSheet> createState() => _DFAnimatedBottomSheetState();
@@ -82,9 +82,9 @@ class DFAnimatedBottomSheet extends StatefulWidget {
         ),
       ),
       builder: (context) => DFAnimatedBottomSheet(
-        children: children,
         padding: padding,
         height: height,
+        children: children,
       ),
     );
   }
@@ -128,7 +128,8 @@ class _DFAnimatedBottomSheetState extends State<DFAnimatedBottomSheet>
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
-              padding: widget.padding ??
+              padding:
+                  widget.padding ??
                   const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,

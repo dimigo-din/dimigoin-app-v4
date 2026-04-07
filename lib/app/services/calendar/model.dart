@@ -11,7 +11,12 @@ class CalendarEvent {
   final DateTime date;
   final String? description;
 
-  CalendarEvent({required this.title, required this.type, required this.date, this.description});
+  CalendarEvent({
+    required this.title,
+    required this.type,
+    required this.date,
+    this.description,
+  });
 
   factory CalendarEvent.fromJson(Map<String, dynamic> json) =>
       _$CalendarEventFromJson(json);

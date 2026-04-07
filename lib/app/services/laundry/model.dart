@@ -4,6 +4,7 @@ import '../user/model.dart';
 part 'model.g.dart';
 
 enum LaundryMachineType { washer, dryer }
+
 enum LaundryTimelineTrigger { primary, stay, etc }
 
 @JsonSerializable(fieldRename: FieldRename.snake)

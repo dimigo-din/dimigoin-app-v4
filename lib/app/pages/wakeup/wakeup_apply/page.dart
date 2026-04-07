@@ -2,12 +2,14 @@ import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:dimigoin_app_v4/app/services/wakeup/model.dart';
+import 'package:dimigoin_app_v4/app/widgets/animated_cross_fade.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFAnimatedBottomSheet.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFAvatar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFDivider.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFInputField.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
+import 'package:dimigoin_app_v4/app/widgets/shimmer_loading_box.dart';
 import 'package:flutter/material.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:get/get.dart';
@@ -39,11 +41,7 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
       context: context,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            bottom: 24,
-          ),
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24),
           child: Column(
             children: [
               Text(
@@ -62,7 +60,9 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
                   type: DFAvatarType.classroom,
                   size: DFAvatarSize.large,
                   fill: DFAvatarFill.image,
-                  image: Image.network(video.snippet.thumbnails.defaultThumbnail.url),
+                  image: Image.network(
+                    video.snippet.thumbnails.defaultThumbnail.url,
+                  ),
                 ),
                 marquee: true,
               ),
@@ -78,7 +78,7 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
                   },
                 ),
               ),
-            ]
+            ],
           ),
         ),
       ],
@@ -102,37 +102,71 @@ class WakeupApplyPage extends GetView<WakeupApplyPageController> {
             const SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView(
-                child: Obx(() => Column(
-                  children: [
-                    ...(controller.youtubeSearchResults.toList())
-                    .map((video) => [
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => _showApplyBottomSheet(context, video),
-                        child: WakeupItem(
-                          title: cleanText(video.snippet.title),
-                          content: cleanText(video.snippet.channelTitle),
-                          leading: DFAvatar(
-                          type: DFAvatarType.classroom,
-                          size: DFAvatarSize.large,
-                          fill: DFAvatarFill.image,
-                          image: Image.network(video.snippet.thumbnails.defaultThumbnail.url),
+                child: Obx(
+                  () => DFAnimatedCrossFade(
+                    duration: const Duration(milliseconds: 300),
+                    animateSize: false,
+                    alignment: AlignmentDirectional.topStart,
+                    firstChild: (_) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: List.generate(
+                        10,
+                        (index) => const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: DFShimmerLoadingBox(
+                            height: 72,
+                            width: double.infinity,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 5),
-                      const DFDivider(
-                        size: DFDividerSize.small,
-                      ),
-                      const SizedBox(height: 5),
-                    ]).expand((element) => element).toList(),
-                  ],
-                )),
+                    ),
+                    secondChild: (_) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ...(controller.youtubeSearchResults.toList())
+                            .map(
+                              (video) => [
+                                GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () =>
+                                      _showApplyBottomSheet(context, video),
+                                  child: WakeupItem(
+                                    title: cleanText(video.snippet.title),
+                                    content: cleanText(
+                                      video.snippet.channelTitle,
+                                    ),
+                                    leading: DFAvatar(
+                                      type: DFAvatarType.classroom,
+                                      size: DFAvatarSize.large,
+                                      fill: DFAvatarFill.image,
+                                      image: Image.network(
+                                        video
+                                            .snippet
+                                            .thumbnails
+                                            .defaultThumbnail
+                                            .url,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                const DFDivider(size: DFDividerSize.small),
+                                const SizedBox(height: 5),
+                              ],
+                            )
+                            .expand((element) => element),
+                      ],
+                    ),
+                    crossFadeState: controller.isLoadingSearch.value
+                        ? CrossFadeState.showFirst
+                        : CrossFadeState.showSecond,
+                  ),
+                ),
               ),
             ),
           ],
         ),
-      )
+      ),
     );
   }
 }

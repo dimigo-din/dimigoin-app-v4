@@ -20,7 +20,9 @@ class SignupPageController extends GetxController {
   }
 
   void checkCanSubmit() {
-    if (selectedGrade.value == -1 || selectedClass.value == -1 || selectedGender.value == -1) {
+    if (selectedGrade.value == -1 ||
+        selectedClass.value == -1 ||
+        selectedGender.value == -1) {
       canSubmit.value = false;
     } else {
       canSubmit.value = true;
@@ -28,7 +30,7 @@ class SignupPageController extends GetxController {
   }
 
   Future<void> submitPersonalInfo() async {
-    try { 
+    try {
       if (!canSubmit.value) return;
 
       await authService.signUpPersonalInformation(

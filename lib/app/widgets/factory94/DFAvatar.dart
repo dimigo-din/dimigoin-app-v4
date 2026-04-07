@@ -4,7 +4,9 @@ import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:flutter_svg/svg.dart';
 
 enum DFAvatarSize { small, medium, large }
+
 enum DFAvatarType { classroom, person }
+
 enum DFAvatarFill { icon, image }
 
 class DFAvatar extends StatelessWidget {
@@ -67,8 +69,26 @@ class DFAvatar extends StatelessWidget {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
 
     final l = type == DFAvatarType.person
-        ? SvgPicture.asset('assets/icons/avatar_person.svg', width: iconSize, height: iconSize, fit: BoxFit.contain, colorFilter: ColorFilter.mode(colorTheme.contentStandardPrimary, BlendMode.srcIn))
-        : SvgPicture.asset('assets/icons/avatar_classroom.svg', width: iconSize, height: iconSize, fit: BoxFit.contain, colorFilter: ColorFilter.mode(colorTheme.contentStandardPrimary, BlendMode.srcIn));
+        ? SvgPicture.asset(
+            'assets/icons/avatar_person.svg',
+            width: iconSize,
+            height: iconSize,
+            fit: BoxFit.contain,
+            colorFilter: ColorFilter.mode(
+              colorTheme.contentStandardPrimary,
+              BlendMode.srcIn,
+            ),
+          )
+        : SvgPicture.asset(
+            'assets/icons/avatar_classroom.svg',
+            width: iconSize,
+            height: iconSize,
+            fit: BoxFit.contain,
+            colorFilter: ColorFilter.mode(
+              colorTheme.contentStandardPrimary,
+              BlendMode.srcIn,
+            ),
+          );
 
     if (l is Icon) {
       return l;
@@ -88,25 +108,16 @@ class DFAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         color: getBackgroundColor(context),
         borderRadius: BorderRadius.circular(radius),
-        border: Border.all(
-          color: colorTheme.lineOutline,
-          width: 1,
-        ),
+        border: Border.all(color: colorTheme.lineOutline, width: 1),
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: iconSize,
-            maxHeight: iconSize,
-          ),
+          constraints: BoxConstraints(maxWidth: iconSize, maxHeight: iconSize),
           child: fill == DFAvatarFill.icon
               ? buildIcon(context)
               : ClipRRect(
                   borderRadius: BorderRadius.circular(radius),
-                  child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: image,
-                  ),
+                  child: FittedBox(fit: BoxFit.cover, child: image),
                 ),
         ),
       ),

@@ -17,7 +17,7 @@ class PageButtonWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context, ) {
+  Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
     final textTheme = Theme.of(context).extension<DFTypography>()!;
 
@@ -29,10 +29,7 @@ class PageButtonWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: colorTheme.componentsFillStandardPrimary,
             borderRadius: BorderRadius.circular(DFRadius.radius400),
-            border: Border.all(
-              color: colorTheme.lineOutline,
-              width: 1,
-            ),
+            border: Border.all(color: colorTheme.lineOutline, width: 1),
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(
@@ -42,12 +39,12 @@ class PageButtonWidget extends StatelessWidget {
             child: Center(
               child: Column(
                 children: [
-                  Icon(
-                    icon,
-                    color: colorTheme.coreBrandPrimary),
+                  Icon(icon, color: colorTheme.coreBrandPrimary),
                   Text(
                     title,
-                    style: textTheme.callout.copyWith(color: colorTheme.coreBrandPrimary),
+                    style: textTheme.callout.copyWith(
+                      color: colorTheme.coreBrandPrimary,
+                    ),
                   ),
                 ],
               ),

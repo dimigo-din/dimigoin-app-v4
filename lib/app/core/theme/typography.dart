@@ -7,17 +7,16 @@ TextStyle style(
   Color color, {
   bool underlined = false,
   double spacing = 0,
-}) =>
-    TextStyle(
-      color: color,
-      height: lineHeight / size,
-      fontSize: size,
-      fontFamily: 'SUITv1',
-      fontWeight: weight,
-      letterSpacing: spacing,
-      decoration: underlined ? TextDecoration.underline : TextDecoration.none,
-      decorationColor: color,
-    );
+}) => TextStyle(
+  color: color,
+  height: lineHeight / size,
+  fontSize: size,
+  fontFamily: 'SUITv1',
+  fontWeight: weight,
+  letterSpacing: spacing,
+  decoration: underlined ? TextDecoration.underline : TextDecoration.none,
+  decorationColor: color,
+);
 
 abstract class Weight {
   static const thin = FontWeight.w100;
@@ -55,24 +54,81 @@ class DFTypography extends ThemeExtension<DFTypography> {
     TextStyle? caption,
     TextStyle? paragraphLarge,
     TextStyle? paragraphSmall,
-  })  : display = display ??
-            style(Weight.semiBold, 48, 70, defaultColor, spacing: -1.44), // Display
-        title = title ??
-            style(Weight.semiBold, 24, 34, defaultColor, spacing: -0.48), // Title
-        headline = headline ??
-            style(Weight.semiBold, 20, 28, defaultColor, spacing: -0.4), // Headline
-        body = body ??
-            style(Weight.regular, 16, 24, defaultColor, spacing: -0.32), // Body
-        callout = callout ??
-            style(Weight.medium, 14, 20, defaultColor, spacing: -0.28), // Callout
-        footnote = footnote ??
-            style(Weight.regular, 12, 18, defaultColor, spacing: -0.24), // Footnote
-        caption = caption ??
-            style(Weight.regular, 10, 14, defaultColor, spacing: -0.2), // Caption
-        paragraphLarge = paragraphLarge ??
-            style(Weight.regular, 16, 28.8, defaultColor, spacing: -0.32), // Paragraph Large
-        paragraphSmall = paragraphSmall ??
-            style(Weight.regular, 14, 24, defaultColor, spacing: -0.28); // Paragraph Small
+  }) : display =
+           display ??
+           style(
+             Weight.semiBold,
+             48,
+             70,
+             defaultColor,
+             spacing: -1.44,
+           ), // Display
+       title =
+           title ??
+           style(
+             Weight.semiBold,
+             24,
+             34,
+             defaultColor,
+             spacing: -0.48,
+           ), // Title
+       headline =
+           headline ??
+           style(
+             Weight.semiBold,
+             20,
+             28,
+             defaultColor,
+             spacing: -0.4,
+           ), // Headline
+       body =
+           body ??
+           style(Weight.regular, 16, 24, defaultColor, spacing: -0.32), // Body
+       callout =
+           callout ??
+           style(
+             Weight.medium,
+             14,
+             20,
+             defaultColor,
+             spacing: -0.28,
+           ), // Callout
+       footnote =
+           footnote ??
+           style(
+             Weight.regular,
+             12,
+             18,
+             defaultColor,
+             spacing: -0.24,
+           ), // Footnote
+       caption =
+           caption ??
+           style(
+             Weight.regular,
+             10,
+             14,
+             defaultColor,
+             spacing: -0.2,
+           ), // Caption
+       paragraphLarge =
+           paragraphLarge ??
+           style(
+             Weight.regular,
+             16,
+             28.8,
+             defaultColor,
+             spacing: -0.32,
+           ), // Paragraph Large
+       paragraphSmall =
+           paragraphSmall ??
+           style(
+             Weight.regular,
+             14,
+             24,
+             defaultColor,
+             spacing: -0.28,
+           ); // Paragraph Small
 
   @override
   ThemeExtension<DFTypography> copyWith({
@@ -103,7 +159,9 @@ class DFTypography extends ThemeExtension<DFTypography> {
 
   @override
   ThemeExtension<DFTypography> lerp(
-      covariant ThemeExtension<DFTypography>? other, double t) {
+    covariant ThemeExtension<DFTypography>? other,
+    double t,
+  ) {
     if (other is! DFTypography) {
       return this;
     }

@@ -20,9 +20,7 @@ import 'app/routes/routes.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   log('background noti: ${message.messageId}');
 }
 
@@ -72,7 +70,9 @@ class _BootstrapAppState extends State<_BootstrapApp> {
         options: DefaultFirebaseOptions.currentPlatform,
       );
 
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      FirebaseMessaging.onBackgroundMessage(
+        _firebaseMessagingBackgroundHandler,
+      );
 
       if (!kIsWeb) {
         FlutterError.onError = (errorDetails) {
@@ -112,9 +112,7 @@ class _BootstrapAppState extends State<_BootstrapApp> {
             }
 
             final app = Overlay(
-              initialEntries: [
-                OverlayEntry(builder: (_) => child!),
-              ],
+              initialEntries: [OverlayEntry(builder: (_) => child!)],
             );
 
             if (kIsWeb) {

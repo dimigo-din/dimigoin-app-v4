@@ -8,12 +8,9 @@ part 'model.g.dart';
 class Pong {
   String message;
 
-  Pong({
-    required this.message,
-  });
+  Pong({required this.message});
 
-  factory Pong.fromJson(Map<String, dynamic> json) =>
-      _$PongFromJson(json);
+  factory Pong.fromJson(Map<String, dynamic> json) => _$PongFromJson(json);
 
   Map<String, dynamic> toJson() => _$PongToJson(this);
 }
@@ -23,10 +20,7 @@ class LoginToken {
   String? accessToken;
   String? refreshToken;
 
-  LoginToken({
-    this.accessToken,
-    this.refreshToken,
-  });
+  LoginToken({this.accessToken, this.refreshToken});
 
   factory LoginToken.fromJson(Map<String, dynamic> json) {
     return _$LoginTokenFromJson(json);

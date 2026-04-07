@@ -24,7 +24,7 @@ class DFHeader extends StatelessWidget {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
     final textTheme = Theme.of(context).extension<DFTypography>()!;
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,13 +34,13 @@ class DFHeader extends StatelessWidget {
               subTitle!,
               style: size == DFHeaderSize.large
                   ? textTheme.footnote.copyWith(
-                    color: colorTheme.contentStandardSecondary,
-                    fontWeight: FontWeight.w400,
-                  )
+                      color: colorTheme.contentStandardSecondary,
+                      fontWeight: FontWeight.w400,
+                    )
                   : textTheme.caption.copyWith(
-                    color: colorTheme.contentStandardSecondary,
-                    fontWeight: FontWeight.w400,
-                  ),
+                      color: colorTheme.contentStandardSecondary,
+                      fontWeight: FontWeight.w400,
+                    ),
             ),
             const SizedBox(height: DFSpacing.spacing100),
           ],
@@ -48,13 +48,13 @@ class DFHeader extends StatelessWidget {
             title,
             style: size == DFHeaderSize.large
                 ? textTheme.headline.copyWith(
-                  color: colorTheme.contentStandardPrimary,
-                  fontWeight: FontWeight.w700,
-                )
+                    color: colorTheme.contentStandardPrimary,
+                    fontWeight: FontWeight.w700,
+                  )
                 : textTheme.body.copyWith(
-                  color: colorTheme.contentStandardPrimary,
-                  fontWeight: FontWeight.w700,
-                ),
+                    color: colorTheme.contentStandardPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
           ),
           if (content != null) ...[
             const SizedBox(height: DFSpacing.spacing100),
@@ -62,13 +62,13 @@ class DFHeader extends StatelessWidget {
               content!,
               style: size == DFHeaderSize.large
                   ? textTheme.paragraphLarge.copyWith(
-                    color: colorTheme.contentStandardSecondary,
-                    fontWeight: FontWeight.w400,
-                  )
+                      color: colorTheme.contentStandardSecondary,
+                      fontWeight: FontWeight.w400,
+                    )
                   : textTheme.paragraphSmall.copyWith(
-                    color: colorTheme.contentStandardSecondary,
-                    fontWeight: FontWeight.w400,
-                  ),
+                      color: colorTheme.contentStandardSecondary,
+                      fontWeight: FontWeight.w400,
+                    ),
             ),
           ],
         ],
@@ -109,29 +109,37 @@ class DFSectionHeader extends StatelessWidget {
           Row(
             children: [
               if (leftIcon != null) ...[
-                Icon(leftIcon, size: 16, color: colorTheme.contentStandardPrimary),
+                Icon(
+                  leftIcon,
+                  size: 16,
+                  color: colorTheme.contentStandardPrimary,
+                ),
                 const SizedBox(width: DFSpacing.spacing300),
               ],
               Text(
                 title,
                 style: size == DFSectionHeaderSize.large
                     ? textTheme.title.copyWith(
-                      color: colorTheme.contentStandardPrimary,
-                      fontWeight: FontWeight.w700,
-                    )
+                        color: colorTheme.contentStandardPrimary,
+                        fontWeight: FontWeight.w700,
+                      )
                     : size == DFSectionHeaderSize.medium
-                        ? textTheme.headline.copyWith(
-                          color: colorTheme.contentStandardPrimary,
-                          fontWeight: FontWeight.w700,
-                        )
-                        : textTheme.callout.copyWith(
-                          color: colorTheme.contentStandardPrimary,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    ? textTheme.headline.copyWith(
+                        color: colorTheme.contentStandardPrimary,
+                        fontWeight: FontWeight.w700,
+                      )
+                    : textTheme.callout.copyWith(
+                        color: colorTheme.contentStandardPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
               ),
               if (rightIcon != null) ...[
                 const SizedBox(width: DFSpacing.spacing200),
-                Icon(rightIcon, size: 16, color: colorTheme.contentStandardPrimary),
+                Icon(
+                  rightIcon,
+                  size: 16,
+                  color: colorTheme.contentStandardPrimary,
+                ),
               ],
             ],
           ),
@@ -142,26 +150,26 @@ class DFSectionHeader extends StatelessWidget {
                   trailingText!,
                   style: size == DFSectionHeaderSize.large
                       ? textTheme.body.copyWith(
-                        color: colorTheme.contentStandardSecondary,
-                        fontWeight: FontWeight.w400,
-                      )
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        )
                       : size == DFSectionHeaderSize.medium
-                          ? textTheme.body.copyWith(
-                            color: colorTheme.contentStandardSecondary,
-                            fontWeight: FontWeight.w400,
-                          )
-                          : textTheme.callout.copyWith(
-                            color: colorTheme.contentStandardSecondary,
-                            fontWeight: FontWeight.w400,
-                          ),
+                      ? textTheme.body.copyWith(
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        )
+                      : textTheme.callout.copyWith(
+                          color: colorTheme.contentStandardSecondary,
+                          fontWeight: FontWeight.w400,
+                        ),
                 ),
                 const SizedBox(width: DFSpacing.spacing200),
               ],
-              if (trailingArea != null) trailingArea!,
+              ?trailingArea,
             ],
           ),
         ],
-      )
+      ),
     );
   }
 }

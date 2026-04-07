@@ -5,6 +5,7 @@ import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 
 enum DFTextButtonSize { small, medium, large }
+
 enum DFTextButtonTheme { grayscale, accent, negative }
 
 class DFTextButton extends StatelessWidget {
@@ -64,7 +65,7 @@ class DFTextButton extends StatelessWidget {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
     final textTheme = Theme.of(context).extension<DFTypography>()!;
 
-    final textStyle;
+    final TextStyle textStyle;
 
     switch (size) {
       case DFTextButtonSize.small:
@@ -78,19 +79,19 @@ class DFTextButton extends StatelessWidget {
     switch (theme) {
       case DFTextButtonTheme.grayscale:
         return textStyle.copyWith(
-                color: colorTheme.contentStandardPrimary,
-                fontWeight: FontWeight.w400,
-              );
+          color: colorTheme.contentStandardPrimary,
+          fontWeight: FontWeight.w400,
+        );
       case DFTextButtonTheme.accent:
         return textStyle.copyWith(
-                color: colorTheme.coreBrandPrimary,
-                fontWeight: FontWeight.w400,
-              );
+          color: colorTheme.coreBrandPrimary,
+          fontWeight: FontWeight.w400,
+        );
       case DFTextButtonTheme.negative:
         return textStyle.copyWith(
-                color: colorTheme.solidPink,
-                fontWeight: FontWeight.w400,
-              );
+          color: colorTheme.solidPink,
+          fontWeight: FontWeight.w400,
+        );
     }
   }
 
@@ -147,5 +148,4 @@ class DFTextButton extends StatelessWidget {
       ),
     );
   }
-  
 }

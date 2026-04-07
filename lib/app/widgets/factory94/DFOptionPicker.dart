@@ -7,10 +7,7 @@ class DFOptionData {
   final String label;
   final String? subLabel;
 
-  const DFOptionData({
-    required this.label,
-    this.subLabel,
-  });
+  const DFOptionData({required this.label, this.subLabel});
 }
 
 class DFOption extends StatelessWidget {
@@ -43,17 +40,12 @@ class DFOption extends StatelessWidget {
         decoration: BoxDecoration(
           color: colorTheme.componentsFillStandardPrimary,
           borderRadius: BorderRadius.circular(DFRadius.radius500),
-          border: Border.all(
-            color: colorTheme.lineOutline,
-            width: 1,
-          ),
+          border: Border.all(color: colorTheme.lineOutline, width: 1),
         ),
         foregroundDecoration: BoxDecoration(
           borderRadius: BorderRadius.circular(DFRadius.radius500),
           border: Border.all(
-            color: activated
-                ? colorTheme.coreBrandPrimary
-                : Colors.transparent,
+            color: activated ? colorTheme.coreBrandPrimary : Colors.transparent,
             width: 2,
           ),
         ),
@@ -76,9 +68,7 @@ class DFOption extends StatelessWidget {
                 color: activated
                     ? colorTheme.contentStandardPrimary
                     : colorTheme.contentStandardSecondary,
-                fontWeight: activated
-                    ? FontWeight.w700
-                    : FontWeight.w400,
+                fontWeight: activated ? FontWeight.w700 : FontWeight.w400,
               ),
               child: Text(label),
             ),
@@ -93,7 +83,7 @@ enum DFOptionPickerType {
   doubleHorizontal,
   doubleVertical,
   quadruple,
-  sextuple
+  sextuple,
 }
 
 class DFOptionPicker extends StatelessWidget {
@@ -117,8 +107,7 @@ class DFOptionPicker extends StatelessWidget {
         children: List.generate(options.length, (index) {
           final option = options[index];
           return Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: DFSpacing.spacing150),
+            padding: const EdgeInsets.symmetric(vertical: DFSpacing.spacing150),
             child: DFOption(
               label: option.label,
               subLabel: option.subLabel,

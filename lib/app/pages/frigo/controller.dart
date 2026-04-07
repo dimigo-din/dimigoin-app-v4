@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/frigo/model.dart';
 import 'package:dimigoin_app_v4/app/services/frigo/service.dart';
+import 'package:dimigoin_app_v4/app/services/frigo/state.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,7 +31,6 @@ String _getFrigoTimingValue(FrigoTiming timing) {
 class FrigoController extends GetxController {
   final frigoService = FrigoService();
 
-  final Rx<Frigo?> frigoApplication = Rx<Frigo?>(null);
   final RxInt selectedFrigoTimingIndex = (-1).obs;
   final TextEditingController frigoReasonTEC = TextEditingController();
 
@@ -44,9 +44,24 @@ class FrigoController extends GetxController {
 
   Future<void> fetchFrigoApplication() async {
     try {
-      final application = await frigoService.getFrigoApplication();
+      await frigoService.getFrigoApplication();
 
-      frigoApplication.value = application;
+      if(frigoService.frigoState is! FrigoSuccess) {
+        frigoReasonTEC.text = '';
+        selectedFrigoTimingIndex.value = -1;
+        isApplied.value = false;
+        return;
+      }
+
+      final application = (frigoService.frigoState as FrigoSuccess).frigo;
+
+      if (application == null) {
+        frigoReasonTEC.text = '';
+        selectedFrigoTimingIndex.value = -1;
+        isApplied.value = false;
+        return;
+      }
+
       frigoReasonTEC.text = application.reason;
       selectedFrigoTimingIndex.value = frigoTiming.indexOf(
         _getFrigoTimingValue(application.timing),
@@ -54,7 +69,6 @@ class FrigoController extends GetxController {
 
       isApplied.value = true;
     } catch (e) {
-      frigoApplication.value = null;
       isApplied.value = false;
       log('Error fetching frigo application: $e');
       return;

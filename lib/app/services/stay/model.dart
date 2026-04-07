@@ -29,11 +29,7 @@ class StaySeat {
   final String target;
   final String range;
 
-  StaySeat({
-    required this.id,
-    required this.target,
-    required this.range,
-  });
+  StaySeat({required this.id, required this.target, required this.range});
 
   factory StaySeat.fromJson(Map<String, dynamic> json) =>
       _$StaySeatFromJson(json);
@@ -64,10 +60,7 @@ class StayApplyUser {
   final String id;
   final String name;
 
-  StayApplyUser({
-    required this.id,
-    required this.name,
-  });
+  StayApplyUser({required this.id, required this.name});
 
   factory StayApplyUser.fromJson(Map<String, dynamic> json) =>
       _$StayApplyUserFromJson(json);
@@ -80,11 +73,7 @@ class StayApplyItem {
   final String staySeat;
   final StayApplyUser user;
 
-  StayApplyItem({
-    this.id,
-    required this.staySeat,
-    required this.user,
-  });
+  StayApplyItem({this.id, required this.staySeat, required this.user});
 
   factory StayApplyItem.fromJson(Map<String, dynamic> json) =>
       _$StayApplyItemFromJson(json);
@@ -142,8 +131,7 @@ class Outing {
     this.auditReason,
   });
 
-  factory Outing.fromJson(Map<String, dynamic> json) =>
-      _$OutingFromJson(json);
+  factory Outing.fromJson(Map<String, dynamic> json) => _$OutingFromJson(json);
   Map<String, dynamic> toJson() => _$OutingToJson(this);
 }
 

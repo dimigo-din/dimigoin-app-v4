@@ -8,17 +8,22 @@ import '../interceptors/middleware.dart';
 
 class JWTMiddleware extends ApiMiddleware {
   AuthService get _authService => Get.find<AuthService>();
-  
+
   static Future<void>? _refreshFuture;
 
   @override
-  Future<Response> handle(RequestOptions options, Future<Response> Function(RequestOptions) next) async {
+  Future<Response> handle(
+    RequestOptions options,
+    Future<Response> Function(RequestOptions) next,
+  ) async {
     await _authService.initComplete;
 
     final token = _authService.jwtToken.accessToken;
     final String path = options.path;
     final bool isAuthLoginEndpoint = path.startsWith('/auth/login');
-    if (token != null && options.headers['Authorization'] == null && !isAuthLoginEndpoint) {
+    if (token != null &&
+        options.headers['Authorization'] == null &&
+        !isAuthLoginEndpoint) {
       options.headers['Authorization'] = 'Bearer $token';
     }
     return next(options);
@@ -50,10 +55,7 @@ class JWTMiddleware extends ApiMiddleware {
             options.path,
             data: options.data,
             queryParameters: options.queryParameters,
-            options: Options(
-              method: options.method,
-              headers: options.headers,
-            ),
+            options: Options(method: options.method, headers: options.headers),
           );
 
           return retryResponse;
@@ -61,7 +63,7 @@ class JWTMiddleware extends ApiMiddleware {
           if (retryErr.response?.statusCode != 401) {
             return null;
           }
-          throw retryErr;
+          rethrow;
         }
       } catch (e) {
         await _authService.logout();

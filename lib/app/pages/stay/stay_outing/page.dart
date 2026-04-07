@@ -1,5 +1,8 @@
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
+import 'package:dimigoin_app_v4/app/services/stay/state.dart';
+import 'package:dimigoin_app_v4/app/widgets/animated_cross_fade.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
+import 'package:dimigoin_app_v4/app/widgets/shimmer_loading_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller.dart';
@@ -23,40 +26,61 @@ class StayOutingPage extends GetView<StayPageController> {
         child: Column(
           children: [
             // 날짜 선택기
-            Obx(() {
-              if (controller.selectedStay.value == null) {
-                return const SizedBox();
-              }
+            Obx(() => DFAnimatedCrossFade(
+              duration: const Duration(milliseconds: 300),
+              firstChild: (_) => const DFShimmerLoadingBox(height: 20),
+              secondChild: (_) {
+                if (controller.selectedStay.value == null) {
+                  return const SizedBox();
+                }
 
-              final days = OutingDateUtils.getOutingDays(
-                controller.selectedStay.value!,
-              );
+                final days = OutingDateUtils.getOutingDays(
+                  controller.selectedStay.value!,
+                );
 
-              return OutingDateSelector(dates: days);
-            }),
+                return OutingDateSelector(dates: days);
+              },
+              crossFadeState: controller.stayService.stayState is! StaySuccess
+                  ? CrossFadeState.showFirst
+                  : CrossFadeState.showSecond,
+            )),
             const SizedBox(height: DFSpacing.spacing300),
 
             // 외출 목록
             Expanded(
-              child: Obx(() => SingleChildScrollView(
-                child: Column(
-                  children: _buildFilteredOutingList(),
+              child: Obx(
+                () => DFAnimatedCrossFade(
+                  duration: const Duration(milliseconds: 300),
+                  firstChild: (_) => const DFShimmerLoadingBox(height: 92),
+                  secondChild: (_) => SingleChildScrollView(
+                    child: Column(children: _buildFilteredOutingList()),
+                  ),
+                  crossFadeState: controller.stayService.stayOutingState is! StaySuccess && controller.isApplied.value
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
                 ),
-              )),
+              ),
             ),
             const SizedBox(height: DFSpacing.spacing300),
 
             // 외출 추가 버튼
-            SizedBox(
-              width: double.infinity,
-              child: DFButton(
-                label: "외출 추가",
-                size: DFButtonSize.large,
-                theme: DFButtonTheme.accent,
-                style: DFButtonStyle.primary,
-                onPressed: () => _showOutingBottomSheet(context, false, null),
+            Obx(() => DFAnimatedCrossFade(
+              duration: const Duration(milliseconds: 300),
+              firstChild: (_) => const DFShimmerLoadingBox(height: 56),
+              secondChild: (_) => SizedBox(
+                width: double.infinity,
+                child: DFButton(
+                  label: "외출 추가",
+                  size: DFButtonSize.large,
+                  theme: DFButtonTheme.accent,
+                  style: DFButtonStyle.primary,
+                  onPressed: () => _showOutingBottomSheet(context, false, null),
+                ),
               ),
-            ),
+              crossFadeState: controller.stayService.stayApplyState is! StaySuccess && controller.isApplied.value
+                  ? CrossFadeState.showFirst
+                  : CrossFadeState.showSecond,
+            ))
           ],
         ),
       ),
@@ -68,9 +92,7 @@ class StayOutingPage extends GetView<StayPageController> {
       return [];
     }
 
-    final days = OutingDateUtils.getOutingDays(
-      controller.selectedStay.value!,
-    );
+    final days = OutingDateUtils.getOutingDays(controller.selectedStay.value!);
     final selectedDay = days[controller.selectedStayOutingDay.value];
 
     return controller.currentStayOutings
@@ -80,14 +102,12 @@ class StayOutingPage extends GetView<StayPageController> {
           final outingDate = OutingDateUtils.parseServerDateTime(outing.from!);
           return OutingDateUtils.isSameDay(outingDate, selectedDay);
         })
-        .map((outing) => OutingListItem(
-              outing: outing,
-              onTap: () => _showOutingBottomSheet(
-                Get.context!,
-                true,
-                outing,
-              ),
-            ))
+        .map(
+          (outing) => OutingListItem(
+            outing: outing,
+            onTap: () => _showOutingBottomSheet(Get.context!, true, outing),
+          ),
+        )
         .toList();
   }
 
@@ -96,13 +116,11 @@ class StayOutingPage extends GetView<StayPageController> {
     bool isEditing,
     dynamic outing,
   ) {
-    if(controller.selectedStay.value == null){
+    if (controller.selectedStay.value == null) {
       return;
     }
 
-    final days = OutingDateUtils.getOutingDays(
-      controller.selectedStay.value!,
-    );
+    final days = OutingDateUtils.getOutingDays(controller.selectedStay.value!);
     final selectedDate = days[controller.selectedStayOutingDay.value];
 
     OutingFormBottomSheet.show(

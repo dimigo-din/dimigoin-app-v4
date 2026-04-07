@@ -19,11 +19,7 @@ class FrigoUser {
   final String email;
   final String name;
 
-  FrigoUser({
-    required this.id,
-    required this.email,
-    required this.name,
-  });
+  FrigoUser({required this.id, required this.email, required this.name});
 
   factory FrigoUser.fromJson(Map<String, dynamic> json) =>
       _$FrigoUserFromJson(json);
