@@ -29,6 +29,10 @@ class _DFGestureDetectorWithFillInteractionState
   bool isPressed = false;
 
   void pressUp() {
+    if (!mounted) {
+      return;
+    }
+
     if (widget.onTap == null && widget.onLongPress == null) {
       return;
     }
@@ -38,6 +42,10 @@ class _DFGestureDetectorWithFillInteractionState
   }
 
   void pressDown() {
+    if (!mounted) {
+      return;
+    }
+
     if (widget.onTap == null && widget.onLongPress == null) {
       return;
     }
@@ -108,6 +116,10 @@ class _DFGestureDetectorWithOpacityInteractionState
   bool isPressed = false;
 
   void pressUp() {
+    if (!mounted) {
+      return;
+    }
+
     if (widget.onTap == null && widget.onLongPress == null) {
       return;
     }
@@ -117,6 +129,10 @@ class _DFGestureDetectorWithOpacityInteractionState
   }
 
   void pressDown() {
+    if (!mounted) {
+      return;
+    }
+
     if (widget.onTap == null && widget.onLongPress == null) {
       return;
     }
@@ -172,6 +188,10 @@ class _DFGestureDetectorWithScaleInteractionState
   bool isPressed = false;
 
   void pressUp() {
+    if (!mounted) {
+      return;
+    }
+
     if (widget.onTap == null && widget.onLongPress == null) {
       return;
     }
@@ -181,6 +201,10 @@ class _DFGestureDetectorWithScaleInteractionState
   }
 
   void pressDown() {
+    if (!mounted) {
+      return;
+    }
+
     if (widget.onTap == null && widget.onLongPress == null) {
       return;
     }
