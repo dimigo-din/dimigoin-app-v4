@@ -54,8 +54,14 @@ class StayOutingPage extends GetView<StayPageController> {
                 () => DFAnimatedCrossFade(
                   duration: const Duration(milliseconds: 300),
                   firstChild: (_) => const DFShimmerLoadingBox(height: 92),
-                  secondChild: (_) => SingleChildScrollView(
-                    child: Column(children: _buildFilteredOutingList()),
+                  secondChild: (_) => SizedBox(
+                    width: double.infinity,
+                      child: SingleChildScrollView(
+                        child: Obx(() => Column(
+                          children: _buildFilteredOutingList()
+                        )
+                      ),
+                    ),
                   ),
                   crossFadeState:
                       controller.stayService.stayOutingState

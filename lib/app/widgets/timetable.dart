@@ -125,17 +125,24 @@ class TimeTableWidget extends GetView<HomePageController> {
                       }
 
                       final subject = daySchedule[periodIndex];
+                      final isElective = subject.content.contains('_');
+                      
+                      final subjectText = isElective
+                          ? subject.content.split('\n')[0].split('_')[1]
+                          : subject.content.split('\n')[0];
 
                       return Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: subject.temp
-                              ? colorTheme.coreBrandTertiary
-                              : Colors.transparent,
+                              ? colorTheme.solidTranslucentPink
+                              : isElective
+                                  ? colorTheme.componentsTranslucentTertiary
+                                  : colorTheme.componentsFillStandardPrimary,
                         ),
                         child: Center(
                           child: Text(
-                            subject.content.split('\n')[0],
+                            subjectText,
                             style: textTheme.callout.copyWith(
                               color: subject.temp
                                   ? colorTheme.contentStandardSecondary

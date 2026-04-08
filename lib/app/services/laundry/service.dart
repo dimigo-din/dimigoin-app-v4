@@ -61,7 +61,6 @@ class LaundryService extends GetxController {
       await repository.applyLaundry(timeId, machineId);
     } catch (e) {
       log(e.toString());
-      _laundryApplyState.value = LaundryApplyFailure(Exception(e.toString()));
       rethrow;
     }
   }

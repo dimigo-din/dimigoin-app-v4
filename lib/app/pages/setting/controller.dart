@@ -85,7 +85,7 @@ class SettingController extends GetxController {
   Future<void> openPrivacyPolicy() async {
     await launchUrl(
       Uri.parse(
-        "https://dimigo-din.notion.site/25f98f8027c680a79e3ecf1e0cb6c6ff?source=copy_link",
+        "https://privacy.dimigoin.io",
       ),
       mode: LaunchMode.externalApplication,
     );

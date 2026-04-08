@@ -68,26 +68,29 @@ class StayApplyPage extends GetView<StayPageController> {
                         height: 34,
                         borderRadius: DFRadius.radius500,
                       ),
-                      secondChild: (_) => StayScheduleSelector(
-                        title: controller.stayList.isEmpty
-                            ? "잔류 일정 없음"
-                            : controller
-                                  .stayList[controller.selectedStayIndex.value]
-                                  .name,
-                        onTap: () => controller.stayList.isNotEmpty
-                            ? StaySelectionBottomSheet.show(
-                                context: context,
-                                stayList: controller.stayList,
-                                selectedStayIndex:
-                                    controller.selectedStayIndex.value,
-                                onStaySelected: controller.selectStay,
-                              )
-                            : null,
+                      secondChild: (_) => Obx(
+                        () => StayScheduleSelector(
+                          title: controller.stayList.isEmpty
+                              ? "잔류 일정 없음"
+                              : controller
+                                    .stayList[controller.selectedStayIndex.value]
+                                    .name,
+                          onTap: () => controller.stayList.isNotEmpty
+                              ? StaySelectionBottomSheet.show(
+                                  context: context,
+                                  stayList: controller.stayList,
+                                  selectedStayIndex:
+                                      controller.selectedStayIndex.value,
+                                  onStaySelected: controller.selectStay,
+                                )
+                              : null,
+                        ),
                       ),
-                      crossFadeState: controller.stayService.stayState is! StaySuccess
+                      crossFadeState:
+                          controller.stayService.stayState is! StaySuccess
                           ? CrossFadeState.showFirst
                           : CrossFadeState.showSecond,
-                    )
+                    ),
                   ),
                   const SizedBox(height: DFSpacing.spacing600),
 
@@ -95,10 +98,8 @@ class StayApplyPage extends GetView<StayPageController> {
                   Obx(
                     () => DFAnimatedCrossFade(
                       duration: const Duration(milliseconds: 300),
-                      firstChild: (_) => const DFShimmerLoadingBox(
-                        height: 100,
-                      ),
-                      secondChild: (_) {
+                      firstChild: (_) => const DFShimmerLoadingBox(height: 100),
+                      secondChild: (_) => Obx(() {
                         if (controller.stayList.isEmpty) {
                           return const SizedBox();
                         }
@@ -135,8 +136,7 @@ class StayApplyPage extends GetView<StayPageController> {
                                         theme: DFButtonTheme.grayscale,
                                         style: DFButtonStyle.secondary,
                                         onPressed: () {
-                                          controller.noSeatReason.text =
-                                              "교실잔류";
+                                          controller.noSeatReason.text = "교실잔류";
                                         },
                                       ),
                                     ],
@@ -146,8 +146,9 @@ class StayApplyPage extends GetView<StayPageController> {
                             ),
                           ],
                         );
-                      },
-                      crossFadeState: controller.stayService.stayState is! StaySuccess
+                      }),
+                      crossFadeState:
+                          controller.stayService.stayState is! StaySuccess
                           ? CrossFadeState.showFirst
                           : CrossFadeState.showSecond,
                     ),
@@ -157,37 +158,40 @@ class StayApplyPage extends GetView<StayPageController> {
             ),
 
             // 신청/취소 버튼
-            Obx(() => DFAnimatedCrossFade(
-              duration: const Duration(milliseconds: 300),
-              firstChild: (_) => const DFShimmerLoadingBox(height: 56),
-              secondChild: (_) => Obx(() {
-                if (controller.stayList.isEmpty) {
-                  return const SizedBox();
-                }
+            Obx(
+              () => DFAnimatedCrossFade(
+                duration: const Duration(milliseconds: 300),
+                firstChild: (_) => const DFShimmerLoadingBox(height: 56),
+                secondChild: (_) => Obx(() {
+                  if (controller.stayList.isEmpty) {
+                    return const SizedBox();
+                  }
 
-                return SizedBox(
-                  width: double.infinity,
-                  child: controller.isApplied.value == false
-                      ? DFButton(
-                          onPressed: () => controller.addStayApplication(),
-                          label: "잔류 신청",
-                          size: DFButtonSize.large,
-                          theme: DFButtonTheme.accent,
-                          style: DFButtonStyle.primary,
-                        )
-                      : DFButton(
-                          onPressed: () => controller.deleteStayApplication(),
-                          label: "잔류 신청 취소",
-                          size: DFButtonSize.large,
-                          theme: DFButtonTheme.accent,
-                          style: DFButtonStyle.secondary,
-                        ),
-                );
-              }),
-              crossFadeState: controller.stayService.stayApplyState is! StayApplySuccess
-                  ? CrossFadeState.showFirst
-                  : CrossFadeState.showSecond,
-            )),
+                  return SizedBox(
+                    width: double.infinity,
+                    child: controller.isApplied.value == false
+                        ? DFButton(
+                            onPressed: () => controller.addStayApplication(),
+                            label: "잔류 신청",
+                            size: DFButtonSize.large,
+                            theme: DFButtonTheme.accent,
+                            style: DFButtonStyle.primary,
+                          )
+                        : DFButton(
+                            onPressed: () => controller.deleteStayApplication(),
+                            label: "잔류 신청 취소",
+                            size: DFButtonSize.large,
+                            theme: DFButtonTheme.accent,
+                            style: DFButtonStyle.secondary,
+                          ),
+                  );
+                }),
+                crossFadeState:
+                    controller.stayService.stayApplyState is! StayApplySuccess
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+              ),
+            ),
           ],
         ),
       ),
