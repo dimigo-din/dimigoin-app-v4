@@ -291,7 +291,6 @@ class StayPageController extends GetxController {
     } catch (e) {
       currentStayOutings.clear();
       log('Error fetching stay outings: $e');
-      print('asdfasf');
     }
   }
 

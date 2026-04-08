@@ -34,13 +34,14 @@ class LaundryTime {
   final String id;
   final String time;
   final List<int> grade;
+  @JsonKey(defaultValue: <LaundryMachine>[])
   final List<LaundryMachine> assigns;
 
   LaundryTime({
     required this.id,
     required this.time,
     required this.grade,
-    required this.assigns,
+    this.assigns = const [],
   });
 
   factory LaundryTime.fromJson(Map<String, dynamic> json) =>

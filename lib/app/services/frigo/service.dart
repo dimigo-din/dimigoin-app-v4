@@ -42,7 +42,6 @@ class FrigoService extends GetxController {
     } catch (e) {
       log(e.toString());
       _frigoState.value = FrigoFailure(e.toString());
-      print(e.toString());
       rethrow;
     }
   }
