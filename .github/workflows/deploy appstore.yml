@@ -72,4 +72,4 @@ jobs:
           ios/Pods/FirebaseCrashlytics/upload-symbols \
             -gsp ios/Runner/GoogleService-Info.plist \
             -p ios \
-            build/ios/Release-iphoneos/Runner.app.dSYM
+            ios/Runner.app.dSYM.zip
