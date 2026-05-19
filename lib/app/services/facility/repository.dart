@@ -33,7 +33,7 @@ class FacilityRepository {
     DFHttpResponse response = await api.post(
       '/student/facility',
       data: formData,
-      options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+      options: Options(contentType: Headers.multipartFormDataContentType),
     );
 
     return FacilityReport.fromJson(response.data['data']);

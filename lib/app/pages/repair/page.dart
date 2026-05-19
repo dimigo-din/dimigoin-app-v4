@@ -117,8 +117,18 @@ class _RepairPageState extends State<RepairPage> {
       });
       await loadReports();
       DFSnackBar.success('수리 요청이 접수되었습니다.');
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      final errorCode = e.response?.data is Map
+          ? e.response?.data['code']?.toString()
+          : null;
+      final suffix = errorCode ?? statusCode?.toString();
+
+      DFSnackBar.error(
+        suffix == null ? '수리 요청 접수에 실패했습니다.' : '수리 요청 접수에 실패했습니다. ($suffix)',
+      );
     } catch (_) {
-      DFSnackBar.error('수리 요청 접수에 실패했습니다. 다시 시도해주세요.');
+      DFSnackBar.error('수리 요청 접수에 실패했습니다.');
     } finally {
       if (mounted) {
         setState(() {
