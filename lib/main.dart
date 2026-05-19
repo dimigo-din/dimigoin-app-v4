@@ -17,6 +17,7 @@ import 'app/core/theme/inapp/light.dart';
 import 'app/core/utils/loader.dart';
 import 'app/routes/pages.dart';
 import 'app/routes/routes.dart';
+import 'app/services/app_update/service.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -49,6 +50,7 @@ class _BootstrapApp extends StatefulWidget {
 
 class _BootstrapAppState extends State<_BootstrapApp> {
   late final Future<void> _initFuture;
+  bool _didSchedulePostInitChecks = false;
 
   @override
   void initState() {
@@ -109,6 +111,15 @@ class _BootstrapAppState extends State<_BootstrapApp> {
               return const Scaffold(
                 body: Center(child: CircularProgressIndicator()),
               );
+            }
+
+            if (!_didSchedulePostInitChecks) {
+              _didSchedulePostInitChecks = true;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (Get.isRegistered<AppUpdateService>()) {
+                  Get.find<AppUpdateService>().checkForUpdate();
+                }
+              });
             }
 
             final app = Overlay(

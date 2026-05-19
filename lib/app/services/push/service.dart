@@ -8,13 +8,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
 import 'repository.dart';
 
 class PushService extends GetxController {
   static const int _stayReminderNotificationId = 940910;
+  static const String _stayReminderSubjectId = 'stay_apply_reminder';
+  static const String _stayReminderMigrationKey =
+      'stay_apply_reminder_backend_migration_done';
 
   final PushRepository repository;
 
@@ -45,7 +46,7 @@ class PushService extends GetxController {
     await _initLocalNotification();
 
     await requestPushPermission();
-    await scheduleStayApplyReminder();
+    await _cancelLocalStayApplyReminder();
 
     FirebaseMessaging.instance.onTokenRefresh
         .listen((fcmToken) async {
@@ -53,6 +54,7 @@ class PushService extends GetxController {
             String deviceId = await authService.getDeviceId();
 
             await repository.upsertFCMToken(deviceId, fcmToken);
+            await _migrateStayApplyReminderToBackend();
             log('FCM Token updated and sent to server: $fcmToken');
           } else {
             log(
@@ -134,9 +136,6 @@ class PushService extends GetxController {
   }
 
   Future<void> _initLocalNotification() async {
-    tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
-
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -202,65 +201,10 @@ class PushService extends GetxController {
     );
   }
 
-  Future<void> scheduleStayApplyReminder() async {
-    if (kIsWeb) {
-      return;
-    }
-
-    const AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
-          'dimigoin_v4_noti',
-          '디미고인 알림',
-          channelDescription: '디미고인 알림 수신을 위한 채널입니다.',
-          importance: Importance.max,
-          priority: Priority.high,
-        );
-
-    const DarwinNotificationDetails iosNotificationDetails =
-        DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        );
-
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-      iOS: iosNotificationDetails,
-    );
-
+  Future<void> _cancelLocalStayApplyReminder() async {
     await flutterLocalNotificationsPlugin.cancel(
       id: _stayReminderNotificationId,
     );
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      id: _stayReminderNotificationId,
-      title: '잔류 신청 마감 전 확인',
-      body: '일요일 10시 전까지 잔류 신청을 완료해주세요.',
-      scheduledDate: _nextSundayAtNine(),
-      notificationDetails: notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
-    );
-  }
-
-  tz.TZDateTime _nextSundayAtNine() {
-    final now = tz.TZDateTime.now(tz.local);
-    final daysUntilSunday = DateTime.sunday - now.weekday;
-    final normalizedDays = daysUntilSunday < 0
-        ? daysUntilSunday + 7
-        : daysUntilSunday;
-    var scheduled = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      9,
-    ).add(Duration(days: normalizedDays));
-
-    if (!scheduled.isAfter(now)) {
-      scheduled = scheduled.add(const Duration(days: 7));
-    }
-
-    return scheduled;
   }
 
   Future<void> requestPushPermission() async {
@@ -321,6 +265,7 @@ class PushService extends GetxController {
         String deviceId = await authService.getDeviceId();
 
         await repository.upsertFCMToken(deviceId, fcmToken);
+        await _migrateStayApplyReminderToBackend();
         log('FCM Token synced to server: $fcmToken');
       } else {
         log('Cannot sync FCM token: Token is null');
@@ -359,6 +304,34 @@ class PushService extends GetxController {
     } catch (e) {
       log(e.toString());
       rethrow;
+    }
+  }
+
+  Future<void> _migrateStayApplyReminderToBackend() async {
+    if (kIsWeb || !authService.isLoginSuccess) {
+      return;
+    }
+
+    try {
+      await _cancelLocalStayApplyReminder();
+
+      final isMigrated = await repository.getBool(_stayReminderMigrationKey);
+      if (isMigrated) {
+        return;
+      }
+
+      final deviceId = await authService.getDeviceId();
+      final subjects = await repository.getSubscribedSubjects(deviceId);
+      if (!subjects.contains(_stayReminderSubjectId)) {
+        await repository.updateSubscribedSubjects(deviceId, [
+          ...subjects,
+          _stayReminderSubjectId,
+        ]);
+      }
+
+      await repository.setBool(_stayReminderMigrationKey, true);
+    } catch (e) {
+      log('Failed to migrate stay reminder to backend push subject: $e');
     }
   }
 }
