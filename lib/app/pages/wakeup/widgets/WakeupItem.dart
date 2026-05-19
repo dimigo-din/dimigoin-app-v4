@@ -4,7 +4,6 @@ import '../../../core/theme/colors.dart';
 import '../../../core/theme/static.dart';
 import '../../../core/theme/typography.dart';
 
-
 class WakeupItem extends StatelessWidget {
   final String? title;
   final String? subTitle;
@@ -27,9 +26,7 @@ class WakeupItem extends StatelessWidget {
     final textTheme = Theme.of(context).extension<DFTypography>()!;
 
     return Container(
-      padding: const EdgeInsets.only(
-        left: DFSpacing.spacing100,
-      ),
+      padding: const EdgeInsets.only(left: DFSpacing.spacing100),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -46,7 +43,7 @@ class WakeupItem extends StatelessWidget {
                   MarqueeText(
                     text: subTitle!,
                     style: textTheme.footnote.copyWith(
-                        color: colorTheme.contentStandardSecondary,
+                      color: colorTheme.contentStandardSecondary,
                       fontWeight: FontWeight.w400,
                     ),
                     velocity: 30.0,
@@ -78,7 +75,7 @@ class WakeupItem extends StatelessWidget {
             trailing!,
           ],
         ],
-      )
+      ),
     );
   }
 }

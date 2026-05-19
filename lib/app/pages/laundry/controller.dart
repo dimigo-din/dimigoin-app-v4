@@ -5,19 +5,17 @@ import 'package:dimigoin_app_v4/app/pages/home/controller.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/services/laundry/model.dart';
 import 'package:dimigoin_app_v4/app/services/laundry/service.dart';
+import 'package:dimigoin_app_v4/app/services/laundry/state.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:get/get.dart';
 
 class LaundryPageController extends GetxController {
   final laundryService = LaundryService();
   final AuthService authService = Get.find<AuthService>();
-    
+
   final RxInt selectedIndex = 0.obs;
   final RxInt selectedWasherIndex = 0.obs;
   final RxInt selectedDryerIndex = 0.obs;
-
-  final Rx<LaundryTimeline?> laundryTimeline = Rx<LaundryTimeline?>(null);
-  final RxList<LaundryApply> laundryApplications = RxList<LaundryApply>([]);
   final RxList<LaundryMachine> laundryMachines = RxList<LaundryMachine>([]);
 
   @override
@@ -25,21 +23,24 @@ class LaundryPageController extends GetxController {
     super.onInit();
     await fetchLaundryTimeline();
   }
-  
+
   void selectLaundryMachine(LaundryMachineType type, LaundryMachine machine) {
     if (type == LaundryMachineType.washer) {
-      selectedWasherIndex.value = laundryMachines.where((m) => m.type == LaundryMachineType.washer).toList().indexOf(machine);
+      selectedWasherIndex.value = laundryMachines
+          .where((m) => m.type == LaundryMachineType.washer)
+          .toList()
+          .indexOf(machine);
     } else {
-      selectedDryerIndex.value = laundryMachines.where((m) => m.type == LaundryMachineType.dryer).toList().indexOf(machine);
+      selectedDryerIndex.value = laundryMachines
+          .where((m) => m.type == LaundryMachineType.dryer)
+          .toList()
+          .indexOf(machine);
     }
   }
 
   Future<void> fetchLaundryTimeline() async {
     try {
-      final timeline = await laundryService.getLaundryTimeline();
-
-      laundryTimeline.value = timeline;
-
+      await laundryService.getLaundryTimeline();
       await filterLaundryMachines();
       await fetchLaundryApplications();
     } catch (e) {
@@ -48,18 +49,23 @@ class LaundryPageController extends GetxController {
   }
 
   Future<void> filterLaundryMachines() async {
+    final state = laundryService.laundryTimelineState;
+    if (state is! LaundryTimelineSuccess) return;
+
+    final timeline = state.timeline;
     final user = authService.user!;
     final userGrade = user.userGrade;
-    final userGender = user.gender;
+    final userGender = _normalizeGender(user.gender!);
 
-    final times = laundryTimeline.value!.times;
+    final times = timeline.times;
 
     final map = <String, LaundryMachine>{};
 
     for (final time in times) {
       if (time.grade.contains(userGrade)) {
         for (final machine in time.assigns) {
-          if (!map.containsKey(machine.id) && machine.gender == userGender) {
+          final machineGender = _normalizeGender(machine.gender);
+          if (!map.containsKey(machine.id) && machineGender == userGender) {
             map[machine.id] = machine;
           }
         }
@@ -69,10 +75,30 @@ class LaundryPageController extends GetxController {
     laundryMachines.value = map.values.toList();
   }
 
+  String _normalizeGender(String gender) {
+    final normalized = gender.trim().toLowerCase();
+
+    switch (normalized) {
+      case 'm':
+      case 'male':
+      case 'man':
+      case '남':
+      case '남자':
+        return 'male';
+      case 'f':
+      case 'female':
+      case 'woman':
+      case '여':
+      case '여자':
+        return 'female';
+      default:
+        return normalized;
+    }
+  }
+
   Future<void> fetchLaundryApplications() async {
     try {
-      final applications = await laundryService.getLaundryApplications();
-      laundryApplications.value = applications;
+      await laundryService.getLaundryApplications();
     } catch (e) {
       log('Error fetching laundry applications: $e');
     }
@@ -99,7 +125,7 @@ class LaundryPageController extends GetxController {
       rethrow;
     } catch (e) {
       DFSnackBar.error("세탁 신청 중 오류가 발생했습니다.");
-      log('Error adding laundry application: $e');
+      print('Error adding laundry application: $e');
       rethrow;
     }
   }
@@ -113,9 +139,8 @@ class LaundryPageController extends GetxController {
       DFSnackBar.success("세탁 신청이 취소되었습니다.");
     } catch (e) {
       DFSnackBar.error("세탁 신청 취소 중 오류가 발생했습니다.");
-      log('Error removing laundry application: $e');
+      print('Error removing laundry application: $e');
       rethrow;
     }
   }
-
 }

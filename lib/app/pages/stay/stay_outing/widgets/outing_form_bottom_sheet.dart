@@ -16,7 +16,8 @@ String _toIso8601StringWithOffset(DateTime dateTime) {
   final offset = dateTime.timeZoneOffset;
   final hours = offset.inHours;
   final minutes = offset.inMinutes.remainder(60).abs();
-  final offsetStr = '${hours >= 0 ? '+' : '-'}${hours.abs().toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
+  final offsetStr =
+      '${hours >= 0 ? '+' : '-'}${hours.abs().toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
 
   // DateTime을 로컬 시간으로 포맷하고 timezone offset 추가
   final year = dateTime.year.toString().padLeft(4, '0');
@@ -68,9 +69,7 @@ class OutingFormBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: _buildChildren(context),
-    );
+    return Column(children: _buildChildren(context));
   }
 
   List<Widget> _buildChildren(BuildContext context) {
@@ -80,46 +79,50 @@ class OutingFormBottomSheet extends StatelessWidget {
 
     return [
       // 신청 시간
-      Obx(() => DFInputField(
-        title: "신청 시간",
-        inputs: [
-          Row(
-            children: [
-              Expanded(
-                child: DFInput(
-                  key: ValueKey(controller.outingFrom.value.toString()),
-                  initialTime: controller.outingFrom.value,
-                  placeholder: "시작 시간",
-                  type: DFInputType.normal,
-                  mode: DFInputMode.time,
-                  onTimeChanged: (t) => controller.outingFrom.value = t,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
-                child: Text(
-                  "~",
-                  style: textTheme.headline.copyWith(
-                    color: colorTheme.contentStandardSecondary,
-                    fontWeight: FontWeight.w500,
+      Obx(
+        () => DFInputField(
+          title: "신청 시간",
+          inputs: [
+            Row(
+              children: [
+                Expanded(
+                  child: DFInput(
+                    key: ValueKey(controller.outingFrom.value.toString()),
+                    initialTime: controller.outingFrom.value,
+                    placeholder: "시작 시간",
+                    type: DFInputType.normal,
+                    mode: DFInputMode.time,
+                    onTimeChanged: (t) => controller.outingFrom.value = t,
                   ),
                 ),
-              ),
-              Expanded(
-                child: DFInput(
-                  key: ValueKey(controller.outingTo.value.toString()),
-                  initialTime: controller.outingTo.value,
-                  placeholder: "종료 시간",
-                  type: DFInputType.normal,
-                  mode: DFInputMode.time,
-                  onTimeChanged: (t) => controller.outingTo.value = t,
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: DFSpacing.spacing400,
+                  ),
+                  child: Text(
+                    "~",
+                    style: textTheme.headline.copyWith(
+                      color: colorTheme.contentStandardSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: DFSpacing.spacing400),
-        ],
-      )),
+                Expanded(
+                  child: DFInput(
+                    key: ValueKey(controller.outingTo.value.toString()),
+                    initialTime: controller.outingTo.value,
+                    placeholder: "종료 시간",
+                    type: DFInputType.normal,
+                    mode: DFInputMode.time,
+                    onTimeChanged: (t) => controller.outingTo.value = t,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DFSpacing.spacing400),
+          ],
+        ),
+      ),
 
       // 신청 사유
       DFInputField(
@@ -135,45 +138,48 @@ class OutingFormBottomSheet extends StatelessWidget {
       ),
 
       // 급식 취소
-      Obx(() => DFInputField(
-        title: "급식 취소",
-        inputs: [
-          Row(
-            children: [
-              Expanded(
-                child: DFOption(
-                  label: "아침",
-                  activated: controller.breakfastCancel.value,
-                  onTap: () => controller.breakfastCancel.toggle(),
+      Obx(
+        () => DFInputField(
+          title: "급식 취소",
+          inputs: [
+            Row(
+              children: [
+                Expanded(
+                  child: DFOption(
+                    label: "아침",
+                    activated: controller.breakfastCancel.value,
+                    onTap: () => controller.breakfastCancel.toggle(),
+                  ),
                 ),
-              ),
-              const SizedBox(width: DFSpacing.spacing200),
-              Expanded(
-                child: DFOption(
-                  label: "점심",
-                  activated: controller.lunchCancel.value,
-                  onTap: () => controller.lunchCancel.toggle(),
+                const SizedBox(width: DFSpacing.spacing200),
+                Expanded(
+                  child: DFOption(
+                    label: "점심",
+                    activated: controller.lunchCancel.value,
+                    onTap: () => controller.lunchCancel.toggle(),
+                  ),
                 ),
-              ),
-              const SizedBox(width: DFSpacing.spacing200),
-              Expanded(
-                child: DFOption(
-                  label: "저녁",
-                  activated: controller.dinnerCancel.value,
-                  onTap: () => controller.dinnerCancel.toggle(),
+                const SizedBox(width: DFSpacing.spacing200),
+                Expanded(
+                  child: DFOption(
+                    label: "저녁",
+                    activated: controller.dinnerCancel.value,
+                    onTap: () => controller.dinnerCancel.toggle(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: DFSpacing.spacing400),
-            ],
-          ),
-          const SizedBox(height: DFSpacing.spacing400),
-        ],
-      )),
+                const SizedBox(height: DFSpacing.spacing400),
+              ],
+            ),
+            const SizedBox(height: DFSpacing.spacing400),
+          ],
+        ),
+      ),
 
       // 자기계발외출 버튼
       if (controller.selectedStay.value?.outingDay?.contains(
-        DateFormat("yyyy-MM-dd").format(selectedDate),
-      ) ?? false) ...[
+            DateFormat("yyyy-MM-dd").format(selectedDate),
+          ) ??
+          false) ...[
         Column(
           children: [
             SizedBox(
@@ -219,7 +225,10 @@ class OutingFormBottomSheet extends StatelessWidget {
     ];
   }
 
-  Future<void> _handleSubmit(BuildContext context, StayPageController controller) async {
+  Future<void> _handleSubmit(
+    BuildContext context,
+    StayPageController controller,
+  ) async {
     if (controller.outingFrom.value == null ||
         controller.outingTo.value == null ||
         controller.outingReasonTEC.text.isEmpty) {
@@ -267,7 +276,10 @@ class OutingFormBottomSheet extends StatelessWidget {
     }
   }
 
-  Future<void> _handleDelete(BuildContext context, StayPageController controller) async {
+  Future<void> _handleDelete(
+    BuildContext context,
+    StayPageController controller,
+  ) async {
     try {
       await controller.deleteStayOuting(outing!.id!);
       if (context.mounted) {

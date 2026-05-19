@@ -6,75 +6,146 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 import 'app/core/theme/inapp/dark.dart';
 import 'app/core/theme/inapp/light.dart';
 import 'app/core/utils/loader.dart';
 import 'app/routes/pages.dart';
 import 'app/routes/routes.dart';
+import 'app/services/app_update/service.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   log('background noti: ${message.messageId}');
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); 
-  await Hive.initFlutter();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await initializeDateFormatting('ko_KR');
 
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+  if (kIsWeb) {
+    // URL strategy must be configured once before the app tree is initialized.
+    setPathUrlStrategy();
+  }
+  if (!kIsWeb) {
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  }
 
-  await AppLoader().load();
-  
-  runApp(
-    GetMaterialApp(
-      title: '디미고인',
-      debugShowCheckedModeBanner: false,
-      theme: lightThemeData,
-      darkTheme: darkThemeData,
-      initialRoute: kReleaseMode ? Routes.MAIN : Routes.TEST,
-      getPages: AppPages.pages,
-      builder: (context, child) {
-        final app = Overlay(
-          initialEntries: [
-            OverlayEntry(builder: (_) => child!),
-          ],
-        );
+  runApp(const _BootstrapApp());
+}
 
-        if (kIsWeb) {
-          return Container(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? darkThemeData.canvasColor
-                : lightThemeData.canvasColor,
-            child: Center(
-              child: ClipRect(
-                child: Container(
-                  constraints: const BoxConstraints(maxWidth: 480),
-                  child: app, // ← Overlay 유지
+class _BootstrapApp extends StatefulWidget {
+  const _BootstrapApp();
+
+  @override
+  State<_BootstrapApp> createState() => _BootstrapAppState();
+}
+
+class _BootstrapAppState extends State<_BootstrapApp> {
+  late final Future<void> _initFuture;
+  bool _didSchedulePostInitChecks = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FlutterNativeSplash.remove();
+      });
+    }
+
+    _initFuture = _init();
+  }
+
+  Future<void> _init() async {
+    try {
+      await Hive.initFlutter();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+
+      FirebaseMessaging.onBackgroundMessage(
+        _firebaseMessagingBackgroundHandler,
+      );
+
+      if (!kIsWeb) {
+        FlutterError.onError = (errorDetails) {
+          FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+        };
+        PlatformDispatcher.instance.onError = (error, stack) {
+          FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+          return true;
+        };
+      }
+
+      await AppLoader().load();
+    } finally {
+      if (!kIsWeb) {
+        FlutterNativeSplash.remove();
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _initFuture,
+      builder: (context, snapshot) {
+        return GetMaterialApp(
+          title: '디미고인',
+          debugShowCheckedModeBanner: false,
+          theme: lightThemeData,
+          darkTheme: darkThemeData,
+          initialRoute: kReleaseMode ? Routes.MAIN : Routes.TEST,
+          getPages: AppPages.pages,
+          builder: (context, child) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (!_didSchedulePostInitChecks) {
+              _didSchedulePostInitChecks = true;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (Get.isRegistered<AppUpdateService>()) {
+                  Get.find<AppUpdateService>().checkForUpdate();
+                }
+              });
+            }
+
+            final app = Overlay(
+              initialEntries: [OverlayEntry(builder: (_) => child!)],
+            );
+
+            if (kIsWeb) {
+              return Container(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? darkThemeData.canvasColor
+                    : lightThemeData.canvasColor,
+                child: Center(
+                  child: ClipRect(
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 480),
+                      child: app,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          );
-        }
+              );
+            }
 
-        return app;
+            return app;
+          },
+        );
       },
-    ),
-  );
+    );
+  }
 }

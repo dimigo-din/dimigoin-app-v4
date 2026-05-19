@@ -35,7 +35,7 @@ LaundryTime _$LaundryTimeFromJson(Map<String, dynamic> json) => LaundryTime(
   grade: (json['grade'] as List<dynamic>)
       .map((e) => (e as num).toInt())
       .toList(),
-  assigns: (json['assigns'] as List<dynamic>)
+  assigns: (json['assigns'] as List<dynamic>? ?? <dynamic>[])
       .map((e) => LaundryMachine.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
@@ -54,7 +54,8 @@ LaundryTimeline _$LaundryTimelineFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       triggeredOn: $enumDecode(
         _$LaundryTimelineTriggerEnumMap,
-        json['triggeredOn'],
+        json['scheduler'],
+        unknownValue: LaundryTimelineTrigger.etc,
       ),
       enabled: json['enabled'] as bool,
       times: (json['times'] as List<dynamic>)
@@ -66,7 +67,7 @@ Map<String, dynamic> _$LaundryTimelineToJson(LaundryTimeline instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'triggeredOn': _$LaundryTimelineTriggerEnumMap[instance.triggeredOn]!,
+      'scheduler': _$LaundryTimelineTriggerEnumMap[instance.triggeredOn]!,
       'enabled': instance.enabled,
       'times': instance.times,
     };
@@ -74,17 +75,18 @@ Map<String, dynamic> _$LaundryTimelineToJson(LaundryTimeline instance) =>
 const _$LaundryTimelineTriggerEnumMap = {
   LaundryTimelineTrigger.primary: 'primary',
   LaundryTimelineTrigger.stay: 'stay',
+  LaundryTimelineTrigger.etc: 'etc',
 };
 
 LaundryApply _$LaundryApplyFromJson(Map<String, dynamic> json) => LaundryApply(
   id: json['id'] as String,
   date: json['date'] as String,
-  created_at: json['created_at'] as String,
+  createdAt: json['created_at'] as String,
   laundryTime: LaundryTime.fromJson(
-    json['laundryTime'] as Map<String, dynamic>,
+    json['laundry_time'] as Map<String, dynamic>,
   ),
   laundryMachine: LaundryMachine.fromJson(
-    json['laundryMachine'] as Map<String, dynamic>,
+    json['laundry_machine'] as Map<String, dynamic>,
   ),
   user: json['user'] == null
       ? null
@@ -95,8 +97,8 @@ Map<String, dynamic> _$LaundryApplyToJson(LaundryApply instance) =>
     <String, dynamic>{
       'id': instance.id,
       'date': instance.date,
-      'created_at': instance.created_at,
-      'laundryTime': instance.laundryTime,
-      'laundryMachine': instance.laundryMachine,
+      'created_at': instance.createdAt,
+      'laundry_time': instance.laundryTime,
+      'laundry_machine': instance.laundryMachine,
       'user': instance.user,
     };

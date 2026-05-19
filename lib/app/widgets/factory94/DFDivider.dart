@@ -6,10 +6,7 @@ enum DFDividerSize { small, medium, large }
 class DFDivider extends StatelessWidget {
   final DFDividerSize size;
 
-  const DFDivider({
-    super.key,
-    this.size = DFDividerSize.medium,
-  });
+  const DFDivider({super.key, this.size = DFDividerSize.medium});
 
   double get height {
     switch (size) {
@@ -28,11 +25,10 @@ class DFDivider extends StatelessWidget {
 
     return SizedBox(
       height: height,
-      width: size == DFDividerSize.large ? double.infinity : MediaQuery.of(context).size.width * 0.9,
-      child: Divider(
-        thickness: height,
-        color: colorTheme.lineDivider,
-      )
+      width: size == DFDividerSize.large
+          ? double.infinity
+          : MediaQuery.of(context).size.width * 0.9,
+      child: Divider(thickness: height, color: colorTheme.lineDivider),
     );
   }
 }

@@ -3,42 +3,56 @@ import 'dart:developer';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:get/get.dart';
 
-import 'model.dart';
 import 'repository.dart';
+import 'state.dart';
 
 class UserService extends GetxController {
   final UserRepository repository;
 
   AuthService authService = Get.find<AuthService>();
 
-  UserService({UserRepository? repository}) : repository = repository ?? UserRepository();
+  final Rx<UserApplyState> _userApplyState = Rx<UserApplyState>(
+    const UserApplyInitial(),
+  );
+  UserApplyState get userApplyState => _userApplyState.value;
+
+  final Rx<UserTimelineState> _timelineState = Rx<UserTimelineState>(
+    const UserTimelineInitial(),
+  );
+  UserTimelineState get timelineState => _timelineState.value;
+
+  UserService({UserRepository? repository})
+    : repository = repository ?? UserRepository();
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    initialize(); 
+    initialize();
   }
 
-  Future<void> initialize() async {
-  }
+  Future<void> initialize() async {}
 
-  Future<Timetable> getTimeline(int userGrade, int userClass) async {
+  Future<void> getTimeline(int userGrade, int userClass) async {
+    _timelineState.value = UserTimelineLoading();
     try {
       final response = await repository.getTimeline(userGrade, userClass);
 
-      return response;
+      _timelineState.value = UserTimelineSuccess(response);
     } catch (e) {
       log(e.toString());
+      _timelineState.value = UserTimelineFailure(e.toString());
       rethrow;
     }
   }
 
-  Future<UserApply> getUserApply() async {
+  Future<void> getUserApply() async {
+    _userApplyState.value = UserApplyLoading();
     try {
       final response = await repository.getUserApply();
 
-      return response;
+      _userApplyState.value = UserApplySuccess(response);
     } catch (e) {
+      _userApplyState.value = UserApplyFailure(e.toString());
       log(e.toString());
       rethrow;
     }

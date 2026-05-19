@@ -26,10 +26,12 @@ final ThemeData lightThemeData = ThemeData(
     centerTitle: false,
   ),
   textSelectionTheme: TextSelectionThemeData(
-      selectionColor: _lightTheme.colors.coreBrandPrimary.withAlpha(100),
-      selectionHandleColor: _lightTheme.colors.coreBrandPrimary),
-  cupertinoOverrideTheme:
-      CupertinoThemeData(primaryColor: _lightTheme.colors.coreBrandPrimary),
+    selectionColor: _lightTheme.colors.coreBrandPrimary.withAlpha(100),
+    selectionHandleColor: _lightTheme.colors.coreBrandPrimary,
+  ),
+  cupertinoOverrideTheme: CupertinoThemeData(
+    primaryColor: _lightTheme.colors.coreBrandPrimary,
+  ),
   scaffoldBackgroundColor: _lightTheme.colors.backgroundStandardSecondary,
   canvasColor: _lightTheme.colors.solidWhite,
   extensions: [_lightTheme.colors, _lightTheme.textStyle],

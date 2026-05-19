@@ -32,33 +32,33 @@ Map<String, dynamic> _$ThumbnailsToJson(Thumbnails instance) =>
     };
 
 VideoId _$VideoIdFromJson(Map<String, dynamic> json) =>
-    VideoId(kind: json['kind'] as String, videoId: json['videoId'] as String?);
+    VideoId(kind: json['kind'] as String, videoId: json['video_id'] as String?);
 
 Map<String, dynamic> _$VideoIdToJson(VideoId instance) => <String, dynamic>{
   'kind': instance.kind,
-  'videoId': instance.videoId,
+  'video_id': instance.videoId,
 };
 
 Snippet _$SnippetFromJson(Map<String, dynamic> json) => Snippet(
-  publishedAt: json['publishedAt'] as String,
-  channelId: json['channelId'] as String,
+  publishedAt: json['published_at'] as String,
+  channelId: json['channel_id'] as String,
   title: json['title'] as String,
   description: json['description'] as String,
   thumbnails: Thumbnails.fromJson(json['thumbnails'] as Map<String, dynamic>),
-  channelTitle: json['channelTitle'] as String,
-  liveBroadcastContent: json['liveBroadcastContent'] as String,
-  publishTime: json['publishTime'] as String,
+  channelTitle: json['channel_title'] as String,
+  liveBroadcastContent: json['live_broadcast_content'] as String,
+  publishTime: json['publish_time'] as String,
 );
 
 Map<String, dynamic> _$SnippetToJson(Snippet instance) => <String, dynamic>{
-  'publishedAt': instance.publishedAt,
-  'channelId': instance.channelId,
+  'published_at': instance.publishedAt,
+  'channel_id': instance.channelId,
   'title': instance.title,
   'description': instance.description,
   'thumbnails': instance.thumbnails,
-  'channelTitle': instance.channelTitle,
-  'liveBroadcastContent': instance.liveBroadcastContent,
-  'publishTime': instance.publishTime,
+  'channel_title': instance.channelTitle,
+  'live_broadcast_content': instance.liveBroadcastContent,
+  'publish_time': instance.publishTime,
 };
 
 YoutubeItem _$YoutubeItemFromJson(Map<String, dynamic> json) => YoutubeItem(
@@ -77,22 +77,22 @@ Map<String, dynamic> _$YoutubeItemToJson(YoutubeItem instance) =>
     };
 
 PageInfo _$PageInfoFromJson(Map<String, dynamic> json) => PageInfo(
-  totalResults: (json['totalResults'] as num).toInt(),
-  resultsPerPage: (json['resultsPerPage'] as num).toInt(),
+  totalResults: (json['total_results'] as num).toInt(),
+  resultsPerPage: (json['results_per_page'] as num).toInt(),
 );
 
 Map<String, dynamic> _$PageInfoToJson(PageInfo instance) => <String, dynamic>{
-  'totalResults': instance.totalResults,
-  'resultsPerPage': instance.resultsPerPage,
+  'total_results': instance.totalResults,
+  'results_per_page': instance.resultsPerPage,
 };
 
 YoutubeSearchResult _$YoutubeSearchResultFromJson(Map<String, dynamic> json) =>
     YoutubeSearchResult(
       kind: json['kind'] as String,
       etag: json['etag'] as String,
-      nextPageToken: json['nextPageToken'] as String,
-      regionCode: json['regionCode'] as String,
-      pageInfo: PageInfo.fromJson(json['pageInfo'] as Map<String, dynamic>),
+      nextPageToken: json['next_page_token'] as String,
+      regionCode: json['region_code'] as String,
+      pageInfo: PageInfo.fromJson(json['page_info'] as Map<String, dynamic>),
       items: (json['items'] as List<dynamic>)
           .map((e) => YoutubeItem.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -103,9 +103,9 @@ Map<String, dynamic> _$YoutubeSearchResultToJson(
 ) => <String, dynamic>{
   'kind': instance.kind,
   'etag': instance.etag,
-  'nextPageToken': instance.nextPageToken,
-  'regionCode': instance.regionCode,
-  'pageInfo': instance.pageInfo,
+  'next_page_token': instance.nextPageToken,
+  'region_code': instance.regionCode,
+  'page_info': instance.pageInfo,
   'items': instance.items,
 };
 
@@ -165,7 +165,7 @@ WakeupApplicationVotes _$WakeupApplicationVotesFromJson(
   id: json['id'] as String,
   upvote: json['upvote'] as bool,
   wakeupSongApplication: WakeupApplication.fromJson(
-    json['wakeupSongApplication'] as Map<String, dynamic>,
+    json['wakeup_song_application'] as Map<String, dynamic>,
   ),
 );
 
@@ -174,7 +174,7 @@ Map<String, dynamic> _$WakeupApplicationVotesToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'upvote': instance.upvote,
-  'wakeupSongApplication': instance.wakeupSongApplication,
+  'wakeup_song_application': instance.wakeupSongApplication,
 };
 
 WakeupHistory _$WakeupHistoryFromJson(Map<String, dynamic> json) =>

@@ -9,11 +9,7 @@ class OutingListItem extends StatelessWidget {
   final Outing outing;
   final VoidCallback onTap;
 
-  const OutingListItem({
-    super.key,
-    required this.outing,
-    required this.onTap,
-  });
+  const OutingListItem({super.key, required this.outing, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

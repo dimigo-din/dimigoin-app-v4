@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 //import 'package:dimigoin_app_v4/app/routes/routes.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/services/push/model.dart';
@@ -14,16 +12,20 @@ import 'package:get/get.dart';
 import 'repository.dart';
 
 class PushService extends GetxController {
+  static const int _stayReminderNotificationId = 940910;
+  static const String _stayReminderSubjectId = 'stay_apply_reminder';
+  static const String _stayReminderMigrationKey =
+      'stay_apply_reminder_backend_migration_done';
+
   final PushRepository repository;
 
   AuthService authService = Get.find<AuthService>();
 
-  PushService({PushRepository? repository}) : repository = repository ?? PushRepository();
+  PushService({PushRepository? repository})
+    : repository = repository ?? PushRepository();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
-  final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
+      FlutterLocalNotificationsPlugin();
 
   @override
   Future<void> onInit() async {
@@ -44,23 +46,25 @@ class PushService extends GetxController {
     await _initLocalNotification();
 
     await requestPushPermission();
+    await _cancelLocalStayApplyReminder();
 
-    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
-      if (authService.isLoginSuccess) {
-        String? deviceId = await getDeviceId();
-        if (deviceId == null) {
-          log('FCM Token refreshed but device ID is null: $fcmToken');
-          return;
-        }
+    FirebaseMessaging.instance.onTokenRefresh
+        .listen((fcmToken) async {
+          if (authService.isLoginSuccess) {
+            String deviceId = await authService.getDeviceId();
 
-        await repository.upsertFCMToken(deviceId, fcmToken);
-        log('FCM Token updated and sent to server: $fcmToken');
-      } else {
-        log('FCM Token refreshed but not sent to server (not logged in): $fcmToken');
-      }
-    }).onError((err) {
-      log('FCM Token update failed: $err');
-    });
+            await repository.upsertFCMToken(deviceId, fcmToken);
+            await _migrateStayApplyReminderToBackend();
+            log('FCM Token updated and sent to server: $fcmToken');
+          } else {
+            log(
+              'FCM Token refreshed but not sent to server (not logged in): $fcmToken',
+            );
+          }
+        })
+        .onError((err) {
+          log('FCM Token update failed: $err');
+        });
 
     if (authService.isLoginSuccess) {
       await syncTokenToServer();
@@ -77,7 +81,8 @@ class PushService extends GetxController {
       _handleNotificationTap(message);
     });
 
-    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance
+        .getInitialMessage();
     if (initialMessage != null) {
       log('Notification tapped (app terminated): ${initialMessage.messageId}');
       _handleNotificationTap(initialMessage);
@@ -136,18 +141,20 @@ class PushService extends GetxController {
 
     const DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsDarwin,
-    );
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+        );
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await flutterLocalNotificationsPlugin.initialize(
+      settings: initializationSettings,
+    );
 
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'dimigoin_v4_noti',
@@ -157,39 +164,46 @@ class PushService extends GetxController {
     );
 
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
   }
 
   Future<void> _showNotification(RemoteMessage message) async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
-      'dimigoin_v4_noti',
-      '디미고인 알림',
-      channelDescription: '디미고인 알림 수신을 위한 채널입니다.',
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-    );
+          'dimigoin_v4_noti',
+          '디미고인 알림',
+          channelDescription: '디미고인 알림 수신을 위한 채널입니다.',
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker',
+        );
 
     const DarwinNotificationDetails iosNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        );
 
-    const NotificationDetails notificationDetails =
-        NotificationDetails(
+    const NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       iOS: iosNotificationDetails,
     );
 
     await flutterLocalNotificationsPlugin.show(
-      message.hashCode,
-      message.notification?.title ?? '알림',
-      message.notification?.body ?? '메시지가 도착했습니다.',
-      notificationDetails,
+      id: message.hashCode,
+      title: message.notification?.title ?? '알림',
+      body: message.notification?.body ?? '메시지가 도착했습니다.',
+      notificationDetails: notificationDetails,
+    );
+  }
+
+  Future<void> _cancelLocalStayApplyReminder() async {
+    await flutterLocalNotificationsPlugin.cancel(
+      id: _stayReminderNotificationId,
     );
   }
 
@@ -200,12 +214,19 @@ class PushService extends GetxController {
       sound: true,
     );
 
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
+
     if (Platform.isIOS) {
-      await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
+      await FirebaseMessaging.instance
+          .setForegroundNotificationPresentationOptions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
     }
   }
 
@@ -216,7 +237,7 @@ class PushService extends GetxController {
 
     final settings = await FirebaseMessaging.instance.getNotificationSettings();
     return settings.authorizationStatus == AuthorizationStatus.authorized ||
-           settings.authorizationStatus == AuthorizationStatus.provisional;
+        settings.authorizationStatus == AuthorizationStatus.provisional;
   }
 
   Future<String?> getFCMToken() async {
@@ -241,13 +262,10 @@ class PushService extends GetxController {
     try {
       String? fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken != null) {
-        String? deviceId = await getDeviceId();
-        if (deviceId == null) {
-          log('Cannot sync FCM token: Device ID is null');
-          return;
-        }
+        String deviceId = await authService.getDeviceId();
 
         await repository.upsertFCMToken(deviceId, fcmToken);
+        await _migrateStayApplyReminderToBackend();
         log('FCM Token synced to server: $fcmToken');
       } else {
         log('Cannot sync FCM token: Token is null');
@@ -269,10 +287,7 @@ class PushService extends GetxController {
 
   Future<List<String>> getSubscribedSubjects() async {
     try {
-      String? deviceId = await getDeviceId();
-      if (deviceId == null) {
-        throw PushDeviceIDNullException();
-      }
+      String deviceId = await authService.getDeviceId();
 
       return await repository.getSubscribedSubjects(deviceId);
     } catch (e) {
@@ -283,10 +298,7 @@ class PushService extends GetxController {
 
   Future<void> updateSubscribedSubjects(List<String> subjects) async {
     try {
-      String? deviceId = await getDeviceId();
-      if (deviceId == null) {
-        throw PushDeviceIDNullException();
-      }
+      String deviceId = await authService.getDeviceId();
 
       await repository.updateSubscribedSubjects(deviceId, subjects);
     } catch (e) {
@@ -295,25 +307,31 @@ class PushService extends GetxController {
     }
   }
 
-  Future<String?> getDeviceId() async {
-    try {
-      if (kIsWeb) {
-        // Web
-        final webInfo = await _deviceInfo.webBrowserInfo;
-        return '${webInfo.userAgent}_${webInfo.vendor}';
-      } else if (Platform.isAndroid) {
-        // Android
-        final androidInfo = await _deviceInfo.androidInfo;
-        return androidInfo.id;
-      } else if (Platform.isIOS) {
-        // iOS
-        final iosInfo = await _deviceInfo.iosInfo;
-        return iosInfo.identifierForVendor;
-      }
-    } catch (e) {
-      return null;
+  Future<void> _migrateStayApplyReminderToBackend() async {
+    if (kIsWeb || !authService.isLoginSuccess) {
+      return;
     }
-    return null;
-  }
 
+    try {
+      await _cancelLocalStayApplyReminder();
+
+      final isMigrated = await repository.getBool(_stayReminderMigrationKey);
+      if (isMigrated) {
+        return;
+      }
+
+      final deviceId = await authService.getDeviceId();
+      final subjects = await repository.getSubscribedSubjects(deviceId);
+      if (!subjects.contains(_stayReminderSubjectId)) {
+        await repository.updateSubscribedSubjects(deviceId, [
+          ...subjects,
+          _stayReminderSubjectId,
+        ]);
+      }
+
+      await repository.setBool(_stayReminderMigrationKey, true);
+    } catch (e) {
+      log('Failed to migrate stay reminder to backend push subject: $e');
+    }
+  }
 }

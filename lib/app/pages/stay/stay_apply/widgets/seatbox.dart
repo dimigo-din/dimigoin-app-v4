@@ -7,19 +7,11 @@ import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 
 class SeatUtils {
-  static List<List<String>> generateTable() {
-    List<List<String>> table = [];
-    const columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
-    
-    for (String col in columns) {
-      List<String> rowSeats = [];
-      for (int row = 1; row <= 18; row++) {
-        rowSeats.add('$col$row');
-      }
-      table.add(rowSeats);
-    }
-    
-    return table;
+  static List<String> generateColumn(StaySeatLayoutColumn column) {
+    return List.generate(
+      column.maxRow,
+      (index) => '${column.name}${index + 1}',
+    );
   }
 
   static bool isInRange(String range, String seat) {
@@ -27,7 +19,7 @@ class SeatUtils {
     if (parts.length != 2) return false;
 
     final start = parts[0]; // "A1"
-    final end = parts[1];   // "N9"
+    final end = parts[1]; // "N9"
 
     // 좌석 파싱 (예: "A1" -> column: "A", row: 1)
     final seatMatch = RegExp(r'^([A-Z]+)(\d+)$').firstMatch(seat);
@@ -58,13 +50,14 @@ class SeatUtils {
     final colCode = col.codeUnitAt(0);
     final startCode = start.codeUnitAt(0);
     final endCode = end.codeUnitAt(0);
-    
+
     return colCode >= startCode && colCode <= endCode;
   }
 }
 
 class SeatSelectionWidget extends StatefulWidget {
   final Stay currentStay;
+  final StaySeatLayout seatLayout;
   final String? initialSelectedSeat;
   final String currentUserGrade;
   final String currentUserGender;
@@ -74,8 +67,9 @@ class SeatSelectionWidget extends StatefulWidget {
   final VoidCallback? onNoSeatSelected;
 
   const SeatSelectionWidget({
-    Key? key,
+    super.key,
     required this.currentStay,
+    required this.seatLayout,
     this.initialSelectedSeat,
     required this.currentUserGrade,
     required this.currentUserGender,
@@ -83,7 +77,7 @@ class SeatSelectionWidget extends StatefulWidget {
     required this.isApplied,
     required this.onSeatConfirmed,
     this.onNoSeatSelected,
-  }) : super(key: key);
+  });
 
   @override
   State<SeatSelectionWidget> createState() => _SeatSelectionWidgetState();
@@ -109,14 +103,14 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
   void _onConfirmPressed() {
     if (widget.isApplied) return;
 
-    if (_selectedSeat != null) {
+    if (_selectedSeat != null && _selectedSeat!.isNotEmpty) {
       widget.onSeatConfirmed(_selectedSeat!);
     }
   }
 
   void _onNoSeatPressed() {
     if (widget.isApplied) return;
-    
+
     setState(() {
       _selectedSeat = null;
     });
@@ -126,6 +120,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
   @override
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
+    final seatLayout = _buildSeatLayout(context);
 
     return Stack(
       children: [
@@ -136,13 +131,14 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
             minScale: 0.5,
             maxScale: 2.0,
             constrained: false,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: _buildGroupedRows(context),
+            child: SizedBox(
+              width: _seatLayoutWidth(),
+              height: _seatLayoutHeight(),
+              child: seatLayout,
             ),
           ),
         ),
-        
+
         Positioned(
           left: 0,
           right: 0,
@@ -167,11 +163,13 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: DFItemList(
-                title: _selectedSeat != '' ? _selectedSeat : '미선택',
+                title: (_selectedSeat == null || _selectedSeat == '')
+                    ? '미선택'
+                    : _selectedSeat!,
                 subTitle: '내가 선택한 좌석',
                 trailing: Row(
                   children: [
-                    if(widget.isApplied == false) ...[
+                    if (widget.isApplied == false) ...[
                       DFButton(
                         label: "미선택",
                         theme: DFButtonTheme.accent,
@@ -182,11 +180,14 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
                       DFButton(
                         label: "선택하기",
                         theme: DFButtonTheme.accent,
-                        onPressed: _selectedSeat != null ? _onConfirmPressed : null,
+                        onPressed:
+                            _selectedSeat != null && _selectedSeat!.isNotEmpty
+                            ? _onConfirmPressed
+                            : null,
                       ),
-                    ]
+                    ],
                   ],
-                )
+                ),
               ),
             ),
           ),
@@ -203,7 +204,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
 
     return staySeat.any((seatPreset) {
       return seatPreset.target == myTarget &&
-             SeatUtils.isInRange(seatPreset.range, seat);
+          SeatUtils.isInRange(seatPreset.range, seat);
     });
   }
 
@@ -212,49 +213,126 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
     if (stayApply == null) return null;
 
     try {
-      return stayApply.firstWhere(
-        (apply) => apply.staySeat == seat,
-      );
+      return stayApply.firstWhere((apply) => apply.staySeat == seat);
     } catch (e) {
       return null;
     }
   }
 
-  List<Widget> _buildGroupedRows(BuildContext context) {
-    final table = SeatUtils.generateTable();
-    List<Widget> groupedWidgets = [];
-    
-    for (int i = 0; i < table.length; i += 2) {
-      List<List<String>> group = table.sublist(
-        i,
-        i + 2 > table.length ? table.length : i + 2,
-      );
+  Widget _buildSeatLayout(BuildContext context) {
+    final leftGroups = _buildColumnGroups(widget.seatLayout.leftColumns);
+    final rightGroups = _buildColumnGroups(widget.seatLayout.rightColumns);
+    final groupCount = leftGroups.length > rightGroups.length
+        ? leftGroups.length
+        : rightGroups.length;
 
-      groupedWidgets.add(
-        Padding(
+    if (groupCount == 0) {
+      return const SizedBox(width: 1, height: 1);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: List.generate(groupCount, (index) {
+        final leftGroup = index < leftGroups.length ? leftGroups[index] : null;
+        final rightGroup = index < rightGroups.length
+            ? rightGroups[index]
+            : null;
+
+        return Padding(
           padding: const EdgeInsets.only(bottom: 16),
-          child: Column(
-            children: group.map((row) => _buildSeatRow(context, row)).toList(),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (leftGroup != null) _buildColumnGroup(context, leftGroup),
+              if (leftGroup != null && rightGroup != null)
+                const SizedBox(width: 28),
+              if (rightGroup != null) _buildColumnGroup(context, rightGroup),
+            ],
           ),
-        ),
+        );
+      }),
+    );
+  }
+
+  double _seatLayoutWidth() {
+    final leftMaxRows = _maxRows(widget.seatLayout.leftColumns);
+    final rightMaxRows = _maxRows(widget.seatLayout.rightColumns);
+    final leftWidth = leftMaxRows == 0 ? 0 : leftMaxRows * 56.0;
+    final rightWidth = rightMaxRows == 0 ? 0 : rightMaxRows * 56.0;
+    final gap = leftWidth > 0 && rightWidth > 0 ? 28.0 : 0.0;
+    final width = leftWidth + gap + rightWidth;
+
+    return width <= 0 ? 1 : width;
+  }
+
+  double _seatLayoutHeight() {
+    final leftGroups = _buildColumnGroups(widget.seatLayout.leftColumns);
+    final rightGroups = _buildColumnGroups(widget.seatLayout.rightColumns);
+    final groupCount = leftGroups.length > rightGroups.length
+        ? leftGroups.length
+        : rightGroups.length;
+
+    var height = 0.0;
+    for (var index = 0; index < groupCount; index++) {
+      final leftRows = index < leftGroups.length ? leftGroups[index].length : 0;
+      final rightRows = index < rightGroups.length
+          ? rightGroups[index].length
+          : 0;
+      final rowCount = leftRows > rightRows ? leftRows : rightRows;
+      height += rowCount * 60.0 + 16.0;
+    }
+
+    return height <= 0 ? 1 : height;
+  }
+
+  int _maxRows(List<StaySeatLayoutColumn> columns) {
+    var maxRows = 0;
+    for (final column in columns) {
+      if (column.maxRow > maxRows) {
+        maxRows = column.maxRow;
+      }
+    }
+    return maxRows;
+  }
+
+  List<List<StaySeatLayoutColumn>> _buildColumnGroups(
+    List<StaySeatLayoutColumn> columns,
+  ) {
+    final groups = <List<StaySeatLayoutColumn>>[];
+
+    for (int i = 0; i < columns.length; i += 2) {
+      groups.add(
+        columns.sublist(i, i + 2 > columns.length ? columns.length : i + 2),
       );
     }
 
-    return groupedWidgets;
+    return groups;
   }
 
-  Widget _buildSeatRow(context, List<String> row) {
+  Widget _buildColumnGroup(
+    BuildContext context,
+    List<StaySeatLayoutColumn> group,
+  ) {
+    return Column(
+      children: group
+          .map(
+            (column) =>
+                _buildSeatRow(context, SeatUtils.generateColumn(column)),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _buildSeatRow(BuildContext context, List<String> row) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: List.generate(row.length, (index) {
           final seat = row[index];
-          final hasExtraMargin = index == 8;
-
           return Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: 3,
-              right: hasExtraMargin ? 23 : 3,
+              right: 3,
               top: 3,
               bottom: 3,
             ),
@@ -274,7 +352,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
     final owner = _getSeatOwner(seat);
     final isTaken = owner != null;
     final isMine = owner?.user.id == widget.currentUserId;
-    
+
     Color backgroundColor;
     Color textColor;
 

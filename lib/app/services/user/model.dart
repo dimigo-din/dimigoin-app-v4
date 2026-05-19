@@ -11,24 +11,26 @@ part 'model.g.dart';
 class Timetable {
   final List<List<TimetableItem>> schedule;
 
-    Timetable({required this.schedule});
+  Timetable({required this.schedule});
 
-    factory Timetable.fromJson(List<dynamic> json) {
-      return Timetable(
-        schedule: (json)
-            .map((week) => (week as List)
+  factory Timetable.fromJson(List<dynamic> json) {
+    return Timetable(
+      schedule: (json)
+          .map(
+            (week) => (week as List)
                 .map((item) => TimetableItem.fromJson(item))
-                .toList())
-            .toList(),
-      );
-    }
-
-    List<dynamic> toJson() {
-      return schedule
-          .map((week) => week.map((item) => item.toJson()).toList())
-          .toList();
-    }
+                .toList(),
+          )
+          .toList(),
+    );
   }
+
+  List<dynamic> toJson() {
+    return schedule
+        .map((week) => week.map((item) => item.toJson()).toList())
+        .toList();
+  }
+}
 
 class TimetableItem {
   final String content;
@@ -44,10 +46,7 @@ class TimetableItem {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'content': content,
-      'temp': temp,
-    };
+    return {'content': content, 'temp': temp};
   }
 }
 
@@ -56,38 +55,32 @@ class UserApply {
   final StayApply? stayApply;
   final LaundryApply? laundryApply;
 
-  UserApply({
-    this.stayApply,
-    this.laundryApply,
-  });
+  UserApply({this.stayApply, this.laundryApply});
 
   factory UserApply.fromJson(Map<String, dynamic> json) {
     return UserApply(
-      stayApply: json['stayApply'] == null
+      stayApply: json['stay_apply'] == null
           ? null
-          : StayApply.fromJson(json['stayApply'] as Map<String, dynamic>),
-      laundryApply: json['laundryApply'] == null
+          : StayApply.fromJson(json['stay_apply'] as Map<String, dynamic>),
+      laundryApply: json['laundry_apply'] == null
           ? null
-          : LaundryApply.fromJson(json['laundryApply'] as Map<String, dynamic>),
+          : LaundryApply.fromJson(
+              json['laundry_apply'] as Map<String, dynamic>,
+            ),
     );
   }
 
   Map<String, dynamic> toJson() => _$UserApplyToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class User {
   final String id;
   final String? email;
   final String? name;
   final String? permission;
 
-  User({
-    required this.id,
-    this.email,
-    this.name,
-    this.permission,
-  });
+  User({required this.id, this.email, this.name, this.permission});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 

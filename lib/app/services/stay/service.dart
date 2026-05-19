@@ -6,48 +6,91 @@ import 'package:get/get.dart';
 
 import 'model.dart';
 import 'repository.dart';
+import 'state.dart';
 
 class StayService extends GetxController {
   final StayRepository repository;
 
   AuthService authService = Get.find<AuthService>();
 
-  StayService({StayRepository? repository}) : repository = repository ?? StayRepository();
+  final Rx<StayState> _stayState = Rx<StayState>(const StayInitial());
+  StayState get stayState => _stayState.value;
+
+  final Rx<StaySeatLayout?> _seatLayout = Rx<StaySeatLayout?>(null);
+  StaySeatLayout? get seatLayout => _seatLayout.value;
+
+  final Rx<StayApplyState> _stayApplyState = Rx<StayApplyState>(
+    const StayApplyInitial(),
+  );
+  StayApplyState get stayApplyState => _stayApplyState.value;
+
+  final Rx<StayOutingState> _stayOutingState = Rx<StayOutingState>(
+    const StayOutingInitial(),
+  );
+  StayOutingState get stayOutingState => _stayOutingState.value;
+
+  StayService({StayRepository? repository})
+    : repository = repository ?? StayRepository();
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    initialize(); 
+    initialize();
   }
 
-  Future<void> initialize() async {
-  }
+  Future<void> initialize() async {}
 
-  Future<List<Stay>> getStay() async {
+  Future<void> getStay() async {
+    _stayState.value = const StayLoading();
     try {
       final response = await repository.getStay();
 
-      return response;
+      _stayState.value = StaySuccess(response);
     } catch (e) {
-      log(e.toString());
+      _stayState.value = StayFailure(e.toString());
       rethrow;
     }
   }
 
-  Future<List<StayApply>> getStayApplication() async {
+  Future<StaySeatLayout> getSeatLayout() async {
+    try {
+      final response = await repository.getSeatLayout();
+      _seatLayout.value = response;
+      return response;
+    } catch (e) {
+      log(e.toString());
+      final fallback = StaySeatLayout.fallback();
+      _seatLayout.value = fallback;
+      return fallback;
+    }
+  }
+
+  Future<void> getStayApplication() async {
+    _stayApplyState.value = const StayApplyLoading();
     try {
       final response = await repository.getStayApplication();
 
-      return response;
+      _stayApplyState.value = StayApplySuccess(response);
     } catch (e) {
+      _stayApplyState.value = StayApplyFailure(e.toString());
       log(e.toString());
       rethrow;
     }
   }
 
-  Future<StayApply> addStayApplication(String stayId, String seatId, List<Outing> outings, {String? noSeatReason}) async {
+  Future<StayApply> addStayApplication(
+    String stayId,
+    String seatId,
+    List<Outing> outings, {
+    String? noSeatReason,
+  }) async {
     try {
-      final response = await repository.addStayApplication(stayId, seatId, outings, noSeatReason: noSeatReason);
+      final response = await repository.addStayApplication(
+        stayId,
+        seatId,
+        outings,
+        noSeatReason: noSeatReason,
+      );
 
       return response;
     } on StayNotInApplyPeriodException catch (e) {
@@ -86,12 +129,14 @@ class StayService extends GetxController {
     }
   }
 
-  Future<List<Outing>> getStayOuting(String id) async {
+  Future<void> getStayOuting(String id) async {
+    _stayOutingState.value = const StayOutingLoading();
     try {
       final response = await repository.getStayOuting(id);
 
-      return response;
+      _stayOutingState.value = StayOutingSuccess(response);
     } catch (e) {
+      _stayOutingState.value = StayOutingFailure(e.toString());
       log(e.toString());
       rethrow;
     }

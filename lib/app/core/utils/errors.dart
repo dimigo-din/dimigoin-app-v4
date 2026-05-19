@@ -16,6 +16,12 @@ class PersonalInformationNotRegisteredException implements Exception {
   PersonalInformationNotRegisteredException({this.message});
 }
 
+class PersonalInformationAlreadyRegisteredException implements Exception {
+  final String? message;
+
+  PersonalInformationAlreadyRegisteredException({this.message});
+}
+
 class GoogleOauthCodeInvalidException implements Exception {
   final String? message;
 

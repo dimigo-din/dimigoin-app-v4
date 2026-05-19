@@ -34,7 +34,9 @@ class WakeupVoteButton extends StatelessWidget {
           color: colorTheme.componentsFillStandardPrimary,
           borderRadius: BorderRadius.circular(DFRadius.radius400),
           border: Border.all(
-            color: isVoted ? colorTheme.coreBrandPrimary : colorTheme.lineOutline,
+            color: isVoted
+                ? colorTheme.coreBrandPrimary
+                : colorTheme.lineOutline,
             width: isVoted ? 2 : 1,
           ),
         ),

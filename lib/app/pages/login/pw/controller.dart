@@ -14,10 +14,17 @@ class PWLoginPageController extends GetxController {
 
   Future<void> loginWithPassword() async {
     try {
-      bool success = await authService.loginWithPassword(email.value, password.value);
+      bool success = await authService.loginWithPassword(
+        email.value,
+        password.value,
+      );
 
-      if (success && authService.isLoginSuccess && authService.isPersonalInfoRegistered) {
-        Get.offAllNamed(Routes.MAIN);
+      if (success && authService.isLoginSuccess) {
+        if (authService.isPersonalInfoRegistered) {
+          Get.offAllNamed(Routes.MAIN);
+        } else {
+          Get.offAllNamed(Routes.SIGNUP);
+        }
       }
     } on PersonalInformationNotRegisteredException {
       DFSnackBar.error('개인정보가 등록되지 않은 계정입니다. 디미인증에서 먼저 등록해주세요.');
@@ -31,5 +38,4 @@ class PWLoginPageController extends GetxController {
       DFSnackBar.error('알 수 없는 오류가 발생했습니다. 다시 시도해주세요.');
     }
   }
-
 }

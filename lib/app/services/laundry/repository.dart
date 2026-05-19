@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../provider/api_interface.dart';
 import '../../provider/model/response.dart';
+import '../../provider/interceptors/app_check_middleware.dart';
 
 import 'model.dart';
 
@@ -19,7 +20,6 @@ class LaundryRepository {
 
     try {
       DFHttpResponse response = await api.get(url);
-
       return LaundryTimeline.fromJson(response.data['data']);
     } on DioException {
       rethrow;
@@ -36,28 +36,28 @@ class LaundryRepository {
           .map((e) => LaundryApply.fromJson(e))
           .toList();
     } on DioException {
-
       rethrow;
     }
   }
 
-  Future<LaundryApply> applyLaundry(String timeId, String machineId) async {
+  Future applyLaundry(String timeId, String machineId) async {
     String url = '/student/laundry';
 
     try {
-      DFHttpResponse response = await api.post(url, data: {
-        'grade': authService.user?.userGrade,
-        'time': timeId,
-        'machine': machineId,
-      });
+      await api.post(
+        url,
+        data: {'time': timeId, 'machine': machineId},
+        middlewares: [AppCheckMiddleware()],
+      );
 
-      return LaundryApply.fromJson(response.data['data']);
+      return;
     } on DioException catch (e) {
       if (e.response?.data['code'] == 'LaundryApplyIsAfterEightAM') {
         throw LaundryApplyIsAfterEightAMException();
       } else if (e.response?.data['code'] == 'LaundryApply_AlreadyExists') {
         throw LaundryApplyAlreadyExistsException();
-      } else if (e.response?.data['code'] == 'PermissionDenied_Resource_Grade') {
+      } else if (e.response?.data['code'] ==
+          'PermissionDenied_Resource_Grade') {
         throw PermissionDeniedResourceGradeException();
       } else if (e.response?.data['code'] == 'LaundryMachine_AlreadyTaken') {
         throw LaundryMachineAlreadyTakenException();
@@ -70,9 +70,7 @@ class LaundryRepository {
     String url = '/student/laundry';
 
     try {
-      await api.delete(url, queryParameters: {
-        'id': applyId,
-      });
+      await api.delete(url, queryParameters: {'id': applyId});
     } on DioException {
       rethrow;
     }

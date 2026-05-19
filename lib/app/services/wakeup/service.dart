@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
+import 'package:dimigoin_app_v4/app/services/wakeup/state.dart';
 import 'package:get/get.dart';
 
 import 'model.dart';
@@ -12,40 +13,57 @@ class WakeupService extends GetxController {
 
   AuthService authService = Get.find<AuthService>();
 
-  WakeupService({WakeupRepository? repository}) : repository = repository ?? WakeupRepository();
+  final Rx<WakeupState> _wakeupState = Rx<WakeupState>(
+    const WakeupInitial(),
+  );
+  WakeupState get wakeupState => _wakeupState.value;
+
+  final Rx<WakeupVoteState> _wakeupVoteState = Rx<WakeupVoteState>(
+    const WakeupVoteInitial(),
+  );
+  WakeupVoteState get wakeupVoteState => _wakeupVoteState.value;
+
+  WakeupService({WakeupRepository? repository})
+    : repository = repository ?? WakeupRepository();
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    initialize(); 
+    initialize();
   }
 
-  Future<void> initialize() async {
-  }
+  Future<void> initialize() async {}
 
-  Future<List<WakeupApplicationWithVote>> getWakeupApplications() async {
+  Future<void> getWakeupApplications() async {
+    _wakeupState.value = const WakeupLoading();
     try {
       final response = await repository.getWakeupApplications();
 
-      return response;
+      _wakeupState.value = WakeupSuccess(response);
     } catch (e) {
       log(e.toString());
+      _wakeupState.value = WakeupFailure(e.toString());
       rethrow;
     }
   }
 
-  Future<List<WakeupApplicationVotes>> getWakeupApplicationVotes() async {
+  Future<void> getWakeupApplicationVotes() async {
+    _wakeupVoteState.value = const WakeupVoteLoading();
     try {
       final response = await repository.getWakeupApplicationVotes();
 
-      return response;
+      _wakeupVoteState.value = WakeupVoteSuccess(response);
     } catch (e) {
       log(e.toString());
+      _wakeupVoteState.value = WakeupVoteFailure(e.toString());
       rethrow;
     }
   }
 
-  Future<void> voteWakeupApplication(String applicationId, bool isUpvote) async {
+  Future<void> voteWakeupApplication(
+    String applicationId,
+    bool isUpvote,
+  ) async {
     try {
       await repository.voteWakeupApplication(applicationId, isUpvote);
     } catch (e) {

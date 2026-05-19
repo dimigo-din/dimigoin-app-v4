@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
-import 'package:dimigoin_app_v4/app/routes/routes.dart';
 import 'package:dimigoin_app_v4/app/services/push/service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:uuid/uuid.dart';
 
 import '../auth/model.dart';
 import 'repository.dart';
@@ -29,12 +29,23 @@ class AuthService extends GetxController {
   PersonalInformation? get user => _user.value;
 
   bool get isLoginSuccess => jwtToken.accessToken != null;
-  bool get isPersonalInfoRegistered => user != null;
+  bool get isPersonalInfoRegistered {
+    final u = _user.value;
+    if (u == null) return false;
+
+    return u.userGrade != null &&
+        u.userClass != null &&
+        u.gender != null &&
+        u.gender!.isNotEmpty;
+  }
 
   final Completer<void> _initCompleter = Completer<void>();
   Future<void> get initComplete => _initCompleter.future;
 
-  AuthService({AuthRepository? repository}) : repository = repository ?? AuthRepository();
+  AuthService({AuthRepository? repository})
+    : repository = repository ?? AuthRepository();
+
+  static const _uuid = Uuid();
 
   @override
   Future<void> onInit() async {
@@ -66,8 +77,8 @@ class AuthService extends GetxController {
       final GoogleSignIn signIn = GoogleSignIn.instance;
       await signIn.initialize(
         clientId: Platform.isIOS
-          ? dotenv.env['GOOGLE_IOS_CLIENT_ID']
-          : dotenv.env['GOOGLE_ANDROID_CLIENT_ID'],
+            ? dotenv.env['GOOGLE_IOS_CLIENT_ID']
+            : dotenv.env['GOOGLE_ANDROID_CLIENT_ID'],
         serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
       );
     }
@@ -88,18 +99,15 @@ class AuthService extends GetxController {
     final Uri url = Uri.parse('https://dimiauth.findflag.kr');
     launchUrl(url, mode: LaunchMode.externalApplication);
   }
-  
+
   Future<String?> _signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? account = await GoogleSignIn.instance.authenticate();
-      
-      if (account == null) {
-        return null;
-      }
-      
-      final GoogleSignInAuthentication auth = await account.authentication;
+      final GoogleSignInAccount account = await GoogleSignIn.instance
+          .authenticate();
+
+      final GoogleSignInAuthentication auth = account.authentication;
       final String? idToken = auth.idToken;
-      
+
       if (idToken == null) {
         throw IdTokenNullException();
       }
@@ -142,7 +150,11 @@ class AuthService extends GetxController {
       final redirectUri = await repository.getGoogleOAuthUrl();
       final Uri oauthUri = Uri.parse(redirectUri);
 
-      return await launchUrl(oauthUri, mode: LaunchMode.platformDefault, webOnlyWindowName: '_self');
+      return await launchUrl(
+        oauthUri,
+        mode: LaunchMode.platformDefault,
+        webOnlyWindowName: '_self',
+      );
     } on Exception catch (e) {
       log(e.toString());
       rethrow;
@@ -178,7 +190,7 @@ class AuthService extends GetxController {
     return true;
   }
 
-  Future<void> loginWithGoogleCallback(String code) async {
+  Future<bool> loginWithGoogleCallback(String code) async {
     try {
       final token = await repository.loginWithGoogleWeb(code);
 
@@ -191,35 +203,39 @@ class AuthService extends GetxController {
       log(e.toString());
       rethrow;
     }
+
+    return true;
   }
 
   Future<void> _handleLoginSuccess(LoginToken token) async {
     _jwtToken.value = token;
 
-    dynamic result = await Get.toNamed(Routes.PIN);
+    await AuthStorage.saveTokens(token.accessToken!, token.refreshToken!);
 
-    if (result == true) {
-      await AuthStorage.saveTokens(token.accessToken!, token.refreshToken!);
+    final decode = JwtDecoder.decode(token.accessToken!) as dynamic;
 
-      final decode = JwtDecoder.decode(token.accessToken!) as dynamic;
+    final user = PersonalInformation(
+      id: decode['id'].toString(),
+      profileUrl: decode['picture'].toString(),
+      name: decode['name'].toString(),
+      userGrade: decode['grade'] != null
+          ? int.parse(decode['grade'].toString())
+          : null,
+      userClass: decode['class'] != null
+          ? int.parse(decode['class'].toString())
+          : null,
+      gender: decode['gender']?.toString(),
+    );
 
-      await AuthStorage.saveUserImageURL(decode['picture'].toString());
-      await AuthStorage.saveUserId(decode['id'].toString());
+    await AuthStorage.savePersonalInformation(user);
 
-      _user.value?.profileUrl = decode['picture'].toString();
-      _user.value?.id = decode['id'].toString();
+    _user.value = user;
 
-      try {
-        final pushService = Get.find<PushService>();
-        await pushService.syncTokenToServer();
-      } catch (e) {
-        log('Failed to sync FCM token after login: $e');
-      }
-
-      Get.offAllNamed(Routes.MAIN);
-    } else {
-      _jwtToken.value = LoginToken();
-      throw PinVerificationCancelledException();
+    try {
+      final pushService = Get.find<PushService>();
+      await pushService.syncTokenToServer();
+    } catch (e) {
+      log('Failed to sync FCM token after login: $e');
     }
   }
 
@@ -245,8 +261,28 @@ class AuthService extends GetxController {
     return true;
   }
 
+  Future<bool> signUpPersonalInformation(
+    int grade,
+    int classNum,
+    String gender,
+  ) async {
+    try {
+      final token = await repository.signUpPersonalInformation(
+        grade,
+        classNum,
+        gender,
+      );
+
+      await _handleLoginSuccess(token);
+    } catch (e) {
+      rethrow;
+    }
+
+    return true;
+  }
+
   Future<void> logout() async {
-    await AuthStorage.clear();
+    await AuthStorage.clearAuth();
     _jwtToken.value = LoginToken();
     _user.value = null;
 
@@ -269,20 +305,15 @@ class AuthService extends GetxController {
     }
   }
 
-  Future<void> getPersonalInformation(String passcode) async {
-    try {
-      final info = await repository.getPersonalInformation(passcode);
+  Future<String> getDeviceId() async {
+    String? deviceId = await AuthStorage.getDeviceId();
 
-      await AuthStorage.savePersonalInformation(info);
-
-      _user.value = info;
-    } on WrongPasscodeException {
-      throw WrongPasscodeException();
-    } on PersonalInformationNotRegisteredException {
-      throw PersonalInformationNotRegisteredException();
-    } catch (e) {
-      log(e.toString());
-      rethrow;
+    if (deviceId == null) {
+      final newId = _uuid.v4();
+      await AuthStorage.saveDeviceId(newId);
+      return newId;
     }
+
+    return deviceId;
   }
 }

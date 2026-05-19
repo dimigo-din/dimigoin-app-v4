@@ -56,6 +56,16 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
           working-directory: ios
+
+      - name: Debug iOS build artifacts
+        run: |
+          pwd
+          ls -la
+          ls -la build || true
+          ls -la build/ios || true
+          find . -name "*.dSYM" || true
+          find . -name "*.dSYM.zip" || true
+          find . -name "*.xcarchive" || true
       
       - name: Deploy to TestFlight
         run: bundle exec fastlane beta

@@ -10,6 +10,7 @@ class DFSegment extends StatelessWidget {
   final VoidCallback? onTap;
 
   const DFSegment({
+    super.key,
     this.activated = false,
     required this.label,
     this.leading,
@@ -33,7 +34,9 @@ class DFSegment extends StatelessWidget {
         decoration: BoxDecoration(
           color: activated!
               ? colorTheme.componentsFillStandardPrimary
-              : colorTheme.componentsFillStandardTertiary.withValues(alpha: 0.05),
+              : colorTheme.componentsFillStandardTertiary.withValues(
+                  alpha: 0.05,
+                ),
           borderRadius: BorderRadius.circular(DFRadius.radius300),
         ),
         child: Row(

@@ -4,8 +4,11 @@ import 'package:flutter/foundation.dart';
 
 abstract class ApiMiddleware {
   @protected
-  FutureOr<Response> handle(RequestOptions options, Future<Response> Function(RequestOptions) next);
-  
+  FutureOr<Response> handle(
+    RequestOptions options,
+    Future<Response> Function(RequestOptions) next,
+  );
+
   @protected
   FutureOr<Response?> onError(DioException e, RequestOptions options) {
     return null;

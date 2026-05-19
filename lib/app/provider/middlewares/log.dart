@@ -6,13 +6,14 @@ import '../interceptors/middleware.dart';
 
 class LogMiddleware extends ApiMiddleware {
   @override
-  Future<Response> handle(RequestOptions options, Future<Response> Function(RequestOptions) next) async {
+  Future<Response> handle(
+    RequestOptions options,
+    Future<Response> Function(RequestOptions) next,
+  ) async {
     final response = await next(options);
-    
-    log(
-      '${options.method}[${response.statusCode}] => PATH: ${options.path}',
-    );
-    
+
+    log('${options.method}[${response.statusCode}] => PATH: ${options.path}');
+
     return response;
   }
 

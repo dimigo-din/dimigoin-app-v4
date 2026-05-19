@@ -4,13 +4,11 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 
 part 'model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class StayApplyPeriod {
   final String id;
   final int grade;
-  @JsonKey(name: 'apply_start')
   final String applyStart;
-  @JsonKey(name: 'apply_end')
   final String applyEnd;
 
   StayApplyPeriod({
@@ -25,30 +23,97 @@ class StayApplyPeriod {
   Map<String, dynamic> toJson() => _$StayApplyPeriodToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class StaySeat {
   final String id;
   final String target;
   final String range;
 
-  StaySeat({
-    required this.id,
-    required this.target,
-    required this.range,
-  });
+  StaySeat({required this.id, required this.target, required this.range});
 
   factory StaySeat.fromJson(Map<String, dynamic> json) =>
       _$StaySeatFromJson(json);
   Map<String, dynamic> toJson() => _$StaySeatToJson(this);
 }
 
-@JsonSerializable()
+class StaySeatLayoutColumn {
+  final String name;
+  final int maxRow;
+
+  StaySeatLayoutColumn({required this.name, required this.maxRow});
+
+  factory StaySeatLayoutColumn.fromJson(Map<String, dynamic> json) {
+    return StaySeatLayoutColumn(
+      name: json['name'] as String,
+      maxRow: (json['maxRow'] ?? json['max_row']) as int,
+    );
+  }
+}
+
+class StaySeatLayout {
+  final List<StaySeatLayoutColumn> leftColumns;
+  final List<StaySeatLayoutColumn> rightColumns;
+
+  StaySeatLayout({required this.leftColumns, required this.rightColumns});
+
+  factory StaySeatLayout.fromJson(Map<String, dynamic> json) {
+    final layout = StaySeatLayout(
+      leftColumns: ((json['leftColumns'] ?? []) as List)
+          .map(
+            (column) =>
+                StaySeatLayoutColumn.fromJson(column as Map<String, dynamic>),
+          )
+          .toList(),
+      rightColumns: ((json['rightColumns'] ?? []) as List)
+          .map(
+            (column) =>
+                StaySeatLayoutColumn.fromJson(column as Map<String, dynamic>),
+          )
+          .toList(),
+    );
+
+    if (layout.leftColumns.isEmpty && layout.rightColumns.isEmpty) {
+      return StaySeatLayout.fallback();
+    }
+
+    return layout;
+  }
+
+  factory StaySeatLayout.fallback() {
+    return StaySeatLayout(
+      leftColumns: [
+        for (final name in [
+          'A',
+          'B',
+          'C',
+          'D',
+          'E',
+          'F',
+          'G',
+          'H',
+          'I',
+          'J',
+          'K',
+          'L',
+          'M',
+          'N',
+        ])
+          StaySeatLayoutColumn(name: name, maxRow: 18),
+      ],
+      rightColumns: [
+        for (final name in ['O', 'P', 'Q', 'R', 'S', 'T'])
+          StaySeatLayoutColumn(name: name, maxRow: 9),
+        StaySeatLayoutColumn(name: 'U', maxRow: 5),
+      ],
+    );
+  }
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class StaySeatPreset {
   final String id;
   final String name;
-  @JsonKey(name: 'only_readingRoom')
   final bool onlyReadingRoom;
-  @JsonKey(name: 'stay_seat')
   final List<StaySeat>? staySeat;
 
   StaySeatPreset({
@@ -63,54 +128,40 @@ class StaySeatPreset {
   Map<String, dynamic> toJson() => _$StaySeatPresetToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class StayApplyUser {
   final String id;
   final String name;
 
-  StayApplyUser({
-    required this.id,
-    required this.name,
-  });
+  StayApplyUser({required this.id, required this.name});
 
   factory StayApplyUser.fromJson(Map<String, dynamic> json) =>
       _$StayApplyUserFromJson(json);
   Map<String, dynamic> toJson() => _$StayApplyUserToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class StayApplyItem {
   final String? id;
-  @JsonKey(name: 'stay_seat')
   final String staySeat;
   final StayApplyUser user;
 
-  StayApplyItem({
-    this.id,
-    required this.staySeat,
-    required this.user,
-  });
+  StayApplyItem({this.id, required this.staySeat, required this.user});
 
   factory StayApplyItem.fromJson(Map<String, dynamic> json) =>
       _$StayApplyItemFromJson(json);
   Map<String, dynamic> toJson() => _$StayApplyItemToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Stay {
   final String id;
   final String name;
-  @JsonKey(name: 'stay_from')
   final String stayFrom;
-  @JsonKey(name: 'stay_to')
   final String stayTo;
-  @JsonKey(name: 'outing_day')
   final List<String>? outingDay;
-  @JsonKey(name: 'stay_apply_period')
   final List<StayApplyPeriod>? stayApplyPeriod;
-  @JsonKey(name: 'stay_seat_preset')
   final StaySeatPreset? staySeatPreset;
-  @JsonKey(name: 'stay_apply')
   final List<StayApplyItem>? stayApply;
 
   Stay({
@@ -129,20 +180,16 @@ class Stay {
 }
 
 @CopyWith()
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Outing {
   final String? id;
   final String? reason;
-  @JsonKey(name: 'breakfast_cancel')
   final bool? breakfastCancel;
-  @JsonKey(name: 'lunch_cancel')
   final bool? lunchCancel;
-  @JsonKey(name: 'dinner_cancel')
   final bool? dinnerCancel;
   final String? from;
   final String? to;
   final bool? approved;
-  @JsonKey(name: 'audit_reason')
   final String? auditReason;
 
   Outing({
@@ -157,15 +204,13 @@ class Outing {
     this.auditReason,
   });
 
-  factory Outing.fromJson(Map<String, dynamic> json) =>
-      _$OutingFromJson(json);
+  factory Outing.fromJson(Map<String, dynamic> json) => _$OutingFromJson(json);
   Map<String, dynamic> toJson() => _$OutingToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class StayApply {
   final String id;
-  @JsonKey(name: 'stay_seat')
   final String staySeat;
   final Stay? stay;
   final List<Outing> outing;

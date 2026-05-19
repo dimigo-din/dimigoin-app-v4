@@ -1,5 +1,8 @@
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/services/laundry/model.dart';
+import 'package:dimigoin_app_v4/app/services/laundry/state.dart';
+import 'package:dimigoin_app_v4/app/widgets/animated_cross_fade.dart';
+import 'package:dimigoin_app_v4/app/widgets/shimmer_loading_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller.dart';
@@ -22,24 +25,56 @@ class LaundryApplyPage extends GetView<LaundryPageController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            LaundryMachineSelector(
-              laundryType: laundryType,
-              onTap: () => MachineSelectionBottomSheet.show(
-                context: context,
+            Obx(() => DFAnimatedCrossFade(
+              duration: const Duration(milliseconds: 300),
+              firstChild: (_) => const DFShimmerLoadingBox(height: 32),
+              secondChild: (_) => LaundryMachineSelector(
                 laundryType: laundryType,
+                onTap: () => MachineSelectionBottomSheet.show(
+                  context: context,
+                  laundryType: laundryType,
+                ),
               ),
-            ),
+              crossFadeState: controller.laundryService.laundryTimelineState is! LaundryTimelineSuccess
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            )),
             const SizedBox(height: 16),
-
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () async {
                   await controller.fetchLaundryApplications();
                 },
-                child: Obx(() => ListView(
-                  children: _buildTimeSlotList(),
-                )),
-              )
+                child: Obx(() {
+                  final selectedIndex = laundryType == LaundryMachineType.washer
+                      ? controller.selectedWasherIndex.value
+                      : controller.selectedDryerIndex.value;
+
+                  return DFAnimatedCrossFade(
+                    duration: const Duration(milliseconds: 300),
+                    firstChild: (_) => Column(
+                      children: List.generate(
+                        3,
+                        (index) => const DFShimmerLoadingBox(
+                          child: LaundryTimeSlotCardLayout(),
+                        ),
+                      ),
+                    ),
+                    secondChild: (_) => ListView(
+                      key: ValueKey('laundry-time-slots-${laundryType.name}-$selectedIndex'),
+                      children: _buildTimeSlotList(
+                        (controller.laundryService.laundryTimelineState as LaundryTimelineSuccess).timeline,
+                        (controller.laundryService.laundryApplyState as LaundryApplySuccess).applications,
+                      ),
+                    ),
+                    crossFadeState:
+                        controller.laundryService.laundryTimelineState is! LaundryTimelineSuccess ||
+                        controller.laundryService.laundryApplyState is! LaundryApplySuccess
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  );
+                }),
+              ),
             ),
           ],
         ),
@@ -47,7 +82,10 @@ class LaundryApplyPage extends GetView<LaundryPageController> {
     );
   }
 
-  List<Widget> _buildTimeSlotList() {
+  List<Widget> _buildTimeSlotList(
+    LaundryTimeline timeline,
+    List<LaundryApply> applications,
+  ) {
     final machines = controller.laundryMachines
         .where((m) => m.type == laundryType)
         .toList();
@@ -62,13 +100,13 @@ class LaundryApplyPage extends GetView<LaundryPageController> {
 
     final selectedMachine = machines[selectedIndex];
 
-    final matchedTimes = controller.laundryTimeline.value!.times
-        .where((t) => (t.assigns).any((m) => m.id == selectedMachine.id))
-        .toList()
-      ..sort((a, b) => (a.time).compareTo(b.time));
+    final matchedTimes =
+        timeline.times
+            .where((t) => (t.assigns).any((m) => m.id == selectedMachine.id))
+            .toList()
+          ..sort((a, b) => (a.time).compareTo(b.time));
 
     final currentUserId = controller.authService.user?.id;
-    final applications = controller.laundryApplications;
 
     return matchedTimes.map((time) {
       final apply = applications.firstWhereOrNull(

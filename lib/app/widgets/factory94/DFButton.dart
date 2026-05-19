@@ -5,7 +5,9 @@ import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 
 enum DFButtonSize { small, medium, large }
+
 enum DFButtonTheme { grayscale, accent, negative }
+
 enum DFButtonStyle { primary, secondary }
 
 class DFButton extends StatelessWidget {
@@ -88,7 +90,7 @@ class DFButton extends StatelessWidget {
   TextStyle getTextStyle(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
     final textTheme = Theme.of(context).extension<DFTypography>()!;
-    
+
     switch (theme) {
       case DFButtonTheme.grayscale:
         return style == DFButtonStyle.primary
@@ -203,5 +205,4 @@ class DFButton extends StatelessWidget {
       ),
     );
   }
-  
 }
