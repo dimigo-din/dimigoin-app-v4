@@ -19,14 +19,14 @@ class FacilityRepository {
 
   Future<FacilityReport> createRepairReport({
     required String subject,
-    required String location,
     required String body,
+    required String reportType,
     required List<MultipartFile> files,
   }) async {
     final formData = FormData.fromMap({
-      'report_type': 'broken',
+      'report_type': reportType,
       'subject': subject,
-      'body': '위치: $location\n\n$body',
+      'body': body,
       if (files.isNotEmpty) 'file': files,
     });
 
