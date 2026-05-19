@@ -1,157 +1,19 @@
-import 'package:dio/dio.dart';
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
-import 'package:dimigoin_app_v4/app/provider/api_interface.dart';
 import 'package:dimigoin_app_v4/app/services/facility/model.dart';
-import 'package:dimigoin_app_v4/app/services/facility/repository.dart';
 import 'package:dimigoin_app_v4/app/widgets/appBar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFInputField.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSegmentControl.dart';
-import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart' hide MultipartFile;
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-class RepairPage extends StatefulWidget {
+import 'controller.dart';
+
+class RepairPage extends GetView<RepairPageController> {
   const RepairPage({super.key});
-
-  @override
-  State<RepairPage> createState() => _RepairPageState();
-}
-
-class _RepairPageState extends State<RepairPage> {
-  late final FacilityRepository repository;
-  final titleTEC = TextEditingController();
-  final bodyTEC = TextEditingController();
-  final imagePicker = ImagePicker();
-
-  List<XFile> images = [];
-  List<FacilityReport> reports = [];
-  bool isLoadingReports = true;
-  bool isSubmitting = false;
-  String selectedReportType = 'broken';
-  String? reportLoadError;
-  int selectedTab = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    repository = FacilityRepository(api: Get.find<ApiProvider>());
-    loadReports();
-  }
-
-  @override
-  void dispose() {
-    titleTEC.dispose();
-    bodyTEC.dispose();
-    super.dispose();
-  }
-
-  Future<void> loadReports() async {
-    setState(() {
-      isLoadingReports = true;
-      reportLoadError = null;
-    });
-
-    try {
-      reports = await repository.getReports();
-    } catch (_) {
-      reportLoadError = '신청 목록을 불러오지 못했습니다.';
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoadingReports = false;
-        });
-      }
-    }
-  }
-
-  Future<void> pickImages() async {
-    final picked = await imagePicker.pickMultiImage();
-    if (picked.isEmpty) return;
-
-    final validImages = picked
-        .where(
-          (image) =>
-              _allowedImageExtensions.contains(_imageExtension(image.name)),
-        )
-        .take(5)
-        .toList();
-
-    if (validImages.length != picked.length) {
-      DFSnackBar.error('jpg, jpeg, png 이미지만 첨부할 수 있습니다.');
-    }
-
-    if (validImages.isEmpty) return;
-
-    setState(() {
-      images = validImages;
-    });
-  }
-
-  Future<void> submit() async {
-    final title = titleTEC.text.trim();
-    final body = bodyTEC.text.trim();
-
-    if (title.isEmpty || body.isEmpty) {
-      DFSnackBar.error('제목과 문의 내용을 모두 입력해주세요.');
-      return;
-    }
-
-    setState(() {
-      isSubmitting = true;
-    });
-
-    try {
-      final files = <MultipartFile>[];
-      for (final image in images) {
-        final extension = _imageExtension(image.name);
-        files.add(
-          MultipartFile.fromBytes(
-            await image.readAsBytes(),
-            filename: _normalizedImageName(image.name, extension),
-          ),
-        );
-      }
-
-      await repository.createRepairReport(
-        subject: title,
-        body: body,
-        reportType: selectedReportType,
-        files: files,
-      );
-
-      titleTEC.clear();
-      bodyTEC.clear();
-      setState(() {
-        images = [];
-        selectedReportType = 'broken';
-        selectedTab = 1;
-      });
-      await loadReports();
-      DFSnackBar.success('수리 신청이 접수되었습니다.');
-    } on DioException catch (e) {
-      final statusCode = e.response?.statusCode;
-      final errorCode = e.response?.data is Map
-          ? e.response?.data['code']?.toString()
-          : null;
-      final suffix = errorCode ?? statusCode?.toString();
-
-      DFSnackBar.error(
-        suffix == null ? '수리 신청에 실패했습니다.' : '수리 신청에 실패했습니다. ($suffix)',
-      );
-    } catch (_) {
-      DFSnackBar.error('수리 신청에 실패했습니다.');
-    } finally {
-      if (mounted) {
-        setState(() {
-          isSubmitting = false;
-        });
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,88 +23,69 @@ class _RepairPageState extends State<RepairPage> {
       decoration: BoxDecoration(color: colorTheme.backgroundStandardSecondary),
       child: SafeArea(
         top: false,
-        child: Scaffold(
-          appBar: const DFAppBar(title: '수리 신청'),
-          body: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              DFSpacing.spacing400,
-              DFSpacing.spacing300,
-              DFSpacing.spacing400,
-              DFSpacing.spacing500,
-            ),
-            child: Column(
-              children: [
-                DFSegmentControl(
-                  key: ValueKey(selectedTab),
-                  initialIndex: selectedTab,
-                  segments: const [
-                    DFSegment(label: '신청'),
-                    DFSegment(label: '목록'),
+        child: GetBuilder<RepairPageController>(
+          builder: (controller) {
+            return Scaffold(
+              appBar: const DFAppBar(title: '수리 신청'),
+              body: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  DFSpacing.spacing400,
+                  DFSpacing.spacing300,
+                  DFSpacing.spacing400,
+                  DFSpacing.spacing500,
+                ),
+                child: Column(
+                  children: [
+                    DFSegmentControl(
+                      key: ValueKey(controller.selectedTab),
+                      initialIndex: controller.selectedTab,
+                      segments: const [
+                        DFSegment(label: '신청'),
+                        DFSegment(label: '목록'),
+                      ],
+                      onChanged: controller.changeTab,
+                    ),
+                    const SizedBox(height: DFSpacing.spacing500),
+                    Expanded(
+                      child: controller.selectedTab == 0
+                          ? _RepairForm(
+                              titleTEC: controller.titleTEC,
+                              bodyTEC: controller.bodyTEC,
+                              images: controller.images,
+                              selectedReportType: controller.selectedReportType,
+                              onPickImages: controller.pickImages,
+                              onClearImages: controller.clearImages,
+                              onReportTypeChanged: controller.changeReportType,
+                            )
+                          : _ReportList(
+                              reports: controller.reports,
+                              isLoading: controller.isLoadingReports,
+                              error: controller.reportLoadError,
+                              onRetry: controller.loadReports,
+                            ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: DFButton(
+                        label: controller.selectedTab == 0
+                            ? (controller.isSubmitting ? '신청 중...' : '신청하기')
+                            : '신청하기',
+                        size: DFButtonSize.large,
+                        onPressed: controller.isSubmitting
+                            ? null
+                            : controller.selectedTab == 0
+                            ? controller.submit
+                            : () => controller.changeTab(0),
+                      ),
+                    ),
                   ],
-                  onChanged: (index) => setState(() {
-                    selectedTab = index;
-                  }),
                 ),
-                const SizedBox(height: DFSpacing.spacing500),
-                Expanded(
-                  child: selectedTab == 0
-                      ? _RepairForm(
-                          titleTEC: titleTEC,
-                          bodyTEC: bodyTEC,
-                          images: images,
-                          selectedReportType: selectedReportType,
-                          onPickImages: pickImages,
-                          onClearImages: () => setState(() => images = []),
-                          onReportTypeChanged: (value) => setState(() {
-                            selectedReportType = value;
-                          }),
-                        )
-                      : _ReportList(
-                          reports: reports,
-                          isLoading: isLoadingReports,
-                          error: reportLoadError,
-                          onRetry: loadReports,
-                        ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: DFButton(
-                    label: selectedTab == 0
-                        ? (isSubmitting ? '신청 중...' : '신청하기')
-                        : '신청하기',
-                    size: DFButtonSize.large,
-                    onPressed: isSubmitting
-                        ? null
-                        : selectedTab == 0
-                        ? submit
-                        : () => setState(() {
-                            selectedTab = 0;
-                          }),
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
-  }
-
-  static const _allowedImageExtensions = {'jpg', 'jpeg', 'png'};
-
-  String _imageExtension(String filename) {
-    final dotIndex = filename.lastIndexOf('.');
-    if (dotIndex == -1 || dotIndex == filename.length - 1) {
-      return '';
-    }
-    return filename.substring(dotIndex + 1).toLowerCase();
-  }
-
-  String _normalizedImageName(String filename, String extension) {
-    if (filename.contains('.') && extension.isNotEmpty) {
-      return filename;
-    }
-    return 'repair_${DateTime.now().millisecondsSinceEpoch}.$extension';
   }
 }
 
@@ -480,6 +323,7 @@ class _ReportTypePicker extends StatelessWidget {
             ],
           ],
         ),
+        const SizedBox(height: 10),
       ],
     );
   }

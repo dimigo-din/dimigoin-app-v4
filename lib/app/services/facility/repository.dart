@@ -31,13 +31,13 @@ class FacilityRepository {
 
     final DFHttpResponse response;
     if (files.isEmpty) {
-      response = await api.post('/student/facility/', data: payload);
+      response = await api.post('/student/facility', data: payload);
     } else {
       final formData = FormData.fromMap(payload);
       formData.files.addAll(files.map((file) => MapEntry('file', file)));
 
       response = await api.post(
-        '/student/facility/',
+        '/student/facility',
         data: formData,
         options: Options(contentType: Headers.multipartFormDataContentType),
       );

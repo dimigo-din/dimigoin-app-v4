@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dimigoin_app_v4/app/services/calendar/model.dart';
 import 'package:dimigoin_app_v4/app/services/calendar/service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 
 class CalendarPageController extends GetxController {
@@ -15,6 +16,10 @@ class CalendarPageController extends GetxController {
   List<CalendarEvent> get events => _events.value;
   final RxList<CalendarEvent> _events = RxList<CalendarEvent>();
   final RxList<CalendarTodoItem> todos = RxList<CalendarTodoItem>();
+
+  bool get advancedCalendarFeaturesEnabled {
+    return dotenv.env['ENABLE_CALENDAR_ADVANCED_FEATURES'] == 'true';
+  }
 
   List<CalendarEvent> get selectedDayEvents {
     final day = _dateOnly(selectedDay.value);

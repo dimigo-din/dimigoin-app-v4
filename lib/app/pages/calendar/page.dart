@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import 'controller.dart';
+import 'widgets/calendar_event_row.dart';
 import 'widgets/df_calendar.dart';
 
 class CalendarPage extends GetView<CalendarPageController> {
@@ -24,53 +25,166 @@ class CalendarPage extends GetView<CalendarPageController> {
         child: Scaffold(
           backgroundColor: colorTheme.backgroundStandardSecondary,
           body: Obx(
-            () => ListView(
-              padding: const EdgeInsets.only(
-                left: DFSpacing.spacing400,
-                right: DFSpacing.spacing400,
-                bottom: DFSpacing.spacing600,
-              ),
-              children: [
-                DFCalendar(
-                  events: controller.events,
-                  onDaySelected: controller.selectDay,
-                  onMonthChanged: controller.fetchEventsForMonth,
-                ),
-                const SizedBox(height: DFSpacing.spacing300),
-                DFDivider(size: DFDividerSize.small),
-                const SizedBox(height: DFSpacing.spacing500),
-                _SectionHeader(
-                  title: '학사일정',
-                  subtitle: _selectedDateLabel(controller.selectedDay.value),
-                ),
-                const SizedBox(height: DFSpacing.spacing300),
-                _AcademicScheduleSection(
-                  events: controller.selectedDayEvents,
-                  isLoading: controller.isLoadingEvents.value,
-                ),
-                const SizedBox(height: DFSpacing.spacing600),
-                _SectionHeader(
-                  title: 'TODO',
-                  subtitle: '선택한 날짜 기준',
-                  trailing: IconButton(
-                    onPressed: () => _showAddTodoSheet(context),
-                    icon: Icon(
-                      Icons.add_circle_outline,
-                      color: colorTheme.coreBrandPrimary,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: DFSpacing.spacing300),
-                _TodoSection(
-                  todos: controller.selectedDayTodos,
-                  onToggle: controller.toggleTodo,
-                  onDelete: controller.deleteTodo,
-                ),
-              ],
-            ),
+            () => controller.advancedCalendarFeaturesEnabled
+                ? _AdvancedCalendarBody(controller: controller)
+                : _LegacyCalendarBody(controller: controller),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _LegacyCalendarBody extends StatefulWidget {
+  final CalendarPageController controller;
+
+  const _LegacyCalendarBody({required this.controller});
+
+  @override
+  State<_LegacyCalendarBody> createState() => _LegacyCalendarBodyState();
+}
+
+class _LegacyCalendarBodyState extends State<_LegacyCalendarBody> {
+  final ScrollController _scrollController = ScrollController();
+  final Map<DateTime, GlobalKey> _itemKeys = {};
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _selectDay(DateTime day) {
+    widget.controller.selectDay(day);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final key = _itemKeys[_dateOnly(day)];
+      final context = key?.currentContext;
+      if (context == null) {
+        return;
+      }
+
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        alignment: 0.1,
+      );
+    });
+  }
+
+  DateTime _dateOnly(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
+
+  @override
+  Widget build(BuildContext context) {
+    final events = widget.controller.events;
+    _itemKeys.removeWhere(
+      (date, _) => !events.any((event) => _dateOnly(event.date) == date),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: DFSpacing.spacing400,
+        right: DFSpacing.spacing400,
+        bottom: DFSpacing.spacing500,
+      ),
+      child: Column(
+        children: [
+          DFCalendar(
+            events: events,
+            onDaySelected: _selectDay,
+            onMonthChanged: widget.controller.fetchEventsForMonth,
+          ),
+          const SizedBox(height: 10),
+          DFDivider(size: DFDividerSize.small),
+          const SizedBox(height: 10),
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: events.length,
+              itemBuilder: (context, index) {
+                final event = events[index];
+                final date = _dateOnly(event.date);
+                final isFirstEventOfDay =
+                    events.indexWhere((item) => _dateOnly(item.date) == date) ==
+                    index;
+
+                return Column(
+                  key: isFirstEventOfDay
+                      ? _itemKeys.putIfAbsent(date, GlobalKey.new)
+                      : null,
+                  children: [
+                    CalendarEventRow(
+                      title: event.title,
+                      day: DateFormat('dd', 'ko_KR').format(event.date),
+                      weekday: DateFormat('E', 'ko_KR').format(event.date),
+                      content: event.description ?? '하루종일',
+                    ),
+                    const SizedBox(height: DFSpacing.spacing500),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AdvancedCalendarBody extends StatelessWidget {
+  final CalendarPageController controller;
+
+  const _AdvancedCalendarBody({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorTheme = Theme.of(context).extension<DFColors>()!;
+
+    return ListView(
+      padding: const EdgeInsets.only(
+        left: DFSpacing.spacing400,
+        right: DFSpacing.spacing400,
+        bottom: DFSpacing.spacing600,
+      ),
+      children: [
+        DFCalendar(
+          events: controller.events,
+          onDaySelected: controller.selectDay,
+          onMonthChanged: controller.fetchEventsForMonth,
+        ),
+        const SizedBox(height: DFSpacing.spacing300),
+        DFDivider(size: DFDividerSize.small),
+        const SizedBox(height: DFSpacing.spacing500),
+        _SectionHeader(
+          title: '학사일정',
+          subtitle: _selectedDateLabel(controller.selectedDay.value),
+        ),
+        const SizedBox(height: DFSpacing.spacing300),
+        _AcademicScheduleSection(
+          events: controller.selectedDayEvents,
+          isLoading: controller.isLoadingEvents.value,
+        ),
+        const SizedBox(height: DFSpacing.spacing600),
+        _SectionHeader(
+          title: 'TODO',
+          subtitle: '선택한 날짜 기준',
+          trailing: IconButton(
+            onPressed: () => _showAddTodoSheet(context),
+            icon: Icon(
+              Icons.add_circle_outline,
+              color: colorTheme.coreBrandPrimary,
+            ),
+          ),
+        ),
+        const SizedBox(height: DFSpacing.spacing300),
+        _TodoSection(
+          todos: controller.selectedDayTodos,
+          onToggle: controller.toggleTodo,
+          onDelete: controller.deleteTodo,
+        ),
+      ],
     );
   }
 
