@@ -23,18 +23,25 @@ class FacilityRepository {
     required String reportType,
     required List<MultipartFile> files,
   }) async {
-    final formData = FormData.fromMap({
+    final payload = {
       'report_type': reportType,
       'subject': subject,
       'body': body,
-      if (files.isNotEmpty) 'file': files,
-    });
+    };
 
-    DFHttpResponse response = await api.post(
-      '/student/facility',
-      data: formData,
-      options: Options(contentType: Headers.multipartFormDataContentType),
-    );
+    final DFHttpResponse response;
+    if (files.isEmpty) {
+      response = await api.post('/student/facility/', data: payload);
+    } else {
+      final formData = FormData.fromMap(payload);
+      formData.files.addAll(files.map((file) => MapEntry('file', file)));
+
+      response = await api.post(
+        '/student/facility/',
+        data: formData,
+        options: Options(contentType: Headers.multipartFormDataContentType),
+      );
+    }
 
     return FacilityReport.fromJson(response.data['data']);
   }

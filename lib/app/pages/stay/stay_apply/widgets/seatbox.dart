@@ -271,7 +271,16 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
     final groupCount = leftGroups.length > rightGroups.length
         ? leftGroups.length
         : rightGroups.length;
-    final height = groupCount * 124.0;
+
+    var height = 0.0;
+    for (var index = 0; index < groupCount; index++) {
+      final leftRows = index < leftGroups.length ? leftGroups[index].length : 0;
+      final rightRows = index < rightGroups.length
+          ? rightGroups[index].length
+          : 0;
+      final rowCount = leftRows > rightRows ? leftRows : rightRows;
+      height += rowCount * 60.0 + 16.0;
+    }
 
     return height <= 0 ? 1 : height;
   }

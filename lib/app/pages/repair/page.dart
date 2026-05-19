@@ -72,8 +72,22 @@ class _RepairPageState extends State<RepairPage> {
     final picked = await imagePicker.pickMultiImage();
     if (picked.isEmpty) return;
 
+    final validImages = picked
+        .where(
+          (image) =>
+              _allowedImageExtensions.contains(_imageExtension(image.name)),
+        )
+        .take(5)
+        .toList();
+
+    if (validImages.length != picked.length) {
+      DFSnackBar.error('jpg, jpeg, png 이미지만 첨부할 수 있습니다.');
+    }
+
+    if (validImages.isEmpty) return;
+
     setState(() {
-      images = picked.take(5).toList();
+      images = validImages;
     });
   }
 
@@ -93,10 +107,11 @@ class _RepairPageState extends State<RepairPage> {
     try {
       final files = <MultipartFile>[];
       for (final image in images) {
+        final extension = _imageExtension(image.name);
         files.add(
           MultipartFile.fromBytes(
             await image.readAsBytes(),
-            filename: image.name,
+            filename: _normalizedImageName(image.name, extension),
           ),
         );
       }
@@ -211,6 +226,23 @@ class _RepairPageState extends State<RepairPage> {
         ),
       ),
     );
+  }
+
+  static const _allowedImageExtensions = {'jpg', 'jpeg', 'png'};
+
+  String _imageExtension(String filename) {
+    final dotIndex = filename.lastIndexOf('.');
+    if (dotIndex == -1 || dotIndex == filename.length - 1) {
+      return '';
+    }
+    return filename.substring(dotIndex + 1).toLowerCase();
+  }
+
+  String _normalizedImageName(String filename, String extension) {
+    if (filename.contains('.') && extension.isNotEmpty) {
+      return filename;
+    }
+    return 'repair_${DateTime.now().millisecondsSinceEpoch}.$extension';
   }
 }
 
