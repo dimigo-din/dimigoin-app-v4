@@ -8,6 +8,8 @@ class Routes {
   static const STAY = '/stay';
   static const WAKEUP = '/wakeup';
   static const LAUNDRY = '/laundry';
+  static const REPAIR = '/repair';
+  static const SCHOOL_VIOLENCE_REPORT = '/school-violence-report';
   static const FRIGO = '/frigo';
   static const OTHERS = '/others';
   static const MAIN = '/';
