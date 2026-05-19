@@ -8,10 +8,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 import 'repository.dart';
 
 class PushService extends GetxController {
+  static const int _stayReminderNotificationId = 940910;
+
   final PushRepository repository;
 
   AuthService authService = Get.find<AuthService>();
@@ -41,6 +45,7 @@ class PushService extends GetxController {
     await _initLocalNotification();
 
     await requestPushPermission();
+    await scheduleStayApplyReminder();
 
     FirebaseMessaging.instance.onTokenRefresh
         .listen((fcmToken) async {
@@ -129,6 +134,9 @@ class PushService extends GetxController {
   }
 
   Future<void> _initLocalNotification() async {
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
+
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -192,6 +200,67 @@ class PushService extends GetxController {
       body: message.notification?.body ?? '메시지가 도착했습니다.',
       notificationDetails: notificationDetails,
     );
+  }
+
+  Future<void> scheduleStayApplyReminder() async {
+    if (kIsWeb) {
+      return;
+    }
+
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+          'dimigoin_v4_noti',
+          '디미고인 알림',
+          channelDescription: '디미고인 알림 수신을 위한 채널입니다.',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
+
+    const DarwinNotificationDetails iosNotificationDetails =
+        DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        );
+
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: iosNotificationDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.cancel(
+      id: _stayReminderNotificationId,
+    );
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id: _stayReminderNotificationId,
+      title: '잔류 신청 마감 전 확인',
+      body: '일요일 10시 전까지 잔류 신청을 완료해주세요.',
+      scheduledDate: _nextSundayAtNine(),
+      notificationDetails: notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+    );
+  }
+
+  tz.TZDateTime _nextSundayAtNine() {
+    final now = tz.TZDateTime.now(tz.local);
+    final daysUntilSunday = DateTime.sunday - now.weekday;
+    final normalizedDays = daysUntilSunday < 0
+        ? daysUntilSunday + 7
+        : daysUntilSunday;
+    var scheduled = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      9,
+    ).add(Duration(days: normalizedDays));
+
+    if (!scheduled.isAfter(now)) {
+      scheduled = scheduled.add(const Duration(days: 7));
+    }
+
+    return scheduled;
   }
 
   Future<void> requestPushPermission() async {
