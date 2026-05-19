@@ -120,6 +120,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
   @override
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
+    final seatLayout = _buildSeatLayout(context);
 
     return Stack(
       children: [
@@ -130,7 +131,11 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
             minScale: 0.5,
             maxScale: 2.0,
             constrained: false,
-            child: _buildSeatLayout(context),
+            child: SizedBox(
+              width: _seatLayoutWidth(),
+              height: _seatLayoutHeight(),
+              child: seatLayout,
+            ),
           ),
         ),
 
@@ -221,6 +226,10 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
         ? leftGroups.length
         : rightGroups.length;
 
+    if (groupCount == 0) {
+      return const SizedBox(width: 1, height: 1);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(groupCount, (index) {
@@ -243,6 +252,38 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
         );
       }),
     );
+  }
+
+  double _seatLayoutWidth() {
+    final leftMaxRows = _maxRows(widget.seatLayout.leftColumns);
+    final rightMaxRows = _maxRows(widget.seatLayout.rightColumns);
+    final leftWidth = leftMaxRows == 0 ? 0 : leftMaxRows * 56.0;
+    final rightWidth = rightMaxRows == 0 ? 0 : rightMaxRows * 56.0;
+    final gap = leftWidth > 0 && rightWidth > 0 ? 28.0 : 0.0;
+    final width = leftWidth + gap + rightWidth;
+
+    return width <= 0 ? 1 : width;
+  }
+
+  double _seatLayoutHeight() {
+    final leftGroups = _buildColumnGroups(widget.seatLayout.leftColumns);
+    final rightGroups = _buildColumnGroups(widget.seatLayout.rightColumns);
+    final groupCount = leftGroups.length > rightGroups.length
+        ? leftGroups.length
+        : rightGroups.length;
+    final height = groupCount * 124.0;
+
+    return height <= 0 ? 1 : height;
+  }
+
+  int _maxRows(List<StaySeatLayoutColumn> columns) {
+    var maxRows = 0;
+    for (final column in columns) {
+      if (column.maxRow > maxRows) {
+        maxRows = column.maxRow;
+      }
+    }
+    return maxRows;
   }
 
   List<List<StaySeatLayoutColumn>> _buildColumnGroups(

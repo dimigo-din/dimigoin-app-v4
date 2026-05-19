@@ -37,7 +37,8 @@ class StayRepository {
     try {
       DFHttpResponse response = await api.get(url);
 
-      return StaySeatLayout.fromJson(response.data['data']);
+      final rawData = response.data['data'] ?? response.data;
+      return StaySeatLayout.fromJson(rawData as Map<String, dynamic>);
     } on DioException {
       rethrow;
     }
