@@ -270,6 +270,12 @@ class PushService extends GetxController {
       sound: true,
     );
 
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
+
     if (Platform.isIOS) {
       await FirebaseMessaging.instance
           .setForegroundNotificationPresentationOptions(
