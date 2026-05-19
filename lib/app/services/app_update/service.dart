@@ -6,14 +6,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:in_app_update/in_app_update.dart' as play_update;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AppUpdateInfo {
+class StoreUpdateInfo {
   final String latestVersion;
   final Uri storeUri;
 
-  const AppUpdateInfo({required this.latestVersion, required this.storeUri});
+  const StoreUpdateInfo({required this.latestVersion, required this.storeUri});
 }
 
 class AppUpdateService extends GetxService {
@@ -41,6 +42,10 @@ class AppUpdateService extends GetxService {
     _isChecking = true;
     try {
       final packageInfo = await PackageInfo.fromPlatform();
+      if (Platform.isAndroid && await _checkAndroidPlayUpdate(packageInfo)) {
+        return;
+      }
+
       final updateInfo = await _fetchLatestVersion(packageInfo);
 
       if (updateInfo == null) {
@@ -57,7 +62,31 @@ class AppUpdateService extends GetxService {
     }
   }
 
-  Future<AppUpdateInfo?> _fetchLatestVersion(PackageInfo packageInfo) {
+  Future<bool> _checkAndroidPlayUpdate(PackageInfo packageInfo) async {
+    try {
+      final updateInfo = await play_update.InAppUpdate.checkForUpdate();
+      final updateAvailable =
+          updateInfo.updateAvailability ==
+              play_update.UpdateAvailability.updateAvailable ||
+          updateInfo.updateAvailability ==
+              play_update.UpdateAvailability.developerTriggeredUpdateInProgress;
+
+      if (!updateAvailable) {
+        return false;
+      }
+
+      _showRequiredAndroidUpdateDialog(
+        packageInfo.packageName,
+        immediateUpdateAllowed: updateInfo.immediateUpdateAllowed,
+      );
+      return true;
+    } catch (e) {
+      debugPrint('Play in-app update check failed: $e');
+      return false;
+    }
+  }
+
+  Future<StoreUpdateInfo?> _fetchLatestVersion(PackageInfo packageInfo) {
     if (Platform.isIOS || Platform.isMacOS) {
       return _fetchIosVersion(packageInfo.packageName);
     }
@@ -67,7 +96,7 @@ class AppUpdateService extends GetxService {
     return Future.value(null);
   }
 
-  Future<AppUpdateInfo?> _fetchIosVersion(String bundleId) async {
+  Future<StoreUpdateInfo?> _fetchIosVersion(String bundleId) async {
     final lookupUri = Uri.https('itunes.apple.com', '/lookup', {
       'bundleId': bundleId,
       'country': 'kr',
@@ -101,7 +130,7 @@ class AppUpdateService extends GetxService {
       return null;
     }
 
-    return AppUpdateInfo(
+    return StoreUpdateInfo(
       latestVersion: version,
       storeUri: Uri.parse(
         storeUrl ?? 'https://apps.apple.com/kr/app/id$_iosAppStoreId',
@@ -109,7 +138,7 @@ class AppUpdateService extends GetxService {
     );
   }
 
-  Future<AppUpdateInfo?> _fetchAndroidVersion(String packageName) async {
+  Future<StoreUpdateInfo?> _fetchAndroidVersion(String packageName) async {
     final storeUri = Uri.https('play.google.com', '/store/apps/details', {
       'id': packageName,
       'hl': 'ko',
@@ -127,7 +156,7 @@ class AppUpdateService extends GetxService {
       return null;
     }
 
-    return AppUpdateInfo(latestVersion: version, storeUri: storeUri);
+    return StoreUpdateInfo(latestVersion: version, storeUri: storeUri);
   }
 
   String? _parsePlayStoreVersion(String html) {
@@ -175,7 +204,7 @@ class AppUpdateService extends GetxService {
         .toList();
   }
 
-  void _showRequiredUpdateDialog(AppUpdateInfo updateInfo) {
+  void _showRequiredUpdateDialog(StoreUpdateInfo updateInfo) {
     if (Get.context == null || _isDialogOpen) {
       return;
     }
@@ -208,6 +237,67 @@ class AppUpdateService extends GetxService {
       ),
       barrierDismissible: false,
     ).whenComplete(() => _isDialogOpen = false);
+  }
+
+  void _showRequiredAndroidUpdateDialog(
+    String packageName, {
+    required bool immediateUpdateAllowed,
+  }) {
+    if (Get.context == null || _isDialogOpen) {
+      return;
+    }
+
+    _isDialogOpen = true;
+    Get.dialog<void>(
+      PopScope(
+        canPop: false,
+        child: AlertDialog(
+          title: const Text('업데이트가 필요합니다'),
+          content: const Text(
+            '디미고인 새 버전이 Play Store에 출시되었습니다. '
+            '업데이트한 뒤 앱을 사용해주세요.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => _startAndroidUpdate(
+                packageName,
+                immediateUpdateAllowed: immediateUpdateAllowed,
+              ),
+              child: const Text('업데이트'),
+            ),
+            TextButton(
+              onPressed: () {
+                _isDialogOpen = false;
+                Get.back<void>();
+                unawaited(checkForUpdate());
+              },
+              child: const Text('다시 확인'),
+            ),
+          ],
+        ),
+      ),
+      barrierDismissible: false,
+    ).whenComplete(() => _isDialogOpen = false);
+  }
+
+  Future<void> _startAndroidUpdate(
+    String packageName, {
+    required bool immediateUpdateAllowed,
+  }) async {
+    if (immediateUpdateAllowed) {
+      final result = await play_update.InAppUpdate.performImmediateUpdate();
+      if (result == play_update.AppUpdateResult.success) {
+        return;
+      }
+    }
+
+    await _openStore(
+      Uri.https('play.google.com', '/store/apps/details', {
+        'id': packageName,
+        'hl': 'ko',
+        'gl': 'KR',
+      }),
+    );
   }
 
   Future<void> _openStore(Uri storeUri) async {
