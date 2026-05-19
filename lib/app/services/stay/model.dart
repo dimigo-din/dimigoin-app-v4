@@ -36,6 +36,73 @@ class StaySeat {
   Map<String, dynamic> toJson() => _$StaySeatToJson(this);
 }
 
+class StaySeatLayoutColumn {
+  final String name;
+  final int maxRow;
+
+  StaySeatLayoutColumn({required this.name, required this.maxRow});
+
+  factory StaySeatLayoutColumn.fromJson(Map<String, dynamic> json) {
+    return StaySeatLayoutColumn(
+      name: json['name'] as String,
+      maxRow: json['maxRow'] as int,
+    );
+  }
+}
+
+class StaySeatLayout {
+  final List<StaySeatLayoutColumn> leftColumns;
+  final List<StaySeatLayoutColumn> rightColumns;
+
+  StaySeatLayout({required this.leftColumns, required this.rightColumns});
+
+  factory StaySeatLayout.fromJson(Map<String, dynamic> json) {
+    return StaySeatLayout(
+      leftColumns: ((json['leftColumns'] ?? []) as List)
+          .map(
+            (column) =>
+                StaySeatLayoutColumn.fromJson(column as Map<String, dynamic>),
+          )
+          .toList(),
+      rightColumns: ((json['rightColumns'] ?? []) as List)
+          .map(
+            (column) =>
+                StaySeatLayoutColumn.fromJson(column as Map<String, dynamic>),
+          )
+          .toList(),
+    );
+  }
+
+  factory StaySeatLayout.fallback() {
+    return StaySeatLayout(
+      leftColumns: [
+        for (final name in [
+          'A',
+          'B',
+          'C',
+          'D',
+          'E',
+          'F',
+          'G',
+          'H',
+          'I',
+          'J',
+          'K',
+          'L',
+          'M',
+          'N',
+        ])
+          StaySeatLayoutColumn(name: name, maxRow: 18),
+      ],
+      rightColumns: [
+        for (final name in ['O', 'P', 'Q', 'R', 'S', 'T'])
+          StaySeatLayoutColumn(name: name, maxRow: 9),
+        StaySeatLayoutColumn(name: 'U', maxRow: 5),
+      ],
+    );
+  }
+}
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 class StaySeatPreset {
   final String id;

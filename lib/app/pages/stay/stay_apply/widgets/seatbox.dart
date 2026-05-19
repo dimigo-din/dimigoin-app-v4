@@ -7,34 +7,11 @@ import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 
 class SeatUtils {
-  static List<List<String>> generateTable() {
-    List<List<String>> table = [];
-    const columns = [
-      'A',
-      'B',
-      'C',
-      'D',
-      'E',
-      'F',
-      'G',
-      'H',
-      'I',
-      'J',
-      'K',
-      'L',
-      'M',
-      'N',
-    ];
-
-    for (String col in columns) {
-      List<String> rowSeats = [];
-      for (int row = 1; row <= 18; row++) {
-        rowSeats.add('$col$row');
-      }
-      table.add(rowSeats);
-    }
-
-    return table;
+  static List<String> generateColumn(StaySeatLayoutColumn column) {
+    return List.generate(
+      column.maxRow,
+      (index) => '${column.name}${index + 1}',
+    );
   }
 
   static bool isInRange(String range, String seat) {
@@ -80,6 +57,7 @@ class SeatUtils {
 
 class SeatSelectionWidget extends StatefulWidget {
   final Stay currentStay;
+  final StaySeatLayout seatLayout;
   final String? initialSelectedSeat;
   final String currentUserGrade;
   final String currentUserGender;
@@ -91,6 +69,7 @@ class SeatSelectionWidget extends StatefulWidget {
   const SeatSelectionWidget({
     super.key,
     required this.currentStay,
+    required this.seatLayout,
     this.initialSelectedSeat,
     required this.currentUserGrade,
     required this.currentUserGender,
@@ -124,7 +103,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
   void _onConfirmPressed() {
     if (widget.isApplied) return;
 
-    if (_selectedSeat != null) {
+    if (_selectedSeat != null && _selectedSeat!.isNotEmpty) {
       widget.onSeatConfirmed(_selectedSeat!);
     }
   }
@@ -151,10 +130,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
             minScale: 0.5,
             maxScale: 2.0,
             constrained: false,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: _buildGroupedRows(context),
-            ),
+            child: _buildSeatLayout(context),
           ),
         ),
 
@@ -182,7 +158,9 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: DFItemList(
-                title: _selectedSeat != '' ? _selectedSeat : '미선택',
+                title: (_selectedSeat == null || _selectedSeat == '')
+                    ? '미선택'
+                    : _selectedSeat!,
                 subTitle: '내가 선택한 좌석',
                 trailing: Row(
                   children: [
@@ -197,7 +175,8 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
                       DFButton(
                         label: "선택하기",
                         theme: DFButtonTheme.accent,
-                        onPressed: _selectedSeat != null
+                        onPressed:
+                            _selectedSeat != null && _selectedSeat!.isNotEmpty
                             ? _onConfirmPressed
                             : null,
                       ),
@@ -235,41 +214,75 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
     }
   }
 
-  List<Widget> _buildGroupedRows(BuildContext context) {
-    final table = SeatUtils.generateTable();
-    List<Widget> groupedWidgets = [];
+  Widget _buildSeatLayout(BuildContext context) {
+    final leftGroups = _buildColumnGroups(widget.seatLayout.leftColumns);
+    final rightGroups = _buildColumnGroups(widget.seatLayout.rightColumns);
+    final groupCount = leftGroups.length > rightGroups.length
+        ? leftGroups.length
+        : rightGroups.length;
 
-    for (int i = 0; i < table.length; i += 2) {
-      List<List<String>> group = table.sublist(
-        i,
-        i + 2 > table.length ? table.length : i + 2,
-      );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: List.generate(groupCount, (index) {
+        final leftGroup = index < leftGroups.length ? leftGroups[index] : null;
+        final rightGroup = index < rightGroups.length
+            ? rightGroups[index]
+            : null;
 
-      groupedWidgets.add(
-        Padding(
+        return Padding(
           padding: const EdgeInsets.only(bottom: 16),
-          child: Column(
-            children: group.map((row) => _buildSeatRow(context, row)).toList(),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (leftGroup != null) _buildColumnGroup(context, leftGroup),
+              if (leftGroup != null && rightGroup != null)
+                const SizedBox(width: 28),
+              if (rightGroup != null) _buildColumnGroup(context, rightGroup),
+            ],
           ),
-        ),
+        );
+      }),
+    );
+  }
+
+  List<List<StaySeatLayoutColumn>> _buildColumnGroups(
+    List<StaySeatLayoutColumn> columns,
+  ) {
+    final groups = <List<StaySeatLayoutColumn>>[];
+
+    for (int i = 0; i < columns.length; i += 2) {
+      groups.add(
+        columns.sublist(i, i + 2 > columns.length ? columns.length : i + 2),
       );
     }
 
-    return groupedWidgets;
+    return groups;
   }
 
-  Widget _buildSeatRow(context, List<String> row) {
+  Widget _buildColumnGroup(
+    BuildContext context,
+    List<StaySeatLayoutColumn> group,
+  ) {
+    return Column(
+      children: group
+          .map(
+            (column) =>
+                _buildSeatRow(context, SeatUtils.generateColumn(column)),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _buildSeatRow(BuildContext context, List<String> row) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: List.generate(row.length, (index) {
           final seat = row[index];
-          final hasExtraMargin = index == 8;
-
           return Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: 3,
-              right: hasExtraMargin ? 23 : 3,
+              right: 3,
               top: 3,
               bottom: 3,
             ),

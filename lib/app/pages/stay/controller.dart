@@ -20,6 +20,7 @@ class StayPageController extends GetxController {
   final Rx<Stay?> selectedStay = Rx<Stay?>(null);
 
   final RxList<StayApply> stayApplyList = <StayApply>[].obs;
+  final Rx<StaySeatLayout> seatLayout = StaySeatLayout.fallback().obs;
 
   final RxList<Outing> currentStayOutings = <Outing>[].obs;
   final RxInt selectedStayOutingDay = 0.obs;
@@ -84,8 +85,13 @@ class StayPageController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    await fetchSeatLayout();
     await fetchStayApply();
     await fetchStayList();
+  }
+
+  Future<void> fetchSeatLayout() async {
+    seatLayout.value = await stayService.getSeatLayout();
   }
 
   DateTime _normalizeKstDate(DateTime dateTime) {
@@ -128,7 +134,7 @@ class StayPageController extends GetxController {
   Future<void> fetchStayList([String? preferredStayId]) async {
     await stayService.getStay();
 
-    if(stayService.stayState is! StaySuccess) {
+    if (stayService.stayState is! StaySuccess) {
       stayList.clear();
       return;
     }
@@ -192,7 +198,9 @@ class StayPageController extends GetxController {
     await stayService.getStayApplication();
 
     if (stayService.stayApplyState is StayApplySuccess) {
-      stayApplyList.assignAll((stayService.stayApplyState as StayApplySuccess).stayApplies);
+      stayApplyList.assignAll(
+        (stayService.stayApplyState as StayApplySuccess).stayApplies,
+      );
     } else {
       stayApplyList.clear();
     }
@@ -284,7 +292,9 @@ class StayPageController extends GetxController {
     try {
       await stayService.getStayOuting(currentStayApply.id);
       if (stayService.stayOutingState is StayOutingSuccess) {
-        currentStayOutings.assignAll((stayService.stayOutingState as StayOutingSuccess).outings);
+        currentStayOutings.assignAll(
+          (stayService.stayOutingState as StayOutingSuccess).outings,
+        );
       } else {
         currentStayOutings.clear();
       }
