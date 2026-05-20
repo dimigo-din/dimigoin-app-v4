@@ -1,0 +1,138 @@
+name: Deploy TestFlight
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: "Branch, tag, or commit SHA to deploy"
+        required: false
+        type: string
+        default: "beta"
+
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag, or commit SHA to deploy"
+        required: true
+        default: "beta"
+        type: string
+
+jobs:
+  deploy-testflight:
+    name: Deploy TestFlight
+    runs-on: macos-26
+    environment: release
+
+    steps:
+      - name: Resolve deploy ref
+        id: deploy_ref
+        run: |
+          REF="${{ inputs.ref }}"
+          if [ -z "$REF" ]; then
+            REF="beta"
+          fi
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+          echo "Deploy ref: $REF"
+
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.deploy_ref.outputs.ref }}
+
+      - name: Select Xcode 26
+        run: |
+          echo "Installed Xcodes:"
+          ls -1 /Applications | grep '^Xcode' || true
+
+          XCODE_PATH="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -n 1)"
+
+          if [ -z "$XCODE_PATH" ]; then
+            echo "Xcode 26 is not installed on this runner."
+            exit 1
+          fi
+
+          sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+
+          echo "Selected Xcode:"
+          xcodebuild -version
+
+          echo "Selected iPhoneOS SDK:"
+          xcrun --sdk iphoneos --show-sdk-version
+
+      - name: Check checked out source
+        run: |
+          echo "Git ref:"
+          git branch --show-current || true
+          git rev-parse HEAD
+
+          echo "App version:"
+          grep '^version:' pubspec.yaml
+
+          echo "Selected Xcode:"
+          xcodebuild -version
+
+          echo "Selected iPhoneOS SDK:"
+          xcrun --sdk iphoneos --show-sdk-version
+
+      - name: Add Google Service Info
+        run: echo "${{ secrets.IOS_GOOGLE_SERVICE_INFO }}" | base64 --decode > ios/Runner/GoogleService-Info.plist
+
+      - name: Add Firebase Options
+        run: echo "${{ secrets.FIREBASE_OPTIONS }}" > lib/firebase_options.dart
+
+      - name: make env directory
+        run: mkdir -p env
+
+      - name: add .env file
+        run: echo "${{ secrets.ENV }}" > env/.env
+
+      - name: Check environment
+        run: |
+          echo "iOS Runner directory:"
+          ls -la ios/Runner/ | grep -E "GoogleService-Info.plist"
+          echo ""
+          echo "Firebase options:"
+          ls -la lib/firebase_options.dart
+          echo ""
+          echo "ENV directory:"
+          ls -la env/
+
+      - name: Install flutter sdk
+        uses: subosito/flutter-action@v2.16.0
+        with:
+          channel: stable
+          cache: true
+          flutter-version-file: pubspec.yaml
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Build iOS app without codesign
+        run: flutter build ios --release --no-codesign
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+          working-directory: ios
+
+      - name: Debug iOS build artifacts
+        run: |
+          pwd
+          ls -la
+          ls -la build || true
+          ls -la build/ios || true
+          find . -name "*.dSYM" || true
+          find . -name "*.dSYM.zip" || true
+          find . -name "*.xcarchive" || true
+
+      - name: Deploy to TestFlight
+        run: bundle exec fastlane beta
+        working-directory: ./ios
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          APPSTORECONNECT_API_KEY_ID: ${{ secrets.APPSTORECONNECT_API_KEY_ID }}
+          APPSTORECONNECT_API_ISSUER_ID: ${{ secrets.APPSTORECONNECT_API_ISSUER_ID }}
+          APPSTORECONNECT_API_KEY: ${{ secrets.APPSTORECONNECT_API_KEY }}
