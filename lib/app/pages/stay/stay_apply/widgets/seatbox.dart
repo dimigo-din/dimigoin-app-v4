@@ -141,7 +141,7 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 60),
+          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 80),
           child: InteractiveViewer(
             boundaryMargin: const EdgeInsets.only(bottom: 10),
             minScale: 0.5,
