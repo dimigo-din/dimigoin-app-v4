@@ -68,3 +68,6 @@ app.*.map.json
 
 # fastlane
 /android/google-play-secret.json
+
+.fvm
+.fvmrc

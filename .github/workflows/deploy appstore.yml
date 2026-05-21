@@ -7,7 +7,7 @@ on:
 jobs:
   deploy-appstore:
     name: Deploy AppStore
-    runs-on: macos-latest
+    runs-on: macos-26
     environment: release
     
     steps:
@@ -15,6 +15,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: 'main'
+
+      - name: Select Xcode 26
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.app
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
       
       - name: Add Google Service Info
         run: echo "${{ secrets.IOS_GOOGLE_SERVICE_INFO }}" | base64 --decode > ios/Runner/GoogleService-Info.plist
@@ -68,8 +74,10 @@ jobs:
           APPSTORECONNECT_API_KEY: ${{ secrets.APPSTORECONNECT_API_KEY }}
 
       - name: Upload dSYM to Crashlytics
+        if: always()
         run: |
+          unzip -o ios/Runner.app.dSYM.zip -d ios/dSYMs
           ios/Pods/FirebaseCrashlytics/upload-symbols \
             -gsp ios/Runner/GoogleService-Info.plist \
             -p ios \
-            ios/Runner.app.dSYM.zip
+            ios/dSYMs
