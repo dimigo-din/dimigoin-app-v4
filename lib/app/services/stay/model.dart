@@ -95,10 +95,10 @@ class StaySeatLayout {
           'J',
           'K',
           'L',
-          'M',
-          'N',
         ])
           StaySeatLayoutColumn(name: name, maxRow: 18),
+        StaySeatLayoutColumn(name: 'M', maxRow: 7),
+        StaySeatLayoutColumn(name: 'N', maxRow: 7),
       ],
       rightColumns: [
         for (final name in ['O', 'P', 'Q', 'R', 'S', 'T'])
