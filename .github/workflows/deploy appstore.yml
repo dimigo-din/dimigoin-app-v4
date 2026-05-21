@@ -16,18 +16,6 @@ jobs:
         with:
           ref: 'main'
 
-      - name: Check installed Xcodes
-        run: |
-          ls -la /Applications | grep Xcode
-          xcodebuild -version
-          xcrun --sdk iphoneos --show-sdk-version
-
-      - name: Select Xcode 26
-        run: |
-          sudo xcode-select -s /Applications/Xcode_26.app
-          xcodebuild -version
-          xcrun --sdk iphoneos --show-sdk-version
-      
       - name: Add Google Service Info
         run: echo "${{ secrets.IOS_GOOGLE_SERVICE_INFO }}" | base64 --decode > ios/Runner/GoogleService-Info.plist
 
