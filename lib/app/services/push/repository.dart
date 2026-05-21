@@ -51,6 +51,16 @@ class PushRepository {
     await pushBox?.delete('token_last_updated_at');
   }
 
+  Future<bool> getBool(String key, {bool defaultValue = false}) async {
+    await init();
+    return pushBox?.get(key, defaultValue: defaultValue) as bool;
+  }
+
+  Future<void> setBool(String key, bool value) async {
+    await init();
+    await pushBox?.put(key, value);
+  }
+
   Future<List<NotificationSubject>> getSubjects() async {
     String url = '/student/push/subjects';
 

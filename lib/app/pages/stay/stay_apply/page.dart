@@ -30,6 +30,7 @@ class StayApplyPage extends GetView<StayPageController> {
           child: SeatSelectionWidget(
             currentStay:
                 controller.stayList[controller.selectedStayIndex.value],
+            seatLayout: controller.seatLayout.value,
             initialSelectedSeat: controller.selectedSeat.value,
             currentUserGrade: authService.user!.userGrade.toString(),
             currentUserGender: authService.user!.gender.toString(),
@@ -73,7 +74,9 @@ class StayApplyPage extends GetView<StayPageController> {
                           title: controller.stayList.isEmpty
                               ? "잔류 일정 없음"
                               : controller
-                                    .stayList[controller.selectedStayIndex.value]
+                                    .stayList[controller
+                                        .selectedStayIndex
+                                        .value]
                                     .name,
                           onTap: () => controller.stayList.isNotEmpty
                               ? StaySelectionBottomSheet.show(

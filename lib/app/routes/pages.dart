@@ -2,6 +2,9 @@ import 'package:dimigoin_app_v4/app/pages/frigo/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/frigo/page.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/page.dart';
+import 'package:dimigoin_app_v4/app/pages/repair/binding.dart';
+import 'package:dimigoin_app_v4/app/pages/repair/page.dart';
+import 'package:dimigoin_app_v4/app/pages/school_violence_report/page.dart';
 import 'package:dimigoin_app_v4/app/pages/signup/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/signup/page.dart';
 import 'package:dimigoin_app_v4/app/pages/stay/binding.dart';
@@ -72,6 +75,19 @@ class AppPages {
       name: Routes.LAUNDRY,
       page: () => LaundryPage(),
       binding: LaundryPageBinding(),
+      middlewares: [LoginMiddleware()],
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.REPAIR,
+      page: () => const RepairPage(),
+      binding: RepairPageBinding(),
+      middlewares: [LoginMiddleware()],
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.SCHOOL_VIOLENCE_REPORT,
+      page: () => const SchoolViolenceReportPage(),
       middlewares: [LoginMiddleware()],
       transition: Transition.cupertino,
     ),

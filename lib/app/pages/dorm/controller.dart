@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 
 import 'package:dimigoin_app_v4/app/services/user/service.dart';
@@ -23,6 +24,10 @@ class DormPageController extends GetxController {
     }
   }
 
+  bool get hiddenEnabled {
+    return dotenv.env['Hidden_Enabled'] == 'true';
+  }
+
   void openStayPage() {
     Get.toNamed('/stay');
   }
@@ -37,5 +42,13 @@ class DormPageController extends GetxController {
 
   void openWakeupPage() {
     Get.toNamed('/wakeup');
+  }
+
+  void openRepairPage() {
+    Get.toNamed('/repair');
+  }
+
+  void openSchoolViolenceReportPage() {
+    Get.toNamed('/school-violence-report');
   }
 }

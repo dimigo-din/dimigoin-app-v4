@@ -30,7 +30,9 @@ class MealPage extends GetView<MealPageController> {
             children: [
               const SizedBox(height: DFSpacing.spacing200),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: DFSpacing.spacing400),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DFSpacing.spacing400,
+                ),
                 child: DFSegmentControl(
                   segments: MealPageController.dayLabels
                       .map((day) => DFSegment(label: day))
@@ -40,16 +42,16 @@ class MealPage extends GetView<MealPageController> {
                 ),
               ),
               const SizedBox(height: DFSpacing.spacing550),
-              SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: DFSpacing.spacing400,
-                    right: DFSpacing.spacing400,
-                    bottom: DFSpacing.spacing500,
-                  ),
-                  child: Column(
-                    children: [
-                      Obx(
+              Expanded(
+                child: SafeArea(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: DFSpacing.spacing400,
+                        right: DFSpacing.spacing400,
+                        bottom: DFSpacing.spacing500,
+                      ),
+                      child: Obx(
                         () => DFAnimatedCrossFade(
                           duration: const Duration(milliseconds: 300),
                           animateSize: false,
@@ -65,24 +67,27 @@ class MealPage extends GetView<MealPageController> {
                             ),
                           ),
                           secondChild: (context) => controller.meals.isEmpty
-                              ? const Center(
-                                  child: Text('급식 정보가 없습니다.'),
-                                )
+                              ? const Center(child: Text('급식 정보가 없습니다.'))
                               : Column(
-                                  children: controller.meals.map(
-                                    (meal) => _MealCard(
-                                      meal: meal,
-                                      highlighted: controller.isHighlightedMeal(
-                                        meal.type,
-                                        controller.selectedDate,
-                                      ),
-                                    ),
-                                  ).toList(),
+                                  children: controller.meals
+                                      .map(
+                                        (meal) => _MealCard(
+                                          meal: meal,
+                                          highlighted: controller
+                                              .isHighlightedMeal(
+                                                meal.type,
+                                                controller.selectedDate,
+                                              ),
+                                        ),
+                                      )
+                                      .toList(),
                                 ),
-                          crossFadeState: controller.mealService.mealStateRx.value is! MealSuccess
+                          crossFadeState:
+                              controller.mealService.mealStateRx.value
+                                  is! MealSuccess
                               ? CrossFadeState.showFirst
                               : CrossFadeState.showSecond,
-                        )
+                        ),
                       ),
                       // SizedBox(
                       //   width: double.infinity,
@@ -93,13 +98,12 @@ class MealPage extends GetView<MealPageController> {
                       //     style: DFButtonStyle.primary,
                       //     onPressed: () {},
                       //   ),
-                      // ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ],
-          ), 
+          ),
         ),
       ),
     );
@@ -121,10 +125,7 @@ class _MealCard extends StatelessWidget {
         child: DFGestureDetectorWithScaleInteraction(
           onTap: () {
             if (meal.image.isNotEmpty) {
-              MealImageBottomSheet.show(
-                context: context,
-                imgUrl: meal.image,
-              );
+              MealImageBottomSheet.show(context: context, imgUrl: meal.image);
             }
           },
           child: DFValueList(
@@ -146,32 +147,21 @@ class _MealCard extends StatelessWidget {
                                 : "\n<간편식> ${meal.simple.join(", ")}")),
           ),
         ),
-      )
+      ),
     );
   }
 }
 
-
 class MealImageBottomSheet extends StatelessWidget {
   final String imgUrl;
 
-  const MealImageBottomSheet({
-    super.key,
-    required this.imgUrl,
-  });
+  const MealImageBottomSheet({super.key, required this.imgUrl});
 
-  static void show({
-    required BuildContext context,
-    required String imgUrl,
-  }) {
+  static void show({required BuildContext context, required String imgUrl}) {
     DFAnimatedBottomSheet.show(
       context: context,
       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24),
-      children: [
-        MealImageBottomSheet(
-          imgUrl: imgUrl,
-        ),
-      ],
+      children: [MealImageBottomSheet(imgUrl: imgUrl)],
     );
   }
 
@@ -193,9 +183,7 @@ class MealImageBottomSheet extends StatelessWidget {
           errorBuilder: (context, error, stackTrace) {
             return const Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
-              child: Center(
-                child: Text('이미지를 불러오지 못했습니다.'),
-              ),
+              child: Center(child: Text('이미지를 불러오지 못했습니다.')),
             );
           },
         ),

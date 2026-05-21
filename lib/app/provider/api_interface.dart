@@ -99,6 +99,8 @@ abstract class ApiProvider {
       data: data,
       queryParameters: queryParameters,
       headers: options?.headers,
+      contentType: options?.contentType,
+      responseType: options?.responseType,
     );
 
     Response dioResponse = await middleware.execute(requestOptions);

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
+import 'package:dimigoin_app_v4/app/services/app_update/service.dart';
 import 'package:dimigoin_app_v4/app/services/push/service.dart';
 import 'package:dimigoin_app_v4/app/services/user/service.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -51,6 +52,7 @@ class AppLoader {
       Get.put<ApiProvider>(ProdApiProvider());
       final authService = Get.put(AuthService());
       await authService.initComplete;
+      Get.put(AppUpdateService());
       Get.put(PushService());
       Get.put(UserService());
 

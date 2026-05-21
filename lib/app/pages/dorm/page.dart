@@ -45,46 +45,80 @@ class DormPage extends GetView<DormPageController> {
               const SizedBox(height: DFSpacing.spacing700),
               const DFHeader(title: "신청하기"),
               const SizedBox(height: DFSpacing.spacing300),
-              Row(
-                children: [
-                  Expanded(
-                    child: PageButtonWidget(
-                      icon: Icons.school_outlined,
-                      title: "잔류",
-                      onTap: () => controller.openStayPage(),
+              SizedBox(
+                // height: 500,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: PageButtonWidget(
+                            icon: Icons.school_outlined,
+                            title: "잔류",
+                            onTap: () => controller.openStayPage(),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: PageButtonWidget(
+                            icon: Icons.home_work_outlined,
+                            title: "금귀",
+                            onTap: () => controller.openFrigoPage(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: PageButtonWidget(
-                      icon: Icons.home_work_outlined,
-                      title: "금귀",
-                      onTap: () => controller.openFrigoPage(),
+
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: PageButtonWidget(
+                            icon: Icons.local_laundry_service_outlined,
+                            title: "세탁",
+                            onTap: () => controller.openLaundryPage(),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: PageButtonWidget(
+                            icon: Icons.music_note_outlined,
+                            title: "기상곡",
+                            onTap: () => controller.openWakeupPage(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 10),
+                    if (controller.hiddenEnabled) ...[
+                      Row(
+                        children: [
+                          Expanded(
+                            child: PageButtonWidget(
+                              icon: Icons.construction_outlined,
+                              title: "수리",
+                              onTap: () => controller.openRepairPage(),
+                            ),
+                          ),
+
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: PageButtonWidget(
+                              icon: Icons.report_outlined,
+                              title: "학폭 신고함",
+                              onTap: () =>
+                                  controller.openSchoolViolenceReportPage(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                    const SizedBox(height: 10),
+                  ],
+                ),
+                // TimeTableWidget(),
               ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: PageButtonWidget(
-                      icon: Icons.local_laundry_service_outlined,
-                      title: "세탁",
-                      onTap: () => controller.openLaundryPage(),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: PageButtonWidget(
-                      icon: Icons.music_note_outlined,
-                      title: "기상곡",
-                      onTap: () => controller.openWakeupPage(),
-                    ),
-                  ),
-                ],
-              ),
-              // TimeTableWidget(),
             ],
           ),
         ),

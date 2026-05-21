@@ -31,6 +31,19 @@ class StayRepository {
     }
   }
 
+  Future<StaySeatLayout> getSeatLayout() async {
+    String url = '/student/stay/seat-layout';
+
+    try {
+      DFHttpResponse response = await api.get(url);
+
+      final rawData = response.data['data'] ?? response.data;
+      return StaySeatLayout.fromJson(rawData as Map<String, dynamic>);
+    } on DioException {
+      rethrow;
+    }
+  }
+
   Future<List<StayApply>> getStayApplication() async {
     String url = '/student/stay/apply';
 

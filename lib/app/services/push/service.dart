@@ -12,6 +12,11 @@ import 'package:get/get.dart';
 import 'repository.dart';
 
 class PushService extends GetxController {
+  static const int _stayReminderNotificationId = 940910;
+  static const String _stayReminderSubjectId = 'stay_apply_reminder';
+  static const String _stayReminderMigrationKey =
+      'stay_apply_reminder_backend_migration_done';
+
   final PushRepository repository;
 
   AuthService authService = Get.find<AuthService>();
@@ -41,6 +46,7 @@ class PushService extends GetxController {
     await _initLocalNotification();
 
     await requestPushPermission();
+    await _cancelLocalStayApplyReminder();
 
     FirebaseMessaging.instance.onTokenRefresh
         .listen((fcmToken) async {
@@ -48,6 +54,7 @@ class PushService extends GetxController {
             String deviceId = await authService.getDeviceId();
 
             await repository.upsertFCMToken(deviceId, fcmToken);
+            await _migrateStayApplyReminderToBackend();
             log('FCM Token updated and sent to server: $fcmToken');
           } else {
             log(
@@ -194,12 +201,24 @@ class PushService extends GetxController {
     );
   }
 
+  Future<void> _cancelLocalStayApplyReminder() async {
+    await flutterLocalNotificationsPlugin.cancel(
+      id: _stayReminderNotificationId,
+    );
+  }
+
   Future<void> requestPushPermission() async {
     await FirebaseMessaging.instance.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
 
     if (Platform.isIOS) {
       await FirebaseMessaging.instance
@@ -246,6 +265,7 @@ class PushService extends GetxController {
         String deviceId = await authService.getDeviceId();
 
         await repository.upsertFCMToken(deviceId, fcmToken);
+        await _migrateStayApplyReminderToBackend();
         log('FCM Token synced to server: $fcmToken');
       } else {
         log('Cannot sync FCM token: Token is null');
@@ -284,6 +304,34 @@ class PushService extends GetxController {
     } catch (e) {
       log(e.toString());
       rethrow;
+    }
+  }
+
+  Future<void> _migrateStayApplyReminderToBackend() async {
+    if (kIsWeb || !authService.isLoginSuccess) {
+      return;
+    }
+
+    try {
+      await _cancelLocalStayApplyReminder();
+
+      final isMigrated = await repository.getBool(_stayReminderMigrationKey);
+      if (isMigrated) {
+        return;
+      }
+
+      final deviceId = await authService.getDeviceId();
+      final subjects = await repository.getSubscribedSubjects(deviceId);
+      if (!subjects.contains(_stayReminderSubjectId)) {
+        await repository.updateSubscribedSubjects(deviceId, [
+          ...subjects,
+          _stayReminderSubjectId,
+        ]);
+      }
+
+      await repository.setBool(_stayReminderMigrationKey, true);
+    } catch (e) {
+      log('Failed to migrate stay reminder to backend push subject: $e');
     }
   }
 }

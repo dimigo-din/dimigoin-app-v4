@@ -22,3 +22,31 @@ class CalendarEvent {
       _$CalendarEventFromJson(json);
   Map<String, dynamic> toJson() => _$CalendarEventToJson(this);
 }
+
+class CalendarTodoItem {
+  final String id;
+  final DateTime date;
+  final String title;
+  final bool isDone;
+
+  const CalendarTodoItem({
+    required this.id,
+    required this.date,
+    required this.title,
+    this.isDone = false,
+  });
+
+  CalendarTodoItem copyWith({
+    String? id,
+    DateTime? date,
+    String? title,
+    bool? isDone,
+  }) {
+    return CalendarTodoItem(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      title: title ?? this.title,
+      isDone: isDone ?? this.isDone,
+    );
+  }
+}

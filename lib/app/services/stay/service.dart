@@ -13,10 +13,11 @@ class StayService extends GetxController {
 
   AuthService authService = Get.find<AuthService>();
 
-  final Rx<StayState> _stayState = Rx<StayState>(
-    const StayInitial(),
-  );
+  final Rx<StayState> _stayState = Rx<StayState>(const StayInitial());
   StayState get stayState => _stayState.value;
+
+  final Rx<StaySeatLayout?> _seatLayout = Rx<StaySeatLayout?>(null);
+  StaySeatLayout? get seatLayout => _seatLayout.value;
 
   final Rx<StayApplyState> _stayApplyState = Rx<StayApplyState>(
     const StayApplyInitial(),
@@ -48,6 +49,19 @@ class StayService extends GetxController {
     } catch (e) {
       _stayState.value = StayFailure(e.toString());
       rethrow;
+    }
+  }
+
+  Future<StaySeatLayout> getSeatLayout() async {
+    try {
+      final response = await repository.getSeatLayout();
+      _seatLayout.value = response;
+      return response;
+    } catch (e) {
+      log(e.toString());
+      final fallback = StaySeatLayout.fallback();
+      _seatLayout.value = fallback;
+      return fallback;
     }
   }
 
