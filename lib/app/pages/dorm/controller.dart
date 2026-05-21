@@ -24,8 +24,8 @@ class DormPageController extends GetxController {
     }
   }
 
-  bool get schoolViolenceReportEnabled {
-    return dotenv.env['ENABLE_SCHOOL_VIOLENCE_REPORT'] == 'true';
+  bool get hiddenEnabled {
+    return dotenv.env['Hidden_Enabled'] == 'true';
   }
 
   void openStayPage() {
