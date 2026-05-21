@@ -58,18 +58,20 @@ class StaySeatLayout {
 
   factory StaySeatLayout.fromJson(Map<String, dynamic> json) {
     final layout = StaySeatLayout(
-      leftColumns: ((json['leftColumns'] ?? []) as List)
+      leftColumns: ((json['leftColumns'] ?? json['left_columns'] ?? []) as List)
           .map(
             (column) =>
                 StaySeatLayoutColumn.fromJson(column as Map<String, dynamic>),
           )
           .toList(),
-      rightColumns: ((json['rightColumns'] ?? []) as List)
-          .map(
-            (column) =>
-                StaySeatLayoutColumn.fromJson(column as Map<String, dynamic>),
-          )
-          .toList(),
+      rightColumns:
+          ((json['rightColumns'] ?? json['right_columns'] ?? []) as List)
+              .map(
+                (column) => StaySeatLayoutColumn.fromJson(
+                  column as Map<String, dynamic>,
+                ),
+              )
+              .toList(),
     );
 
     if (layout.leftColumns.isEmpty && layout.rightColumns.isEmpty) {
@@ -95,10 +97,10 @@ class StaySeatLayout {
           'J',
           'K',
           'L',
+          'M',
+          'N',
         ])
           StaySeatLayoutColumn(name: name, maxRow: 18),
-        StaySeatLayoutColumn(name: 'M', maxRow: 7),
-        StaySeatLayoutColumn(name: 'N', maxRow: 7),
       ],
       rightColumns: [
         for (final name in ['O', 'P', 'Q', 'R', 'S', 'T'])
