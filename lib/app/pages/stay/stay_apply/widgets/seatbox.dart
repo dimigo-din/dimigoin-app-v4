@@ -92,6 +92,14 @@ class SeatSelectionWidget extends StatefulWidget {
 }
 
 class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
+  static const int _mainSeatSplitRow = 9;
+  static const double _seatStride = 56;
+  static const double _rowHeight = 60;
+  static const double _mainGroupGapX = 28;
+  static const double _groupGapY = 16;
+  static const double _bottomTopGap = 40;
+  static const double _bottomGroupGapY = 28;
+
   String? _selectedSeat;
 
   @override
@@ -228,69 +236,134 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
   }
 
   Widget _buildSeatLayout(BuildContext context) {
-    final leftGroups = _buildColumnGroups(widget.seatLayout.leftColumns);
-    final rightGroups = _buildColumnGroups(widget.seatLayout.rightColumns);
-    final groupCount = leftGroups.length > rightGroups.length
-        ? leftGroups.length
-        : rightGroups.length;
+    final mainColumns = _mainColumns();
+    final bottomColumns = _bottomColumns();
+    final mainGroups = _buildColumnGroups(mainColumns);
+    final bottomGroups = _buildColumnGroups(bottomColumns);
 
-    if (groupCount == 0) {
+    if (mainGroups.isEmpty && bottomGroups.isEmpty) {
       return const SizedBox(width: 1, height: 1);
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: List.generate(groupCount, (index) {
-        final leftGroup = index < leftGroups.length ? leftGroups[index] : null;
-        final rightGroup = index < rightGroups.length
-            ? rightGroups[index]
-            : null;
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: Row(
+      children: [
+        if (mainGroups.isNotEmpty) _buildMainSeatLayout(context, mainGroups),
+        if (mainGroups.isNotEmpty && bottomGroups.isNotEmpty)
+          const SizedBox(height: _bottomTopGap),
+        if (bottomGroups.isNotEmpty)
+          Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (leftGroup != null) _buildColumnGroup(context, leftGroup),
-              if (leftGroup != null && rightGroup != null)
-                const SizedBox(width: 28),
-              if (rightGroup != null) _buildColumnGroup(context, rightGroup),
+              if (mainGroups.isNotEmpty) SizedBox(width: _bottomLeftOffset()),
+              _buildBottomSeatLayout(context, bottomGroups),
             ],
           ),
-        );
-      }),
+      ],
     );
   }
 
   double _seatLayoutWidth() {
-    final leftMaxRows = _maxRows(widget.seatLayout.leftColumns);
-    final rightMaxRows = _maxRows(widget.seatLayout.rightColumns);
-    final leftWidth = leftMaxRows == 0 ? 0 : leftMaxRows * 56.0;
-    final rightWidth = rightMaxRows == 0 ? 0 : rightMaxRows * 56.0;
-    final gap = leftWidth > 0 && rightWidth > 0 ? 28.0 : 0.0;
-    final width = leftWidth + gap + rightWidth;
+    final mainWidth = _mainLayoutWidth();
+    final bottomWidth = _bottomColumns().isEmpty
+        ? 0.0
+        : _bottomLeftOffset() + _bottomBlockWidth();
+    final width = mainWidth > bottomWidth ? mainWidth : bottomWidth;
 
     return width <= 0 ? 1 : width;
   }
 
   double _seatLayoutHeight() {
-    final leftGroups = _buildColumnGroups(widget.seatLayout.leftColumns);
-    final rightGroups = _buildColumnGroups(widget.seatLayout.rightColumns);
-    final groupCount = leftGroups.length > rightGroups.length
-        ? leftGroups.length
-        : rightGroups.length;
+    final mainGroups = _buildColumnGroups(_mainColumns());
+    final bottomGroups = _buildColumnGroups(_bottomColumns());
+    var height = _groupsHeight(mainGroups, _groupGapY);
 
-    var height = 0.0;
-    for (var index = 0; index < groupCount; index++) {
-      final leftRows = index < leftGroups.length ? leftGroups[index].length : 0;
-      final rightRows = index < rightGroups.length
-          ? rightGroups[index].length
-          : 0;
-      final rowCount = leftRows > rightRows ? leftRows : rightRows;
-      height += rowCount * 60.0 + 16.0;
+    if (bottomGroups.isNotEmpty) {
+      if (height > 0) {
+        height += _bottomTopGap;
+      }
+      height += _groupsHeight(bottomGroups, _bottomGroupGapY);
     }
 
     return height <= 0 ? 1 : height;
+  }
+
+  List<StaySeatLayoutColumn> _allColumns() {
+    return [
+      ...widget.seatLayout.leftColumns,
+      ...widget.seatLayout.rightColumns,
+    ];
+  }
+
+  List<StaySeatLayoutColumn> _mainColumns() {
+    return _allColumns()
+        .where((column) => !_isBottomColumn(column.name))
+        .toList();
+  }
+
+  List<StaySeatLayoutColumn> _bottomColumns() {
+    return _allColumns()
+        .where((column) => _isBottomColumn(column.name))
+        .toList();
+  }
+
+  bool _isBottomColumn(String columnName) {
+    final columnIndex = SeatUtils._columnIndex(columnName);
+    return columnIndex >= SeatUtils._columnIndex('O') &&
+        columnIndex <= SeatUtils._columnIndex('U');
+  }
+
+  double _mainLayoutWidth() {
+    final leftWidth = _mainLeftBlockWidth();
+    final rightWidth = _mainRightBlockWidth();
+    final gap = leftWidth > 0 && rightWidth > 0 ? _mainGroupGapX : 0.0;
+    return leftWidth + gap + rightWidth;
+  }
+
+  double _mainLeftBlockWidth() {
+    final maxRows = _mainColumns().fold<int>(0, (maxRows, column) {
+      final rows = column.maxRow > _mainSeatSplitRow
+          ? _mainSeatSplitRow
+          : column.maxRow;
+      return rows > maxRows ? rows : maxRows;
+    });
+    return maxRows * _seatStride;
+  }
+
+  double _mainRightBlockWidth() {
+    final maxRows = _mainColumns().fold<int>(0, (maxRows, column) {
+      final rows = column.maxRow > _mainSeatSplitRow
+          ? column.maxRow - _mainSeatSplitRow
+          : 0;
+      return rows > maxRows ? rows : maxRows;
+    });
+    return maxRows * _seatStride;
+  }
+
+  double _bottomLeftOffset() {
+    final leftWidth = _mainLeftBlockWidth();
+    final rightWidth = _mainRightBlockWidth();
+    return leftWidth > 0 && rightWidth > 0 ? leftWidth + _mainGroupGapX : 0.0;
+  }
+
+  double _bottomBlockWidth() {
+    final bottomWidth = _maxRows(_bottomColumns()) * _seatStride;
+    final mainRightWidth = _mainRightBlockWidth();
+    return bottomWidth > mainRightWidth ? bottomWidth : mainRightWidth;
+  }
+
+  double _groupsHeight(
+    List<List<StaySeatLayoutColumn>> groups,
+    double groupGapY,
+  ) {
+    var height = 0.0;
+    for (var index = 0; index < groups.length; index++) {
+      height += groups[index].length * _rowHeight;
+      if (index != groups.length - 1) {
+        height += groupGapY;
+      }
+    }
+    return height;
   }
 
   int _maxRows(List<StaySeatLayoutColumn> columns) {
@@ -317,17 +390,100 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
     return groups;
   }
 
-  Widget _buildColumnGroup(
+  Widget _buildMainSeatLayout(
+    BuildContext context,
+    List<List<StaySeatLayoutColumn>> groups,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: List.generate(groups.length, (index) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: index == groups.length - 1 ? 0 : _groupGapY,
+          ),
+          child: _buildMainColumnGroup(context, groups[index]),
+        );
+      }),
+    );
+  }
+
+  Widget _buildMainColumnGroup(
     BuildContext context,
     List<StaySeatLayoutColumn> group,
   ) {
+    final hasRightBlock = group.any(
+      (column) => column.maxRow > _mainSeatSplitRow,
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildColumnGroupRange(context, group, 1, _mainSeatSplitRow),
+        if (hasRightBlock) ...[
+          const SizedBox(width: _mainGroupGapX),
+          _buildColumnGroupRange(context, group, _mainSeatSplitRow + 1),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildBottomSeatLayout(
+    BuildContext context,
+    List<List<StaySeatLayoutColumn>> groups,
+  ) {
+    return SizedBox(
+      width: _bottomBlockWidth(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(groups.length, (index) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: index == groups.length - 1 ? 0 : _bottomGroupGapY,
+            ),
+            child: groups[index].length == 1
+                ? _buildSpacedSeatRow(
+                    context,
+                    SeatUtils.generateColumn(groups[index].first),
+                  )
+                : _buildColumnGroupRange(context, groups[index], 1),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildColumnGroupRange(
+    BuildContext context,
+    List<StaySeatLayoutColumn> group,
+    int startRow, [
+    int? endRow,
+  ]) {
     return Column(
-      children: group
-          .map(
-            (column) =>
-                _buildSeatRow(context, SeatUtils.generateColumn(column)),
-          )
-          .toList(),
+      children: group.map((column) {
+        final seats = _generateColumnRange(column, startRow, endRow);
+        if (seats.isEmpty) {
+          return const SizedBox(height: _rowHeight);
+        }
+        return _buildSeatRow(context, seats);
+      }).toList(),
+    );
+  }
+
+  List<String> _generateColumnRange(
+    StaySeatLayoutColumn column,
+    int startRow, [
+    int? endRow,
+  ]) {
+    final lastRow = endRow == null || endRow > column.maxRow
+        ? column.maxRow
+        : endRow;
+    if (startRow > lastRow) {
+      return [];
+    }
+
+    return List.generate(
+      lastRow - startRow + 1,
+      (index) => '${column.name}${startRow + index}',
     );
   }
 
@@ -347,6 +503,20 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
             child: _buildSeatItem(context, seat),
           );
         }),
+      ),
+    );
+  }
+
+  Widget _buildSpacedSeatRow(BuildContext context, List<String> row) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: SizedBox(
+        width: _bottomBlockWidth(),
+        height: _rowHeight - 4,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: row.map((seat) => _buildSeatItem(context, seat)).toList(),
+        ),
       ),
     );
   }
