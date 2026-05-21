@@ -47,11 +47,19 @@ class SeatUtils {
   }
 
   static bool _isColumnInRange(String col, String start, String end) {
-    final colCode = col.codeUnitAt(0);
-    final startCode = start.codeUnitAt(0);
-    final endCode = end.codeUnitAt(0);
+    final colCode = _columnIndex(col);
+    final startCode = _columnIndex(start);
+    final endCode = _columnIndex(end);
 
     return colCode >= startCode && colCode <= endCode;
+  }
+
+  static int _columnIndex(String column) {
+    var value = 0;
+    for (final codeUnit in column.codeUnits) {
+      value = value * 26 + codeUnit - 'A'.codeUnitAt(0) + 1;
+    }
+    return value;
   }
 }
 
@@ -84,6 +92,14 @@ class SeatSelectionWidget extends StatefulWidget {
 }
 
 class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
+  static const double _seatWidth = 50;
+  static const double _seatHeight = 44;
+  static const double _mainGroupGapX = 50;
+  static const double _groupGapY = 42;
+  static const double _secondarySectionGapY = 72;
+  static const double _secondaryGroupGapY = 58;
+  static const double _uSeatGapX = 50;
+
   String? _selectedSeat;
 
   @override
@@ -220,126 +236,332 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
   }
 
   Widget _buildSeatLayout(BuildContext context) {
-    final leftGroups = _buildColumnGroups(widget.seatLayout.leftColumns);
-    final rightGroups = _buildColumnGroups(widget.seatLayout.rightColumns);
-    final groupCount = leftGroups.length > rightGroups.length
-        ? leftGroups.length
-        : rightGroups.length;
+    final items = <Widget>[];
+    final rightX = _mainBlockWidth + _mainGroupGapX;
+    final mainRowPairs = _mainRowPairs;
+    final secondaryRowPairs = _secondaryRowPairs;
+    final extraRowPairs = _extraRowPairs;
 
-    if (groupCount == 0) {
-      return const SizedBox(width: 1, height: 1);
-    }
+    for (var index = 0; index < mainRowPairs.length; index++) {
+      final pair = mainRowPairs[index];
+      final y = _mainGroupY(index);
+      final leftSeatCount = _leftSeatCount(pair);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: List.generate(groupCount, (index) {
-        final leftGroup = index < leftGroups.length ? leftGroups[index] : null;
-        final rightGroup = index < rightGroups.length
-            ? rightGroups[index]
-            : null;
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (leftGroup != null) _buildColumnGroup(context, leftGroup),
-              if (leftGroup != null && rightGroup != null)
-                const SizedBox(width: 28),
-              if (rightGroup != null) _buildColumnGroup(context, rightGroup),
-            ],
+      if (leftSeatCount > 0) {
+        items.add(
+          Positioned(
+            left: 0,
+            top: y,
+            child: _buildSeatTable(context, pair, 1, leftSeatCount),
           ),
         );
-      }),
-    );
-  }
+      }
 
-  double _seatLayoutWidth() {
-    final leftMaxRows = _maxRows(widget.seatLayout.leftColumns);
-    final rightMaxRows = _maxRows(widget.seatLayout.rightColumns);
-    final leftWidth = leftMaxRows == 0 ? 0 : leftMaxRows * 56.0;
-    final rightWidth = rightMaxRows == 0 ? 0 : rightMaxRows * 56.0;
-    final gap = leftWidth > 0 && rightWidth > 0 ? 28.0 : 0.0;
-    final width = leftWidth + gap + rightWidth;
-
-    return width <= 0 ? 1 : width;
-  }
-
-  double _seatLayoutHeight() {
-    final leftGroups = _buildColumnGroups(widget.seatLayout.leftColumns);
-    final rightGroups = _buildColumnGroups(widget.seatLayout.rightColumns);
-    final groupCount = leftGroups.length > rightGroups.length
-        ? leftGroups.length
-        : rightGroups.length;
-
-    var height = 0.0;
-    for (var index = 0; index < groupCount; index++) {
-      final leftRows = index < leftGroups.length ? leftGroups[index].length : 0;
-      final rightRows = index < rightGroups.length
-          ? rightGroups[index].length
-          : 0;
-      final rowCount = leftRows > rightRows ? leftRows : rightRows;
-      height += rowCount * 60.0 + 16.0;
-    }
-
-    return height <= 0 ? 1 : height;
-  }
-
-  int _maxRows(List<StaySeatLayoutColumn> columns) {
-    var maxRows = 0;
-    for (final column in columns) {
-      if (column.maxRow > maxRows) {
-        maxRows = column.maxRow;
+      if (_hasRightMainBlock(pair)) {
+        items.add(
+          Positioned(
+            left: rightX,
+            top: y,
+            child: _buildSeatTable(context, pair, 10, _rightSeatCount(pair)),
+          ),
+        );
       }
     }
-    return maxRows;
-  }
 
-  List<List<StaySeatLayoutColumn>> _buildColumnGroups(
-    List<StaySeatLayoutColumn> columns,
-  ) {
-    final groups = <List<StaySeatLayoutColumn>>[];
+    final secondaryTop = _secondaryTop;
 
-    for (int i = 0; i < columns.length; i += 2) {
-      groups.add(
-        columns.sublist(i, i + 2 > columns.length ? columns.length : i + 2),
+    for (var index = 0; index < secondaryRowPairs.length; index++) {
+      final pair = secondaryRowPairs[index];
+      items.add(
+        Positioned(
+          left: rightX,
+          top: secondaryTop + index * (_seatHeight * 2 + _secondaryGroupGapY),
+          child: _buildSeatTable(context, pair, 1, _leftSeatCount(pair)),
+        ),
       );
     }
 
-    return groups;
+    if (_hasConfiguredColumn('U')) {
+      items.add(
+        Positioned(left: rightX, top: _uTop, child: _buildUSeatRow(context)),
+      );
+    }
+
+    for (var index = 0; index < extraRowPairs.length; index++) {
+      final pair = extraRowPairs[index];
+      items.add(
+        Positioned(
+          left: 0,
+          top: _extraTop + index * (_seatHeight * 2 + _groupGapY),
+          child: _buildSeatTable(context, pair, 1, _leftSeatCount(pair)),
+        ),
+      );
+    }
+
+    return Stack(clipBehavior: Clip.none, children: items);
   }
 
-  Widget _buildColumnGroup(
+  double _seatLayoutWidth() {
+    final width = _mainBlockWidth + _mainGroupGapX + _rightBlockWidth;
+    final extraWidth = _extraRowPairs.fold<double>(0, (maxWidth, pair) {
+      final width = _seatWidth * _leftSeatCount(pair);
+      return width > maxWidth ? width : maxWidth;
+    });
+
+    final maxWidth = width > extraWidth ? width : extraWidth;
+    return maxWidth <= 0 ? 1 : maxWidth;
+  }
+
+  double _seatLayoutHeight() {
+    final mainBottom = _mainBottom;
+    final secondaryBottom = _secondaryRowPairs.isEmpty
+        ? mainBottom
+        : _secondaryTop +
+              _secondaryRowPairs.length * (_seatHeight * 2) +
+              (_secondaryRowPairs.length - 1) * _secondaryGroupGapY;
+    final uBottom = _hasConfiguredColumn('U')
+        ? _uTop + _seatHeight
+        : secondaryBottom;
+    final extraBottom = _extraRowPairs.isEmpty
+        ? uBottom
+        : _extraTop +
+              _extraRowPairs.length * (_seatHeight * 2) +
+              (_extraRowPairs.length - 1) * _groupGapY;
+
+    return extraBottom <= 0 ? 1 : extraBottom;
+  }
+
+  static const List<List<String>> _defaultMainRowPairs = [
+    ['A', 'B'],
+    ['C', 'D'],
+    ['E', 'F'],
+    ['G', 'H'],
+    ['I', 'J'],
+    ['K', 'L'],
+    ['M', 'N'],
+  ];
+
+  static const List<List<String>> _defaultSecondaryRowPairs = [
+    ['O', 'P'],
+    ['Q', 'R'],
+    ['S', 'T'],
+  ];
+
+  static const Set<String> _knownSeatColumns = {
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+  };
+
+  List<List<String>> get _mainRowPairs =>
+      _configuredPairs(_defaultMainRowPairs);
+
+  List<List<String>> get _secondaryRowPairs =>
+      _configuredPairs(_defaultSecondaryRowPairs);
+
+  List<List<String>> get _extraRowPairs {
+    final names = _configuredColumnNames
+        .where((name) => !_knownSeatColumns.contains(name))
+        .toList();
+
+    return _chunkPairs(names);
+  }
+
+  double get _mainBlockWidth => _seatWidth * 9;
+
+  double get _rightBlockWidth {
+    final widths = <double>[
+      for (final pair in _mainRowPairs) _seatWidth * _rightSeatCount(pair),
+      for (final pair in _secondaryRowPairs) _seatWidth * _leftSeatCount(pair),
+      if (_hasConfiguredColumn('U')) _uSeatRowWidth,
+    ];
+
+    return widths.fold<double>(0, (maxWidth, width) {
+      return width > maxWidth ? width : maxWidth;
+    });
+  }
+
+  double get _mainBottom {
+    if (_mainRowPairs.isEmpty) {
+      return 0;
+    }
+
+    return _mainGroupY(_mainRowPairs.length - 1) + _seatHeight * 2;
+  }
+
+  double get _secondaryTop {
+    if (_secondaryRowPairs.isEmpty && !_hasConfiguredColumn('U')) {
+      return _mainBottom;
+    }
+
+    return _mainBottom + _secondarySectionGapY;
+  }
+
+  double get _uTop {
+    if (_secondaryRowPairs.isEmpty) {
+      return _secondaryTop;
+    }
+
+    return _secondaryTop +
+        _secondaryRowPairs.length * (_seatHeight * 2) +
+        (_secondaryRowPairs.length - 1) * _secondaryGroupGapY +
+        _secondaryGroupGapY;
+  }
+
+  double get _extraTop {
+    final uBottom = _hasConfiguredColumn('U') ? _uTop + _seatHeight : _uTop;
+    return uBottom + (_extraRowPairs.isEmpty ? 0 : _secondaryGroupGapY);
+  }
+
+  double get _uSeatRowWidth {
+    final seatCount = _configuredMaxRow('U');
+    if (seatCount <= 0) {
+      return 0;
+    }
+
+    return seatCount * _seatWidth + (seatCount - 1) * _uSeatGapX;
+  }
+
+  double _mainGroupY(int index) => index * (_seatHeight * 2 + _groupGapY);
+
+  bool _hasRightMainBlock(List<String> pair) {
+    return _rightSeatCount(pair) > 0;
+  }
+
+  int _leftSeatCount(List<String> pair) {
+    final maxRows = pair.map(_configuredMaxRow).fold<int>(0, (a, b) {
+      return a > b ? a : b;
+    });
+
+    return maxRows >= 9 ? 9 : maxRows;
+  }
+
+  int _rightSeatCount(List<String> pair) {
+    final maxRows = pair.map(_configuredMaxRow).fold<int>(0, (a, b) {
+      return a > b ? a : b;
+    });
+
+    return maxRows > 9 ? maxRows - 9 : 0;
+  }
+
+  int _configuredMaxRow(String columnName) {
+    for (final column in [
+      ...widget.seatLayout.leftColumns,
+      ...widget.seatLayout.rightColumns,
+    ]) {
+      if (column.name == columnName) {
+        return column.maxRow;
+      }
+    }
+
+    return 0;
+  }
+
+  bool _hasConfiguredColumn(String columnName) {
+    return _configuredMaxRow(columnName) > 0;
+  }
+
+  List<String> get _configuredColumnNames {
+    final names = {
+      for (final column in [
+        ...widget.seatLayout.leftColumns,
+        ...widget.seatLayout.rightColumns,
+      ])
+        if (column.maxRow > 0) column.name,
+    }.toList();
+
+    names.sort(_compareSeatColumns);
+    return names;
+  }
+
+  List<List<String>> _configuredPairs(List<List<String>> defaults) {
+    return defaults
+        .map((pair) => pair.where(_hasConfiguredColumn).toList())
+        .where((pair) => pair.isNotEmpty)
+        .toList();
+  }
+
+  List<List<String>> _chunkPairs(List<String> names) {
+    final pairs = <List<String>>[];
+
+    for (var index = 0; index < names.length; index += 2) {
+      pairs.add(
+        names.sublist(
+          index,
+          index + 2 > names.length ? names.length : index + 2,
+        ),
+      );
+    }
+
+    return pairs;
+  }
+
+  int _compareSeatColumns(String a, String b) {
+    return _columnIndex(a).compareTo(_columnIndex(b));
+  }
+
+  int _columnIndex(String column) {
+    var value = 0;
+    for (final codeUnit in column.codeUnits) {
+      value = value * 26 + codeUnit - 'A'.codeUnitAt(0) + 1;
+    }
+    return value;
+  }
+
+  Widget _buildSeatTable(
     BuildContext context,
-    List<StaySeatLayoutColumn> group,
+    List<String> rows,
+    int startNumber,
+    int count,
   ) {
     return Column(
-      children: group
-          .map(
-            (column) =>
-                _buildSeatRow(context, SeatUtils.generateColumn(column)),
-          )
-          .toList(),
+      children: rows.map((rowName) {
+        final maxRow = _configuredMaxRow(rowName);
+        final effectiveCount = maxRow < startNumber
+            ? 0
+            : count.clamp(0, maxRow - startNumber + 1);
+        final seats = List.generate(
+          effectiveCount,
+          (index) => '$rowName${startNumber + index}',
+        );
+
+        return Row(
+          children: seats.map((seat) => _buildSeatItem(context, seat)).toList(),
+        );
+      }).toList(),
     );
   }
 
-  Widget _buildSeatRow(BuildContext context, List<String> row) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Row(
-        children: List.generate(row.length, (index) {
-          final seat = row[index];
-          return Padding(
-            padding: const EdgeInsets.only(
-              left: 3,
-              right: 3,
-              top: 3,
-              bottom: 3,
-            ),
-            child: _buildSeatItem(context, seat),
-          );
-        }),
-      ),
+  Widget _buildUSeatRow(BuildContext context) {
+    final seatCount = _configuredMaxRow('U');
+
+    return Row(
+      children: List.generate(seatCount, (index) {
+        return Padding(
+          padding: EdgeInsets.only(
+            right: index == seatCount - 1 ? 0 : _uSeatGapX,
+          ),
+          child: _buildSeatItem(context, 'U${index + 1}'),
+        );
+      }),
     );
   }
 
@@ -356,6 +578,9 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
     Color backgroundColor;
     Color textColor;
 
+    final seatColumn = RegExp(r'^([A-Z]+)').firstMatch(seat)?.group(1) ?? '';
+    final isSecondarySeat = _columnIndex(seatColumn) >= _columnIndex('O');
+
     if (isSelected || isMine) {
       backgroundColor = colorTheme.coreBrandPrimary;
       textColor = colorTheme.solidWhite;
@@ -363,11 +588,14 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
       backgroundColor = colorTheme.componentsInteractivePressed;
       textColor = colorTheme.contentStandardPrimary;
     } else if (!isActive) {
-      backgroundColor = colorTheme.componentsInteractivePressed;
+      backgroundColor = colorTheme.componentsFillStandardPrimary;
       textColor = colorTheme.contentStandardPrimary;
+    } else if (isSecondarySeat) {
+      backgroundColor = const Color(0xFFCDEFFF);
+      textColor = Colors.black;
     } else {
-      backgroundColor = colorTheme.contentStandardSecondary;
-      textColor = colorTheme.contentInvertedPrimary;
+      backgroundColor = colorTheme.solidWhite;
+      textColor = Colors.black;
     }
 
     final displayText = isTaken
@@ -379,11 +607,11 @@ class _SeatSelectionWidgetState extends State<SeatSelectionWidget> {
           ? () => _onSeatTapped(seat)
           : null,
       child: Container(
-        width: 50,
-        height: 50,
+        width: _seatWidth,
+        height: _seatHeight,
         decoration: BoxDecoration(
           color: backgroundColor,
-          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: colorTheme.lineOutline, width: 0.8),
         ),
         child: Center(
           child: Text(
