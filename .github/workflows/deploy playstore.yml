@@ -62,8 +62,19 @@ jobs:
           channel: stable
           cache: true
           flutter-version-file: pubspec.yaml
+          
       - run: flutter pub get
-      - run: flutter build appbundle --release
+
+      - name: Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+        with:
+          cache: true
+
+      - name: Create Shorebird Android release
+        run: shorebird release android --artifact aab
+        env:
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+
       - run: fastlane release
         working-directory: ./android
 

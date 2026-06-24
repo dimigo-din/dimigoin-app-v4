@@ -1,28 +1,23 @@
-name: Deploy Playstore Beta
+name: Shorebird Patch Android Beta
 
 on:
-  workflow_call:
   workflow_dispatch:
 
 jobs:
-  deploy-playstore-beta:
-    name: Deploy Playstore Beta
+  patch-android-beta:
+    name: Shorebird Patch Android Beta
     runs-on: ubuntu-latest
     environment: beta
 
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-        with:
-          ref: 'beta'
+
       - name: Add Android keystore
         run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/dimigoin-keystore.jks
 
       - name: Add Android key properties
         run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" > android/key.properties
-
-      - name: Add Android Service Account
-        run: echo "${{ secrets.PLAY_STORE_CREDENTIAL }}" | base64 --decode > android/google-play-secret.json
 
       - name: Add Google Service Json
         run: echo "${{ secrets.ANDROID_GOOGLE_SERVICE_JSON }}" | base64 --decode > android/app/google-services.json
@@ -31,26 +26,12 @@ jobs:
         run: echo "${{ secrets.FIREBASE_OPTIONS }}" > lib/firebase_options.dart
 
       - name: make env directory
-        run: mkdir env
+        run: mkdir -p env
 
       - name: add .env file
         run: echo "${{ secrets.ENV }}" > env/.env
 
-      - name: Check environment
-        run: |
-          echo "Android app directory:"
-          ls -la android/app/ | grep -E "dimigoin-keystore.jks|google-services.json"
-          echo ""
-          echo "Android directory:"
-          ls -la android/ | grep -E "key.properties|google-play-secret.json"
-          echo ""
-          echo "Firebase options:"
-          ls -la lib/firebase_options.dart
-          echo ""
-          echo "ENV directory:"
-          ls -la env/
-      
-      - name: Setup Java to compile the Android project
+      - name: Setup Java
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
@@ -63,17 +44,21 @@ jobs:
           cache: true
           flutter-version-file: pubspec.yaml
 
-      - run: flutter pub get
-
       - name: Setup Shorebird
         uses: shorebirdtech/setup-shorebird@v1
         with:
           cache: true
 
-      - name: Create Shorebird Android beta release
-        run: shorebird release android --artifact aab
+      - run: flutter pub get
+
+      - name: Read version from pubspec.yaml
+        id: app_version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Patch target version: $VERSION"
+
+      - name: Create Shorebird Android patch
+        run: shorebird patch android --release-version=${{ steps.app_version.outputs.version }}
         env:
           SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
-
-      - run: fastlane beta
-        working-directory: ./android
