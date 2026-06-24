@@ -69,5 +69,5 @@ app.*.map.json
 # fastlane
 /android/google-play-secret.json
 
-# FVM Version Cache
-.fvm/
+.fvm
+.fvmrc
