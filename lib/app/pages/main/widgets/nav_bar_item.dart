@@ -31,7 +31,7 @@ class NavBarItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               SvgPicture.asset(
-                item.iconUrl,
+                isSelected ? item.filledIconUrl : item.iconUrl,
                 width: 28,
                 height: 28,
                 colorFilter: ColorFilter.mode(
