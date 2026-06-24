@@ -1,12 +1,15 @@
 default_platform(:android)
 
 platform :android do
+  aab_path = "../build/app/outputs/bundle/release/app-release.aab"
+
   desc "Beta (Internal Test)"
   lane :beta do
-    sh "flutter build appbundle --release"
+    UI.user_error!("Shorebird AAB not found at #{aab_path}") unless File.exist?(aab_path)
+
     upload_to_play_store(
       track: 'internal',
-      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      aab: aab_path,
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true
@@ -15,10 +18,11 @@ platform :android do
 
   desc "Production Release"
   lane :release do
-    sh "flutter build appbundle --release"
+    UI.user_error!("Shorebird AAB not found at #{aab_path}") unless File.exist?(aab_path)
+
     upload_to_play_store(
       track: 'production',
-      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      aab: aab_path,
       skip_upload_metadata: true,
       skip_upload_images: true,
       skip_upload_screenshots: true

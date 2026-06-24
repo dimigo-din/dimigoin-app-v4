@@ -65,11 +65,31 @@ class MainPage extends StatelessWidget {
   final MainPageController controller = Get.put(MainPageController());
 
   final List<NavItemData> navItems = const [
-    NavItemData('assets/icons/menu/home.svg', '홈'),
-    NavItemData('assets/icons/menu/meal.svg', '급식'),
-    NavItemData('assets/icons/menu/office.svg', '생활관'),
-    NavItemData('assets/icons/menu/calendar.svg', '일정'),
-    NavItemData('assets/icons/menu/others.svg', '더보기'),
+    NavItemData(
+      'assets/icons/menu/home.svg',
+      'assets/icons/menu/fill/home.svg',
+      '홈',
+    ),
+    NavItemData(
+      'assets/icons/menu/meal.svg',
+      'assets/icons/menu/fill/meal.svg',
+      '급식',
+    ),
+    NavItemData(
+      'assets/icons/menu/office.svg',
+      'assets/icons/menu/fill/office.svg',
+      '생활관',
+    ),
+    NavItemData(
+      'assets/icons/menu/calendar.svg',
+      'assets/icons/menu/fill/calendar.svg',
+      '일정',
+    ),
+    NavItemData(
+      'assets/icons/menu/my.svg',
+      'assets/icons/menu/fill/my.svg',
+      '내 정보',
+    ),
   ];
 
   final List<Widget Function()> pageBuilders = [
@@ -132,6 +152,7 @@ class MainPage extends StatelessWidget {
 
 class NavItemData {
   final String iconUrl;
+  final String filledIconUrl;
   final String label;
-  const NavItemData(this.iconUrl, this.label);
+  const NavItemData(this.iconUrl, this.filledIconUrl, this.label);
 }
