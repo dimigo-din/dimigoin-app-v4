@@ -27,7 +27,7 @@ platform :ios do
 
     shorebird_release(
       platform: "ios",
-      args: "--flutter-version=#{flutter_version} --export-method=app-store"
+      args: "--flutter-version=#{flutter_version}"
     )
   end
 
