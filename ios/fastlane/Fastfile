@@ -21,12 +21,13 @@ platform :ios do
       readonly: true
     )
 
-    pubspec = YAML.safe_load(File.read("../pubspec.yaml"))
+    project_root = File.expand_path("../..", __dir__)
+    pubspec = YAML.safe_load(File.read(File.join(project_root, "pubspec.yaml")))
     flutter_version = pubspec.dig("environment", "flutter").to_s
     UI.user_error!("Flutter version is not pinned in pubspec.yaml") if flutter_version.empty?
 
     sh(
-      "cd .. && shorebird release ios " \
+      "cd #{Shellwords.escape(project_root)} && shorebird release ios " \
       "--flutter-version=#{Shellwords.escape(flutter_version)} " \
       "--export-method=app-store"
     )
