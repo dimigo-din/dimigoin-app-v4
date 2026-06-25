@@ -1,4 +1,4 @@
-require "shellwords"
+require "yaml"
 
 opt_out_usage
 default_platform(:ios)
@@ -14,56 +14,58 @@ platform :ios do
     )
   end
 
-  private_lane :prepare_shorebird_release do
+  private_lane :create_shorebird_release do
     match(
       type: "appstore",
       readonly: true
     )
 
-    sh("cd .. && shorebird release ios --export-method=app-store")
+    project_root = File.expand_path("../..", __dir__)
+    pubspec = YAML.safe_load(File.read(File.join(project_root, "pubspec.yaml")))
+    flutter_version = pubspec.dig("environment", "flutter").to_s
+    UI.user_error!("Flutter version is not pinned in pubspec.yaml") if flutter_version.empty?
+
+    shorebird_release(
+      platform: "ios",
+      args: "--flutter-version=#{flutter_version}"
+    )
   end
 
   private_lane :upload_shorebird_dsyms do
-    runner_dsym = Dir["../build/ios/**/*.xcarchive/dSYMs/Runner.app.dSYM"].first ||
-                  Dir["../build/ios/**/Runner.app.dSYM"].first
-    UI.user_error!("Runner.app.dSYM not found under ../build/ios") unless runner_dsym
+    project_root = File.expand_path("../..", __dir__)
+    runner_dsym = Dir[File.join(project_root, "build/ios/**/*.xcarchive/dSYMs/Runner.app.dSYM")].first ||
+                  Dir[File.join(project_root, "build/ios/**/Runner.app.dSYM")].first
+    UI.user_error!("Runner.app.dSYM not found under build/ios") unless runner_dsym
 
     dsyms_directory = File.dirname(runner_dsym)
-    upload_symbols = "../ios/Pods/FirebaseCrashlytics/upload-symbols"
-    google_service_info = "../ios/Runner/GoogleService-Info.plist"
+    upload_symbols = File.join(project_root, "ios/Pods/FirebaseCrashlytics/upload-symbols")
+    google_service_info = File.join(project_root, "ios/Runner/GoogleService-Info.plist")
 
-    sh("dwarfdump --uuid #{Shellwords.escape(runner_dsym)}")
+    sh("dwarfdump", "--uuid", runner_dsym)
     sh(
-      "#{Shellwords.escape(upload_symbols)} " \
-      "-gsp #{Shellwords.escape(google_service_info)} " \
-      "-p ios #{Shellwords.escape(dsyms_directory)}"
+      upload_symbols,
+      "-gsp", google_service_info,
+      "-p", "ios",
+      dsyms_directory
     )
   end
 
   desc "Deploy beta build to TestFlight"
   lane :beta do
-    prepare_shorebird_release
+    create_shorebird_release
     upload_shorebird_dsyms
 
-    ipa_path = Dir["../build/ios/ipa/*.ipa"].first
-    UI.user_error!("Shorebird IPA not found in ../build/ios/ipa") unless ipa_path
-
     upload_to_testflight(
-      ipa: ipa_path,
       skip_waiting_for_build_processing: true
     )
   end
 
   desc "Deploy production build to App Store"
   lane :prod do
-    prepare_shorebird_release
+    create_shorebird_release
     upload_shorebird_dsyms
 
-    ipa_path = Dir["../build/ios/ipa/*.ipa"].first
-    UI.user_error!("Shorebird IPA not found in ../build/ios/ipa") unless ipa_path
-
     upload_to_app_store(
-      ipa: ipa_path,
       force: true,
       submit_for_review: false,
       automatic_release: false,
