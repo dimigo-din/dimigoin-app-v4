@@ -1,3 +1,5 @@
+require "shellwords"
+
 opt_out_usage
 default_platform(:ios)
 
@@ -12,44 +14,56 @@ platform :ios do
     )
   end
 
-  desc "Deploy beta build to TestFlight"
-  lane :beta do
+  private_lane :prepare_shorebird_release do
     match(
       type: "appstore",
       readonly: true
     )
 
-    build_app(
-      workspace: "Runner.xcworkspace",
-      scheme: "Runner",
-      export_method: "app-store",
-      export_options: {
-        signingStyle: "manual"
-      }
+    sh("cd .. && shorebird release ios --export-method=app-store")
+  end
+
+  private_lane :upload_shorebird_dsyms do
+    runner_dsym = Dir["../build/ios/**/*.xcarchive/dSYMs/Runner.app.dSYM"].first ||
+                  Dir["../build/ios/**/Runner.app.dSYM"].first
+    UI.user_error!("Runner.app.dSYM not found under ../build/ios") unless runner_dsym
+
+    dsyms_directory = File.dirname(runner_dsym)
+    upload_symbols = "../ios/Pods/FirebaseCrashlytics/upload-symbols"
+    google_service_info = "../ios/Runner/GoogleService-Info.plist"
+
+    sh("dwarfdump --uuid #{Shellwords.escape(runner_dsym)}")
+    sh(
+      "#{Shellwords.escape(upload_symbols)} " \
+      "-gsp #{Shellwords.escape(google_service_info)} " \
+      "-p ios #{Shellwords.escape(dsyms_directory)}"
     )
+  end
+
+  desc "Deploy beta build to TestFlight"
+  lane :beta do
+    prepare_shorebird_release
+    upload_shorebird_dsyms
+
+    ipa_path = Dir["../build/ios/ipa/*.ipa"].first
+    UI.user_error!("Shorebird IPA not found in ../build/ios/ipa") unless ipa_path
 
     upload_to_testflight(
+      ipa: ipa_path,
       skip_waiting_for_build_processing: true
     )
   end
 
   desc "Deploy production build to App Store"
   lane :prod do
-    match(
-      type: "appstore",
-      readonly: true
-    )
+    prepare_shorebird_release
+    upload_shorebird_dsyms
 
-    build_app(
-      workspace: "Runner.xcworkspace",
-      scheme: "Runner",
-      export_method: "app-store",
-      export_options: {
-        signingStyle: "manual"
-      }
-    )
+    ipa_path = Dir["../build/ios/ipa/*.ipa"].first
+    UI.user_error!("Shorebird IPA not found in ../build/ios/ipa") unless ipa_path
 
     upload_to_app_store(
+      ipa: ipa_path,
       force: true,
       submit_for_review: false,
       automatic_release: false,
