@@ -22,7 +22,10 @@ platform :ios do
 
     project_root = File.expand_path("../..", __dir__)
     pubspec = YAML.safe_load(File.read(File.join(project_root, "pubspec.yaml")))
-    flutter_version = pubspec.dig("environment", "flutter").to_s
+    flutter_version = ENV.fetch(
+      "FLUTTER_VERSION",
+      pubspec.dig("environment", "flutter").to_s
+    )
     UI.user_error!("Flutter version is not pinned in pubspec.yaml") if flutter_version.empty?
 
     shorebird_release(

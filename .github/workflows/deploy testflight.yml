@@ -46,6 +46,9 @@ jobs:
           cache: true
           flutter-version-file: pubspec.yaml
 
+      - name: Read Flutter version
+        run: echo "FLUTTER_VERSION=$(awk '$1 == \"flutter:\" { print $2; exit }' pubspec.yaml)" >> "$GITHUB_ENV"
+
       - name: Setup Shorebird
         uses: shorebirdtech/setup-shorebird@v1
         with:
