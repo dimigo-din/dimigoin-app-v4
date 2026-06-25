@@ -77,6 +77,12 @@ class OthersPage extends GetView<OthersPageController> {
               onTap: () =>
                   controller.launchMenuUrl("https://pf.kakao.com/_fxhZen/chat"),
             ),
+            SizedBox(height: 10),
+            _othersPageItem(
+              title: "PATCH TEST",
+              onTap: () =>
+                  controller.launchMenuUrl("https://pf.kakao.com/_fxhZen/chat"),
+            ),
             const Spacer(),
             Padding(
               padding: EdgeInsets.only(bottom: DFSpacing.spacing400),
