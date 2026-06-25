@@ -1,4 +1,5 @@
 require "shellwords"
+require "yaml"
 
 opt_out_usage
 default_platform(:ios)
@@ -20,7 +21,15 @@ platform :ios do
       readonly: true
     )
 
-    sh("cd .. && shorebird release ios --export-method=app-store")
+    pubspec = YAML.safe_load(File.read("../pubspec.yaml"))
+    flutter_version = pubspec.dig("environment", "flutter").to_s
+    UI.user_error!("Flutter version is not pinned in pubspec.yaml") if flutter_version.empty?
+
+    sh(
+      "cd .. && shorebird release ios " \
+      "--flutter-version=#{Shellwords.escape(flutter_version)} " \
+      "--export-method=app-store"
+    )
   end
 
   private_lane :upload_shorebird_dsyms do
