@@ -65,7 +65,7 @@ jobs:
 
       - name: Read Flutter version
         run: |
-          FLUTTER_VERSION=$(awk '$1 == "flutter:" { print $2; exit }' pubspec.yaml)
+          FLUTTER_VERSION=$(flutter --version --machine | jq -r '.frameworkVersion')
           test -n "$FLUTTER_VERSION"
           echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> "$GITHUB_ENV"
 
