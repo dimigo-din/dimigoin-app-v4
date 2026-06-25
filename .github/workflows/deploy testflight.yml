@@ -45,11 +45,14 @@ jobs:
           channel: stable
           cache: true
           flutter-version-file: pubspec.yaml
-      
+
+      - name: Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+        with:
+          cache: true
+
       - run: flutter pub get
-      
-      - run: flutter build ios --release --no-codesign
-      
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -57,16 +60,6 @@ jobs:
           bundler-cache: true
           working-directory: ios
 
-      - name: Debug iOS build artifacts
-        run: |
-          pwd
-          ls -la
-          ls -la build || true
-          ls -la build/ios || true
-          find . -name "*.dSYM" || true
-          find . -name "*.dSYM.zip" || true
-          find . -name "*.xcarchive" || true
-      
       - name: Deploy to TestFlight
         run: bundle exec fastlane beta
         working-directory: ./ios
@@ -76,3 +69,4 @@ jobs:
           APPSTORECONNECT_API_KEY_ID: ${{ secrets.APPSTORECONNECT_API_KEY_ID }}
           APPSTORECONNECT_API_ISSUER_ID: ${{ secrets.APPSTORECONNECT_API_ISSUER_ID }}
           APPSTORECONNECT_API_KEY: ${{ secrets.APPSTORECONNECT_API_KEY }}
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}

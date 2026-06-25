@@ -45,18 +45,21 @@ jobs:
           channel: stable
           cache: true
           flutter-version-file: pubspec.yaml
-      
+
+      - name: Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+        with:
+          cache: true
+
       - run: flutter pub get
-      
-      - run: flutter build ios --release --no-codesign
-      
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
           bundler-cache: true
           working-directory: ios
-      
+
       - name: Deploy to App Store
         run: bundle exec fastlane prod
         working-directory: ./ios
@@ -66,12 +69,4 @@ jobs:
           APPSTORECONNECT_API_KEY_ID: ${{ secrets.APPSTORECONNECT_API_KEY_ID }}
           APPSTORECONNECT_API_ISSUER_ID: ${{ secrets.APPSTORECONNECT_API_ISSUER_ID }}
           APPSTORECONNECT_API_KEY: ${{ secrets.APPSTORECONNECT_API_KEY }}
-
-      - name: Upload dSYM to Crashlytics
-        if: always()
-        run: |
-          unzip -o ios/Runner.app.dSYM.zip -d ios/dSYMs
-          ios/Pods/FirebaseCrashlytics/upload-symbols \
-            -gsp ios/Runner/GoogleService-Info.plist \
-            -p ios \
-            ios/dSYMs
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
