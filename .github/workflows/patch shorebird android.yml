@@ -44,6 +44,9 @@ jobs:
           cache: true
           flutter-version-file: pubspec.yaml
 
+      - name: Read Flutter version
+        run: echo "FLUTTER_VERSION=$(awk '$1 == \"flutter:\" { print $2; exit }' pubspec.yaml)" >> "$GITHUB_ENV"
+
       - name: Setup Shorebird
         uses: shorebirdtech/setup-shorebird@v1
         with:
@@ -59,6 +62,6 @@ jobs:
           echo "Patch target version: $VERSION"
 
       - name: Create Shorebird Android patch
-        run: shorebird patch android --release-version=${{ steps.app_version.outputs.version }}
+        run: shorebird patch android --flutter-version="$FLUTTER_VERSION" --release-version=${{ steps.app_version.outputs.version }}
         env:
           SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
