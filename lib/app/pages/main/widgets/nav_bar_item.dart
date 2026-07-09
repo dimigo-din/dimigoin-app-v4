@@ -1,7 +1,7 @@
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:vector_graphics/vector_graphics.dart';
 import '../page.dart';
 
 class NavBarItem extends StatelessWidget {
@@ -30,8 +30,8 @@ class NavBarItem extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(
-                isSelected ? item.filledIconUrl : item.iconUrl,
+              VectorGraphic(
+                loader: isSelected ? item.filledIcon : item.icon,
                 width: 28,
                 height: 28,
                 colorFilter: ColorFilter.mode(
