@@ -14,6 +14,7 @@ import 'package:dimigoin_app_v4/app/pages/home/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/dorm/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/calendar/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/others/binding.dart';
+import 'package:vector_graphics/vector_graphics_compat.dart';
 
 import 'widgets/bottom_nav_bar.dart';
 
@@ -66,28 +67,28 @@ class MainPage extends StatelessWidget {
 
   final List<NavItemData> navItems = const [
     NavItemData(
-      'assets/icons/menu/home.svg',
-      'assets/icons/menu/fill/home.svg',
+      AssetBytesLoader('assets/icons/menu/home.svg'),
+      AssetBytesLoader('assets/icons/menu/fill/home.svg'),
       '홈',
     ),
     NavItemData(
-      'assets/icons/menu/meal.svg',
-      'assets/icons/menu/fill/meal.svg',
+      AssetBytesLoader('assets/icons/menu/meal.svg'),
+      AssetBytesLoader('assets/icons/menu/fill/meal.svg'),
       '급식',
     ),
     NavItemData(
-      'assets/icons/menu/office.svg',
-      'assets/icons/menu/fill/office.svg',
+      AssetBytesLoader('assets/icons/menu/office.svg'),
+      AssetBytesLoader('assets/icons/menu/fill/office.svg'),
       '생활관',
     ),
     NavItemData(
-      'assets/icons/menu/calendar.svg',
-      'assets/icons/menu/fill/calendar.svg',
+      AssetBytesLoader('assets/icons/menu/calendar.svg'),
+      AssetBytesLoader('assets/icons/menu/fill/calendar.svg'),
       '일정',
     ),
     NavItemData(
-      'assets/icons/menu/my.svg',
-      'assets/icons/menu/fill/my.svg',
+      AssetBytesLoader('assets/icons/menu/my.svg'),
+      AssetBytesLoader('assets/icons/menu/fill/my.svg'),
       '내 정보',
     ),
   ];
@@ -151,8 +152,8 @@ class MainPage extends StatelessWidget {
 }
 
 class NavItemData {
-  final String iconUrl;
-  final String filledIconUrl;
+  final AssetBytesLoader icon;
+  final AssetBytesLoader filledIcon;
   final String label;
-  const NavItemData(this.iconUrl, this.filledIconUrl, this.label);
+  const NavItemData(this.icon, this.filledIcon, this.label);
 }
