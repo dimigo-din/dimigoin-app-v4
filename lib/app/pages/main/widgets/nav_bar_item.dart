@@ -30,16 +30,28 @@ class NavBarItem extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              VectorGraphic(
-                loader: isSelected ? item.filledIcon : item.icon,
-                width: 28,
-                height: 28,
-                colorFilter: ColorFilter.mode(
-                  isSelected
-                      ? colorTheme.coreBrandPrimary
-                      : colorTheme.coreBrandSecondary,
-                  BlendMode.srcIn,
-                ),
+              IndexedStack(
+                index: isSelected ? 1 : 0,
+                children: [
+                  VectorGraphic(
+                    loader: item.icon,
+                    width: 28,
+                    height: 28,
+                    colorFilter: ColorFilter.mode(
+                      colorTheme.coreBrandSecondary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  VectorGraphic(
+                    loader: item.filledIcon,
+                    width: 28,
+                    height: 28,
+                    colorFilter: ColorFilter.mode(
+                      colorTheme.coreBrandPrimary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 4),
               Text(
