@@ -32,12 +32,6 @@ jobs:
           cache: true
           flutter-version-file: pubspec.yaml
 
-      - name: Read Flutter version
-        run: |
-          FLUTTER_VERSION=$(flutter --version --machine | jq -r '.frameworkVersion')
-          test -n "$FLUTTER_VERSION"
-          echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> "$GITHUB_ENV"
-
       - name: Setup Shorebird
         uses: shorebirdtech/setup-shorebird@v1
         with:
@@ -53,6 +47,6 @@ jobs:
           echo "Patch target version: $VERSION"
 
       - name: Create Shorebird iOS patch
-        run: shorebird patch ios --flutter-version="$FLUTTER_VERSION" --release-version=${{ steps.app_version.outputs.version }} --no-codesign
+        run: shorebird patch ios --release-version=${{ steps.app_version.outputs.version }} --no-codesign
         env:
           SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
