@@ -6,7 +6,6 @@ part of 'model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-// ignore: unused_element
 UserApply _$UserApplyFromJson(Map<String, dynamic> json) => UserApply(
   stayApply: json['stayApply'] == null
       ? null

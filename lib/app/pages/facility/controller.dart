@@ -1,33 +1,36 @@
+import 'package:dimigoin_app_v4/app/pages/facility/widgets/facility_detail_bottom_sheet.dart';
+import 'package:dimigoin_app_v4/app/routes/routes.dart';
+import 'package:dimigoin_app_v4/app/services/facility/service.dart';
+import 'package:dimigoin_app_v4/app/services/facility/state.dart';
 import 'package:dio/dio.dart';
-import 'package:dimigoin_app_v4/app/provider/api_interface.dart';
 import 'package:dimigoin_app_v4/app/services/facility/model.dart';
-import 'package:dimigoin_app_v4/app/services/facility/repository.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSnackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:image_picker/image_picker.dart';
 
-class RepairPageController extends GetxController {
-  late final FacilityRepository repository;
+class FacilityPageController extends GetxController {
+  final facilityService = FacilityService();
+
   final titleTEC = TextEditingController();
   final bodyTEC = TextEditingController();
   final imagePicker = ImagePicker();
 
-  List<XFile> images = [];
-  List<FacilityReport> reports = [];
-  bool isLoadingReports = true;
-  bool isSubmitting = false;
-  String selectedReportType = 'broken';
-  String? reportLoadError;
-  int selectedTab = 0;
+  final RxList<ReportFacility> reports = <ReportFacility>[].obs;
+  final RxInt selectedIndex = 0.obs;
+
+  final RxList<XFile> images = <XFile>[].obs;
+  final Rx<FacilityReportType> selectedReportType = Rx<FacilityReportType>(
+    FacilityReportType.suggest,
+  );
+  final RxBool isSubmitting = false.obs;
 
   static const _allowedImageExtensions = {'jpg', 'jpeg', 'png'};
 
   @override
   void onInit() {
     super.onInit();
-    repository = FacilityRepository(api: Get.find<ApiProvider>());
-    loadReports();
+    fetchReports();
   }
 
   @override
@@ -37,18 +40,19 @@ class RepairPageController extends GetxController {
     super.onClose();
   }
 
-  Future<void> loadReports() async {
-    isLoadingReports = true;
-    reportLoadError = null;
-    update();
-
+  Future<bool> fetchReports({bool showError = true}) async {
     try {
-      reports = await repository.getReports();
+      await facilityService.fetchReportList();
+
+      final state = facilityService.facilityState as FacilityListSuccess;
+      reports.assignAll(state.facility);
+      return true;
     } catch (_) {
-      reportLoadError = '신청 목록을 불러오지 못했습니다.';
-    } finally {
-      isLoadingReports = false;
-      update();
+      reports.clear();
+      if (showError) {
+        DFSnackBar.error('수리 신청 내역을 불러오는데 실패했습니다.');
+      }
+      return false;
     }
   }
 
@@ -70,26 +74,16 @@ class RepairPageController extends GetxController {
 
     if (validImages.isEmpty) return;
 
-    images = validImages;
-    update();
+    images.value = validImages;
   }
 
   void clearImages() {
-    images = [];
-    update();
+    images.value = [];
   }
 
-  void changeReportType(String value) {
-    selectedReportType = value;
-    update();
-  }
+  Future<void> addReport() async {
+    if (isSubmitting.value) return;
 
-  void changeTab(int index) {
-    selectedTab = index;
-    update();
-  }
-
-  Future<void> submit() async {
     final title = titleTEC.text.trim();
     final body = bodyTEC.text.trim();
 
@@ -98,8 +92,7 @@ class RepairPageController extends GetxController {
       return;
     }
 
-    isSubmitting = true;
-    update();
+    isSubmitting.value = true;
 
     try {
       final files = <MultipartFile>[];
@@ -113,38 +106,28 @@ class RepairPageController extends GetxController {
         );
       }
 
-      await repository.createRepairReport(
+      await facilityService.createRepairReport(
         subject: title,
         body: body,
-        reportType: selectedReportType,
+        reportType: selectedReportType.value.name,
         files: files,
       );
 
       titleTEC.clear();
       bodyTEC.clear();
-      images = [];
-      selectedReportType = 'broken';
-      selectedTab = 1;
-      update();
-
-      await loadReports();
+      images.clear();
+      selectedReportType.value = FacilityReportType.suggest;
+      await fetchReports(showError: false);
       DFSnackBar.success('수리 신청이 접수되었습니다.');
-    } on DioException catch (e) {
-      final statusCode = e.response?.statusCode;
-      final errorCode = e.response?.data is Map
-          ? e.response?.data['code']?.toString()
-          : null;
-      final suffix = errorCode ?? statusCode?.toString();
-
-      DFSnackBar.error(
-        suffix == null ? '수리 신청에 실패했습니다.' : '수리 신청에 실패했습니다. ($suffix)',
-      );
     } catch (_) {
       DFSnackBar.error('수리 신청에 실패했습니다.');
     } finally {
-      isSubmitting = false;
-      update();
+      isSubmitting.value = false;
     }
+  }
+
+  void openReportDetail(ReportFacility report) {
+    FacilityDetailBottomSheet.show(context: Get.context!, report: report);
   }
 
   String _imageExtension(String filename) {
@@ -159,6 +142,6 @@ class RepairPageController extends GetxController {
     if (filename.contains('.') && extension.isNotEmpty) {
       return filename;
     }
-    return 'repair_${DateTime.now().millisecondsSinceEpoch}.$extension';
+    return 'facility_${DateTime.now().millisecondsSinceEpoch}.$extension';
   }
 }

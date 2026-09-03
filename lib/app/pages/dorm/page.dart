@@ -91,17 +91,16 @@ class DormPage extends GetView<DormPageController> {
                     ),
 
                     const SizedBox(height: 10),
-                    if (controller.hiddenEnabled) ...[
-                      Row(
-                        children: [
-                          Expanded(
-                            child: PageButtonWidget(
-                              icon: Icons.construction_outlined,
-                              title: "수리",
-                              onTap: () => controller.openRepairPage(),
-                            ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: PageButtonWidget(
+                            icon: Icons.construction_outlined,
+                            title: "수리",
+                            onTap: () => controller.openFacilityPage(),
                           ),
-
+                        ),
+                        if (controller.hiddenEnabled) ...[
                           const SizedBox(width: 10),
                           Expanded(
                             child: PageButtonWidget(
@@ -112,8 +111,9 @@ class DormPage extends GetView<DormPageController> {
                             ),
                           ),
                         ],
-                      ),
-                    ],
+                      ],
+                    ),
+
                     const SizedBox(height: 10),
                   ],
                 ),

@@ -35,9 +35,11 @@ LaundryTime _$LaundryTimeFromJson(Map<String, dynamic> json) => LaundryTime(
   grade: (json['grade'] as List<dynamic>)
       .map((e) => (e as num).toInt())
       .toList(),
-  assigns: (json['assigns'] as List<dynamic>? ?? <dynamic>[])
-      .map((e) => LaundryMachine.fromJson(e as Map<String, dynamic>))
-      .toList(),
+  assigns:
+      (json['assigns'] as List<dynamic>?)
+          ?.map((e) => LaundryMachine.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
 );
 
 Map<String, dynamic> _$LaundryTimeToJson(LaundryTime instance) =>
