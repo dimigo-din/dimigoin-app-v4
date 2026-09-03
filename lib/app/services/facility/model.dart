@@ -21,7 +21,7 @@ class ReportFacility {
   final FacilityReportType reportType;
   final String subject;
   final String body;
-  final List<File>? file;
+  final List<String>? files;
 
   final DateTime? createdAt;
   final User? user;
@@ -30,11 +30,11 @@ class ReportFacility {
     required this.reportType,
     required this.subject,
     required this.body,
-    this.file,
     this.createdAt,
     this.user,
     this.id,
     this.status,
+    this.files,
   });
 
   factory ReportFacility.fromJson(Map<String, dynamic> json) =>

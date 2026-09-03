@@ -1,3 +1,4 @@
+import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide MultipartFile, FormData;
 
@@ -10,11 +11,14 @@ class FacilityRepository {
 
   FacilityRepository({ApiProvider? api}) : api = api ?? Get.find<ApiProvider>();
 
-  Future<List<ReportFacility>> getReportList() async {
+  Future<List<ReportFacility>> getReportList({int page = 1}) async {
     String url = '/student/facility/list';
 
     try {
-      DFHttpResponse response = await api.get(url);
+      DFHttpResponse response = await api.get(
+        url,
+        queryParameters: {'page': page},
+      );
 
       return (response.data['data'] as List)
           .map((report) => ReportFacility.fromJson(report))
@@ -66,8 +70,12 @@ class FacilityRepository {
           options: Options(contentType: Headers.multipartFormDataContentType),
         );
       }
-    } on DioException {
-      rethrow;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 409) {
+        throw FacilityRateLimitExceededException();
+      } else {
+        rethrow;
+      }
     }
   }
 
@@ -86,6 +94,23 @@ class FacilityRepository {
 
     try {
       await api.post(url, data: payload);
+    } on DioException {
+      rethrow;
+    }
+  }
+
+  Future<List<String>> getReportImg(String reportId) async {
+    String url = '/student/facility/img';
+
+    try {
+      DFHttpResponse response = await api.get(
+        url,
+        queryParameters: {'id': reportId},
+      );
+
+      return (response.data['data'] as List)
+          .map((img) => img as String)
+          .toList();
     } on DioException {
       rethrow;
     }

@@ -78,20 +78,35 @@ class FacilityListPage extends GetView<FacilityPageController> {
                   onRefresh: () async {
                     await controller.fetchReports(showError: false);
                   },
-                  child: ListView.separated(
+                  child: ListView.builder(
+                    controller: controller.reportListScrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: controller.reports.length,
-                    separatorBuilder: (_, _) => const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: DFSpacing.spacing200,
-                      ),
-                    ),
-                    itemBuilder: (_, index) => FacilityReportListItem(
-                      onTap: () => controller.openReportDetail(
-                        controller.reports[index],
-                      ),
-                      report: controller.reports[index],
-                    ),
+                    itemCount:
+                        controller.reports.length +
+                        (controller.isLoadingMoreReports.value ? 1 : 0),
+                    itemBuilder: (_, index) {
+                      if (index == controller.reports.length) {
+                        return Center(
+                          child: SizedBox.square(
+                            dimension: 24,
+                            child: CircularProgressIndicator(
+                              color: colorTheme.coreBrandPrimary,
+                              strokeWidth: 2.5,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: FacilityReportListItem(
+                          onTap: () => controller.openReportDetail(
+                            controller.reports[index],
+                          ),
+                          report: controller.reports[index],
+                        ),
+                      );
+                    },
                   ),
                 );
               }),

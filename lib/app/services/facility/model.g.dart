@@ -11,9 +11,6 @@ ReportFacility _$ReportFacilityFromJson(Map<String, dynamic> json) =>
       reportType: $enumDecode(_$FacilityReportTypeEnumMap, json['report_type']),
       subject: json['subject'] as String,
       body: json['body'] as String,
-      file: (json['file'] as List<dynamic>?)
-          ?.map((e) => File.fromJson(e as Map<String, dynamic>))
-          .toList(),
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -31,7 +28,6 @@ Map<String, dynamic> _$ReportFacilityToJson(ReportFacility instance) =>
       'report_type': _$FacilityReportTypeEnumMap[instance.reportType]!,
       'subject': instance.subject,
       'body': instance.body,
-      'file': instance.file,
       'created_at': instance.createdAt?.toIso8601String(),
       'user': instance.user,
     };

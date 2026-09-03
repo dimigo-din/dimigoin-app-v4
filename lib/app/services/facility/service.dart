@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
+import 'package:dimigoin_app_v4/app/services/facility/model.dart';
 import 'package:get/get.dart';
 
 import 'repository.dart';
@@ -28,17 +30,21 @@ class FacilityService extends GetxController {
 
   Future<void> initialize() async {}
 
-  Future<void> fetchReportList() async {
+  Future<void> fetchReportList({int page = 1}) async {
     _facilityState.value = const FacilityListLoading();
 
     try {
-      final reportList = await repository.getReportList();
+      final reportList = await fetchReportListPage(page: page);
       _facilityState.value = FacilityListSuccess(reportList);
     } catch (e) {
       log('Error fetching report list: $e');
       _facilityState.value = FacilityListFailure(e.toString());
       rethrow;
     }
+  }
+
+  Future<List<ReportFacility>> fetchReportListPage({required int page}) {
+    return repository.getReportList(page: page);
   }
 
   Future<void> fetchReport(String reportId) async {
@@ -67,8 +73,19 @@ class FacilityService extends GetxController {
         reportType: reportType,
         files: files,
       );
+    } on FacilityRateLimitExceededException {
+      rethrow;
     } catch (e) {
       log('Error creating repair report: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<String>> fetchReportImg(String reportId) async {
+    try {
+      return await repository.getReportImg(reportId);
+    } catch (e) {
+      log('Error fetching report images: $e');
       rethrow;
     }
   }
