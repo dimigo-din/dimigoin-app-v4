@@ -88,6 +88,8 @@ class _FacilityImages extends StatelessWidget {
 
   const _FacilityImages({required this.imageFuture});
 
+  static const double _imageHeight = 200;
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).extension<DFTypography>()!;
@@ -97,17 +99,18 @@ class _FacilityImages extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const DFShimmerLoadingBox(
-            height: 200,
+            height: _imageHeight,
             width: double.infinity,
             borderRadius: 8,
           );
         }
 
         if (snapshot.hasError) {
-          return SizedBox(
-            width: double.infinity,
+          return _imageFrame(
+            colorTheme: colorTheme,
             child: Text(
               '신청 내역 이미지를 불러오는데 실패했습니다.',
+              textAlign: TextAlign.center,
               style: textTheme.body.copyWith(
                 color: colorTheme.contentStandardPrimary,
               ),
@@ -117,10 +120,11 @@ class _FacilityImages extends StatelessWidget {
 
         final files = snapshot.data ?? const <String>[];
         if (files.isEmpty) {
-          return SizedBox(
-            width: double.infinity,
+          return _imageFrame(
+            colorTheme: colorTheme,
             child: Text(
               '첨부된 이미지가 없습니다.',
+              textAlign: TextAlign.center,
               style: textTheme.body.copyWith(
                 color: colorTheme.contentStandardPrimary,
               ),
@@ -130,7 +134,7 @@ class _FacilityImages extends StatelessWidget {
 
         return CarouselSlider(
           options: CarouselOptions(
-            height: 200,
+            height: _imageHeight,
             enableInfiniteScroll: false,
             enlargeCenterPage: true,
           ),
@@ -141,18 +145,19 @@ class _FacilityImages extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.symmetric(horizontal: 5),
                   decoration: BoxDecoration(
-                    color: Colors.grey[200],
+                    color: colorTheme.componentsFillStandardPrimary,
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: colorTheme.lineOutline),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.network(
                       fileUrl,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;
                         return const DFShimmerLoadingBox(
-                          height: 200,
+                          height: _imageHeight,
                           width: double.infinity,
                           borderRadius: 8,
                         );
@@ -175,6 +180,21 @@ class _FacilityImages extends StatelessWidget {
           }).toList(),
         );
       },
+    );
+  }
+
+  Widget _imageFrame({required DFColors colorTheme, required Widget child}) {
+    return Container(
+      width: double.infinity,
+      height: _imageHeight,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.all(DFSpacing.spacing300),
+      decoration: BoxDecoration(
+        color: colorTheme.componentsFillStandardPrimary,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colorTheme.lineOutline),
+      ),
+      child: child,
     );
   }
 }
