@@ -25,9 +25,9 @@ class DFAnimatedColumn extends StatefulWidget {
   const DFAnimatedColumn({
     super.key,
     required this.children,
-    this.itemDuration = const Duration(milliseconds: 400),
-    this.itemDelay = const Duration(milliseconds: 100),
-    this.minimumDuration = const Duration(milliseconds: 800),
+    this.itemDuration = const Duration(milliseconds: 300),
+    this.itemDelay = const Duration(milliseconds: 50),
+    this.minimumDuration = const Duration(milliseconds: 500),
     this.curve = Curves.easeOutCubic,
     this.beginOffset = const Offset(0, 0.3),
     this.mainAxisAlignment = MainAxisAlignment.start,
