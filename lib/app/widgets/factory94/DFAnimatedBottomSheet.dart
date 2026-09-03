@@ -1,50 +1,8 @@
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
+import 'package:dimigoin_app_v4/app/widgets/factory94/DFAnimatedColumn.dart';
 import 'package:flutter/material.dart';
 
-class StaggeredAnimationItem extends StatelessWidget {
-  final Widget child;
-  final int index;
-  final Animation<double> animation;
-
-  const StaggeredAnimationItem({
-    super.key,
-    required this.child,
-    required this.index,
-    required this.animation,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    const itemDuration = 400;
-    const itemDelay = 100;
-    const sheetDuration = 800;
-
-    final startTime = (index * itemDelay) / sheetDuration;
-    final endTime = startTime + (itemDuration / sheetDuration);
-
-    final curvedAnimation = CurvedAnimation(
-      parent: animation,
-      curve: Interval(
-        startTime.clamp(0.0, 1.0),
-        endTime.clamp(0.0, 1.0),
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    return FadeTransition(
-      opacity: curvedAnimation,
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 0.3),
-          end: Offset.zero,
-        ).animate(curvedAnimation),
-        child: child,
-      ),
-    );
-  }
-}
-
-class DFAnimatedBottomSheet extends StatefulWidget {
+class DFAnimatedBottomSheet extends StatelessWidget {
   final List<Widget> children;
   final EdgeInsetsGeometry? padding;
   final double? height;
@@ -55,9 +13,6 @@ class DFAnimatedBottomSheet extends StatefulWidget {
     this.height,
     this.padding,
   });
-
-  @override
-  State<DFAnimatedBottomSheet> createState() => _DFAnimatedBottomSheetState();
 
   static Future<T?> show<T>({
     required BuildContext context,
@@ -88,29 +43,6 @@ class DFAnimatedBottomSheet extends StatefulWidget {
       ),
     );
   }
-}
-
-class _DFAnimatedBottomSheetState extends State<DFAnimatedBottomSheet>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-    _animation = _controller;
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,13 +55,13 @@ class _DFAnimatedBottomSheetState extends State<DFAnimatedBottomSheet>
       child: SafeArea(
         top: false,
         child: Container(
-          height: widget.height,
+          height: height,
           padding: const EdgeInsets.only(top: 24),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
               padding:
-                  widget.padding ??
+                  padding ??
                   const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -143,14 +75,7 @@ class _DFAnimatedBottomSheetState extends State<DFAnimatedBottomSheet>
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  ...List.generate(
-                    widget.children.length,
-                    (index) => StaggeredAnimationItem(
-                      index: index,
-                      animation: _animation,
-                      child: widget.children[index],
-                    ),
-                  ),
+                  DFAnimatedColumn(children: children),
                 ],
               ),
             ),
