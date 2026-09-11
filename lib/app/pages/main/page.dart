@@ -14,6 +14,8 @@ import 'package:dimigoin_app_v4/app/pages/home/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/dorm/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/calendar/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/others/binding.dart';
+import 'package:dimigoin_app_v4/app/pages/lostfound/page.dart';
+import 'package:dimigoin_app_v4/app/pages/lostfound/binding.dart';
 import 'package:vector_graphics/vector_graphics.dart';
 
 import 'widgets/bottom_nav_bar.dart';
@@ -39,9 +41,12 @@ class MainPageController extends GetxController {
         DormPageBinding().dependencies();
         break;
       case 3:
-        CalendarPageBinding().dependencies();
+        LostfoundPageBinding().dependencies();
         break;
       case 4:
+        CalendarPageBinding().dependencies();
+        break;
+      case 5:
         OthersPageBinding().dependencies();
         break;
     }
@@ -82,6 +87,11 @@ class MainPage extends StatelessWidget {
       '생활관',
     ),
     NavItemData(
+      AssetBytesLoader('assets/icons/menu/others.svg.vec'),
+      AssetBytesLoader('assets/icons/menu/others.svg.vec'),
+      '분실물',
+    ),
+    NavItemData(
       AssetBytesLoader('assets/icons/menu/calendar.svg.vec'),
       AssetBytesLoader('assets/icons/menu/fill/calendar.svg.vec'),
       '일정',
@@ -97,6 +107,7 @@ class MainPage extends StatelessWidget {
     () => HomePage(),
     () => MealPage(),
     () => DormPage(),
+    () => LostfoundPage(),
     () => CalendarPage(),
     () => OthersPage(),
   ];

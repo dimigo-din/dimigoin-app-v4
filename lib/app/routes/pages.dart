@@ -27,6 +27,11 @@ import '../pages/test/page.dart';
 import '../pages/main/page.dart';
 
 import '../pages/login/pw/binding.dart';
+
+import '../pages/lostfound/detail/binding.dart';
+import '../pages/lostfound/detail/page.dart';
+import '../pages/lostfound/report/binding.dart';
+import '../pages/lostfound/report/page.dart';
 import '../pages/login/pw/page.dart';
 
 import '../pages/setting/binding.dart';
@@ -62,6 +67,20 @@ class AppPages {
       name: Routes.PW_LOGIN,
       page: () => const PWLoginPage(),
       binding: PWLoginPageBinding(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.LOSTFOUND_DETAIL,
+      page: () => const LostfoundDetailPage(),
+      binding: LostfoundDetailPageBinding(),
+      middlewares: [LoginMiddleware()],
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.LOSTFOUND_REPORT,
+      page: () => const LostfoundReportPage(),
+      binding: LostfoundReportPageBinding(),
+      middlewares: [LoginMiddleware()],
       transition: Transition.cupertino,
     ),
     GetPage(
