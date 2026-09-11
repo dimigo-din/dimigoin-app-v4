@@ -80,22 +80,22 @@ class DFBadge extends StatelessWidget {
 
     switch (theme) {
       case DFBadgeTheme.grayscale:
-        return textTheme.body.copyWith(
+        return textTheme.footnote.copyWith(
           color: colorTheme.contentStandardSecondary,
           fontWeight: FontWeight.w400,
         );
       case DFBadgeTheme.accent:
-        return textTheme.body.copyWith(
+        return textTheme.footnote.copyWith(
           color: colorTheme.coreBrandPrimary,
           fontWeight: FontWeight.w400,
         );
       case DFBadgeTheme.negative:
-        return textTheme.body.copyWith(
+        return textTheme.footnote.copyWith(
           color: colorTheme.coreStatusNegative,
           fontWeight: FontWeight.w400,
         );
       case DFBadgeTheme.solid:
-        return textTheme.body.copyWith(
+        return textTheme.footnote.copyWith(
           color: colorTheme.solidBlue,
           fontWeight: FontWeight.w400,
         );

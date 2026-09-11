@@ -19,6 +19,9 @@ ReportFacility _$ReportFacilityFromJson(Map<String, dynamic> json) =>
           : User.fromJson(json['user'] as Map<String, dynamic>),
       id: json['id'] as String?,
       status: json['status'] as String?,
+      files: (json['files'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$ReportFacilityToJson(ReportFacility instance) =>
@@ -28,6 +31,7 @@ Map<String, dynamic> _$ReportFacilityToJson(ReportFacility instance) =>
       'report_type': _$FacilityReportTypeEnumMap[instance.reportType]!,
       'subject': instance.subject,
       'body': instance.body,
+      'files': instance.files,
       'created_at': instance.createdAt?.toIso8601String(),
       'user': instance.user,
     };
