@@ -1,9 +1,9 @@
 import 'package:dimigoin_app_v4/app/pages/frigo/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/frigo/page.dart';
+import 'package:dimigoin_app_v4/app/pages/facility/binding.dart';
+import 'package:dimigoin_app_v4/app/pages/facility/page.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/laundry/page.dart';
-import 'package:dimigoin_app_v4/app/pages/repair/binding.dart';
-import 'package:dimigoin_app_v4/app/pages/repair/page.dart';
 import 'package:dimigoin_app_v4/app/pages/school_violence_report/page.dart';
 import 'package:dimigoin_app_v4/app/pages/signup/binding.dart';
 import 'package:dimigoin_app_v4/app/pages/signup/page.dart';
@@ -28,6 +28,13 @@ import '../pages/main/page.dart';
 
 import '../pages/login/pw/binding.dart';
 import '../pages/login/pw/page.dart';
+
+import '../pages/lostfound/binding.dart';
+import '../pages/lostfound/page.dart';
+import '../pages/lostfound/detail/binding.dart';
+import '../pages/lostfound/detail/page.dart';
+import '../pages/lostfound/report/binding.dart';
+import '../pages/lostfound/report/page.dart';
 
 import '../pages/setting/binding.dart';
 import '../pages/setting/page.dart';
@@ -65,6 +72,27 @@ class AppPages {
       transition: Transition.cupertino,
     ),
     GetPage(
+      name: Routes.LOSTFOUND,
+      page: () => LostfoundPage(),
+      binding: LostfoundPageBinding(),
+      middlewares: [LoginMiddleware()],
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.LOSTFOUND_DETAIL,
+      page: () => const LostfoundDetailPage(),
+      binding: LostfoundDetailPageBinding(),
+      middlewares: [LoginMiddleware()],
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.LOSTFOUND_REPORT,
+      page: () => LostfoundReportPage(),
+      binding: LostfoundReportPageBinding(),
+      middlewares: [LoginMiddleware()],
+      transition: Transition.cupertino,
+    ),
+    GetPage(
       name: Routes.STAY,
       page: () => StayPage(),
       binding: StayPageBinding(),
@@ -79,9 +107,9 @@ class AppPages {
       transition: Transition.cupertino,
     ),
     GetPage(
-      name: Routes.REPAIR,
-      page: () => const RepairPage(),
-      binding: RepairPageBinding(),
+      name: Routes.FACILITY,
+      page: () => const FacilityPage(),
+      binding: FacilityPageBinding(),
       middlewares: [LoginMiddleware()],
       transition: Transition.cupertino,
     ),

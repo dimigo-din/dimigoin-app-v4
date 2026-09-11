@@ -5,10 +5,13 @@ class Routes {
   static const LICENSE = '/license';
   static const LOGIN = '/login';
   static const PW_LOGIN = '/login/pw';
+  static const LOSTFOUND = '/lostfound';
+  static const LOSTFOUND_DETAIL = '/lostfound/detail';
+  static const LOSTFOUND_REPORT = '/lostfound/report';
   static const STAY = '/stay';
   static const WAKEUP = '/wakeup';
   static const LAUNDRY = '/laundry';
-  static const REPAIR = '/repair';
+  static const FACILITY = '/facility';
   static const SCHOOL_VIOLENCE_REPORT = '/school-violence-report';
   static const FRIGO = '/frigo';
   static const OTHERS = '/others';

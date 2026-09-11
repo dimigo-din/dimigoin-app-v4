@@ -71,3 +71,6 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+
+# web dev
+web_dev_config.yaml

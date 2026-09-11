@@ -37,13 +37,29 @@ class PageButtonWidget extends StatelessWidget {
               horizontal: DFSpacing.spacing300,
             ),
             child: Center(
-              child: Column(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, color: colorTheme.coreBrandPrimary),
-                  Text(
-                    title,
-                    style: textTheme.callout.copyWith(
-                      color: colorTheme.coreBrandPrimary,
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Icon(
+                        icon,
+                        color: colorTheme.coreBrandPrimary,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: DFSpacing.spacing400),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        title,
+                        style: textTheme.callout.copyWith(
+                          color: colorTheme.coreBrandPrimary,
+                        ),
+                      ),
                     ),
                   ),
                 ],
