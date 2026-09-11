@@ -147,3 +147,9 @@ class PushDeviceIDNullException implements Exception {
 
   PushDeviceIDNullException({this.message});
 }
+
+class FacilityRateLimitExceededException implements Exception {
+  final String? message;
+
+  FacilityRateLimitExceededException({this.message});
+}

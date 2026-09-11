@@ -68,6 +68,7 @@ dependencies:
   shimmer: ^3.0.0
   in_app_update: ^4.2.5
   vector_graphics: ^1.2.2
+  carousel_slider: ^5.1.2
 
 dev_dependencies:
   flutter_test:

@@ -2,9 +2,9 @@ import 'package:get/get.dart';
 
 import 'controller.dart';
 
-class RepairPageBinding implements Bindings {
+class FacilityPageBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => RepairPageController());
+    Get.lazyPut(() => FacilityPageController());
   }
 }

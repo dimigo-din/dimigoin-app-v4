@@ -44,8 +44,8 @@ class DormPageController extends GetxController {
     Get.toNamed('/wakeup');
   }
 
-  void openRepairPage() {
-    Get.toNamed('/repair');
+  void openFacilityPage() {
+    Get.toNamed('/facility');
   }
 
   void openSchoolViolenceReportPage() {
