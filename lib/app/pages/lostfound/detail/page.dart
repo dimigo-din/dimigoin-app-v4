@@ -1,7 +1,7 @@
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
-import 'package:dimigoin_app_v4/app/pages/lostfound/widgets/report_card.dart';
+import 'package:dimigoin_app_v4/app/pages/lostfound/utils/lostfound_format.dart';
 import 'package:dimigoin_app_v4/app/services/lostfound/model.dart';
 import 'package:dimigoin_app_v4/app/widgets/appBar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFAnimatedBottomSheet.dart';
@@ -25,14 +25,12 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
       decoration: BoxDecoration(color: colorTheme.backgroundStandardSecondary),
       child: SafeArea(
         top: false,
-        child: GetBuilder<LostfoundDetailPageController>(
-          builder: (controller) {
-            return Scaffold(
-              appBar: const DFAppBar(title: '분실물 제보'),
-              body: _buildBody(context, controller),
-            );
-          },
-        ),
+        child: Obx(() {
+          return Scaffold(
+            appBar: const DFAppBar(title: '분실물 제보'),
+            body: _buildBody(context, controller),
+          );
+        }),
       ),
     );
   }
@@ -95,7 +93,11 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
                       theme: report.status == LostfoundStatus.lost
                           ? DFBadgeTheme.negative
                           : DFBadgeTheme.grayscale,
-                      label: report.status.label,
+                      label: report.isConcluded == false
+                          ? report.status == LostfoundStatus.lost
+                                ? '분실'
+                                : '습득'
+                          : '회수됨',
                     ),
                     const SizedBox(width: DFSpacing.spacing200),
                     Text(
@@ -116,9 +118,9 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
                 ),
                 const SizedBox(height: DFSpacing.spacing200),
                 _LabeledRow(label: '마지막 위치', value: report.lastSeenPlace),
-                if (report.userName != null) ...[
+                if (report.user?.name != null) ...[
                   const SizedBox(height: DFSpacing.spacing100),
-                  _LabeledRow(label: '작성자', value: report.userName!),
+                  _LabeledRow(label: '작성자', value: report.user!.name!),
                 ],
                 const SizedBox(height: DFSpacing.spacing400),
                 Text(
@@ -136,11 +138,14 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
                   SizedBox(
                     width: double.infinity,
                     child: DFButton(
-                      label: controller.isMarkingFound ? '처리 중...' : '찾았어요',
+                      label: controller.isMarkingFound.value
+                          ? '처리 중...'
+                          : '찾았어요',
                       size: DFButtonSize.medium,
                       theme: DFButtonTheme.accent,
                       style: DFButtonStyle.secondary,
-                      onPressed: controller.isMarkingFound
+                      disabled: controller.isBusy,
+                      onPressed: controller.isBusy
                           ? null
                           : () => _confirmMarkFound(context, controller),
                     ),
@@ -150,14 +155,14 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
                 const DFDivider(),
                 const SizedBox(height: DFSpacing.spacing400),
                 Text(
-                  '댓글 ${report.comment.length}',
+                  '댓글 ${report.comment?.length}',
                   style: textTheme.headline.copyWith(
                     color: colorTheme.contentStandardPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: DFSpacing.spacing300),
-                if (report.comment.isEmpty)
+                if (report.comment!.isEmpty)
                   Text(
                     '아직 댓글이 없어요.',
                     style: textTheme.footnote.copyWith(
@@ -165,7 +170,7 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
                     ),
                   )
                 else
-                  ...report.comment.map(
+                  ...report.comment!.map(
                     (comment) => Padding(
                       padding: const EdgeInsets.only(
                         bottom: DFSpacing.spacing300,
@@ -193,19 +198,17 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
                 child: DFInput(
                   controller: controller.commentTEC,
                   placeholder:
-                      controller.isMine ||
-                          report.status == LostfoundStatus.found
+                      controller.isMine || report.status == LostfoundStatus.lost
                       ? '댓글을 입력하세요'
                       : '물건을 주웠다면 댓글로 알려주세요',
                 ),
               ),
               const SizedBox(width: DFSpacing.spacing200),
               DFButton(
-                label: controller.isSubmittingComment ? '등록 중' : '등록',
+                label: controller.isSubmittingComment.value ? '등록 중' : '등록',
                 size: DFButtonSize.medium,
-                onPressed: controller.isSubmittingComment
-                    ? null
-                    : controller.submitComment,
+                disabled: controller.isBusy,
+                onPressed: controller.isBusy ? null : controller.submitComment,
               ),
             ],
           ),
@@ -226,7 +229,11 @@ void _confirmMarkFound(
     context: context,
     children: [
       Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24),
+        padding: const EdgeInsets.only(
+          left: DFSpacing.spacing500,
+          right: DFSpacing.spacing500,
+          bottom: DFSpacing.spacing550,
+        ),
         child: Column(
           children: [
             Text(
@@ -237,7 +244,7 @@ void _confirmMarkFound(
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: DFSpacing.spacing500),
             SizedBox(
               width: double.infinity,
               child: DFButton(
@@ -348,10 +355,10 @@ class _CommentTile extends StatelessWidget {
         children: [
           Row(
             children: [
-              if (comment.userName != null) ...[
+              if (comment.user?.name != null) ...[
                 Flexible(
                   child: Text(
-                    comment.userName!,
+                    comment.user!.name!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: textTheme.footnote.copyWith(

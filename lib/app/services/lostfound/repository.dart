@@ -1,4 +1,6 @@
+import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart' hide FormData, MultipartFile;
 
 import '../../provider/api_interface.dart';
 import '../../provider/model/response.dart';
@@ -7,79 +9,110 @@ import 'model.dart';
 class LostfoundRepository {
   final ApiProvider api;
 
-  /// 서버가 한 페이지에 고정으로 내려주는 개수
-  /// 이 값보다 적게 오면 마지막 페이지로 판단
   static const int pageSize = 10;
 
-  LostfoundRepository({required this.api});
+  LostfoundRepository({ApiProvider? api})
+    : api = api ?? Get.find<ApiProvider>();
 
   Future<List<LostfoundReport>> getReports({
     int page = 1,
     LostfoundStatus? status,
-
-    /// true 면 내 제보만, false 면 내 제보를 뺀 나머지, null 이면 전체
     bool? mine,
   }) async {
+    String url = '/student/lostfound/list';
+
     DFHttpResponse response = await api.get(
-      '/student/lostfound/list',
+      url,
       queryParameters: {
         'page': '$page',
-        if (status != null) 'status': status.value,
+        if (status != null) 'status': status.name,
         if (mine != null) 'mine': '$mine',
       },
     );
 
-    return ((response.data['data'] ?? []) as List)
+    return (response.data['data'] as List)
         .map((report) => LostfoundReport.fromJson(report))
         .toList();
   }
 
   Future<LostfoundReport> getReport(String id) async {
-    DFHttpResponse response = await api.get(
-      '/student/lostfound',
-      queryParameters: {'id': id},
-    );
+    String url = '/student/lostfound';
 
-    return LostfoundReport.fromJson(response.data['data']);
+    try {
+      DFHttpResponse response = await api.get(url, queryParameters: {'id': id});
+      return LostfoundReport.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        throw ResourceNotFoundException();
+      } else if (e.response?.statusCode == 403) {
+        throw PermissionDeniedResourceException();
+      }
+      rethrow;
+    }
   }
 
   Future<LostfoundReport> createReport({
+    required LostfoundStatus status,
     required String objectName,
     required String lastSeenPlace,
     required String body,
     required List<MultipartFile> files,
   }) async {
-    // 첨부가 없어도 FormData로 보낸다.
+    String url = '/student/lostfound';
+    // 이 API는 첨부 유무와 관계없이 multipart 요청을 받습니다.
     final formData = FormData.fromMap({
+      'status': status.name,
       'object_name': objectName,
       'last_seen_place': lastSeenPlace,
       'body': body,
     });
     formData.files.addAll(files.map((file) => MapEntry('file', file)));
 
-    DFHttpResponse response = await api.post(
-      '/student/lostfound',
-      data: formData,
-      options: Options(contentType: Headers.multipartFormDataContentType),
-    );
-
-    return LostfoundReport.fromJson(response.data['data']);
+    try {
+      DFHttpResponse response = await api.post(
+        url,
+        data: formData,
+        options: Options(contentType: Headers.multipartFormDataContentType),
+      );
+      return LostfoundReport.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 429) {
+        throw TooManyRequestsException();
+      }
+      rethrow;
+    }
   }
 
-  /// 작성자 본인만 호출할 수 있습니다. (다른 사람이면 403)
   Future<LostfoundReport> markFound(String id) async {
-    DFHttpResponse response = await api.patch(
-      '/student/lostfound/found',
-      data: {'id': id},
-    );
+    String url = '/student/lostfound/found';
 
-    return LostfoundReport.fromJson(response.data['data']);
+    try {
+      DFHttpResponse response = await api.patch(url, data: {'id': id});
+      return LostfoundReport.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 403) {
+        throw PermissionDeniedResourceException();
+      } else if (e.response?.statusCode == 404) {
+        throw ResourceNotFoundException();
+      }
+      rethrow;
+    }
   }
 
   Future<void> postComment({required String post, required String text}) async {
-    await api.post(
-      '/student/lostfound/comment',
-      data: {'post': post, 'text': text},
-    );
+    String url = '/student/lostfound/comment';
+
+    try {
+      await api.post(url, data: {'post': post, 'text': text});
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 403) {
+        throw PermissionDeniedResourceException();
+      } else if (e.response?.statusCode == 404) {
+        throw ResourceNotFoundException();
+      } else if (e.response?.statusCode == 429) {
+        throw TooManyRequestsException();
+      }
+      rethrow;
+    }
   }
 }

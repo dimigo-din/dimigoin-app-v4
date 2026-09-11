@@ -4,13 +4,7 @@ import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:dimigoin_app_v4/app/services/lostfound/model.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFBadge.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-
-String formatLostfoundDate(String raw) {
-  final parsed = DateTime.tryParse(raw);
-  if (parsed == null) return '';
-  return DateFormat('M월 d일 HH:mm', 'ko_KR').format(parsed.toLocal());
-}
+import '../utils/lostfound_format.dart';
 
 class LostfoundReportCard extends StatelessWidget {
   final LostfoundReport report;
@@ -51,10 +45,14 @@ class LostfoundReportCard extends StatelessWidget {
                         type: DFBadgeType.normal,
                         size: DFBadgeSize.small,
                         // 분실 제보만 강조하고, 회수된 제보는 뉴트럴로 톤다운합니다.
-                        theme: report.status == LostfoundStatus.lost
+                        theme: report.isConcluded == false
                             ? DFBadgeTheme.negative
                             : DFBadgeTheme.grayscale,
-                        label: report.status.label,
+                        label: report.isConcluded == false
+                            ? report.status == LostfoundStatus.lost
+                                  ? '분실'
+                                  : '습득'
+                            : '회수됨',
                       ),
                       const SizedBox(width: DFSpacing.spacing200),
                       Text(

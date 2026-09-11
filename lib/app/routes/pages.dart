@@ -27,12 +27,14 @@ import '../pages/test/page.dart';
 import '../pages/main/page.dart';
 
 import '../pages/login/pw/binding.dart';
+import '../pages/login/pw/page.dart';
 
+import '../pages/lostfound/binding.dart';
+import '../pages/lostfound/page.dart';
 import '../pages/lostfound/detail/binding.dart';
 import '../pages/lostfound/detail/page.dart';
 import '../pages/lostfound/report/binding.dart';
 import '../pages/lostfound/report/page.dart';
-import '../pages/login/pw/page.dart';
 
 import '../pages/setting/binding.dart';
 import '../pages/setting/page.dart';
@@ -70,6 +72,13 @@ class AppPages {
       transition: Transition.cupertino,
     ),
     GetPage(
+      name: Routes.LOSTFOUND,
+      page: () => LostfoundPage(),
+      binding: LostfoundPageBinding(),
+      middlewares: [LoginMiddleware()],
+      transition: Transition.cupertino,
+    ),
+    GetPage(
       name: Routes.LOSTFOUND_DETAIL,
       page: () => const LostfoundDetailPage(),
       binding: LostfoundDetailPageBinding(),
@@ -78,7 +87,7 @@ class AppPages {
     ),
     GetPage(
       name: Routes.LOSTFOUND_REPORT,
-      page: () => const LostfoundReportPage(),
+      page: () => LostfoundReportPage(),
       binding: LostfoundReportPageBinding(),
       middlewares: [LoginMiddleware()],
       transition: Transition.cupertino,

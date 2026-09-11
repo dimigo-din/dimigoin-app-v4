@@ -5,6 +5,7 @@ class Routes {
   static const LICENSE = '/license';
   static const LOGIN = '/login';
   static const PW_LOGIN = '/login/pw';
+  static const LOSTFOUND = '/lostfound';
   static const LOSTFOUND_DETAIL = '/lostfound/detail';
   static const LOSTFOUND_REPORT = '/lostfound/report';
   static const STAY = '/stay';

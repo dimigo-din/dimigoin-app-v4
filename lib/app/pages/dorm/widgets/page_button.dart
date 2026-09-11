@@ -33,7 +33,7 @@ class PageButtonWidget extends StatelessWidget {
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(
-              vertical: DFSpacing.spacing800,
+              vertical: DFSpacing.spacing900,
               horizontal: DFSpacing.spacing300,
             ),
             child: Center(

@@ -60,7 +60,8 @@ class _DFGestureDetectorWithFillInteractionState
     return GestureDetector(
       onTap: widget.onTap,
       onLongPress: widget.onLongPress,
-      onTapCancel: pressUp,
+      // A cancel-only tap recognizer would steal taps from a parent row.
+      onTapCancel: widget.onTap != null ? pressUp : null,
       child: Listener(
         onPointerDown: (_) => pressDown(),
         onPointerUp: (_) => pressUp(),
