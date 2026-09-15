@@ -91,6 +91,7 @@ class LostfoundReportCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(DFRadius.radius300),
                 child: Image.network(
                   thumbnail,
+                  webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
                   width: 56,
                   height: 56,
                   fit: BoxFit.cover,

@@ -317,6 +317,7 @@ class _ImageStrip extends StatelessWidget {
           borderRadius: BorderRadius.circular(DFRadius.radius300),
           child: Image.network(
             images[index].url,
+            webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
             width: 160,
             height: 160,
             fit: BoxFit.cover,
