@@ -51,9 +51,11 @@ class LostfoundDetailPageController extends GetxController {
   void onInit() {
     super.onInit();
     final arguments = Get.arguments;
-    reportId = arguments is Map && arguments['id'] is String
-        ? arguments['id'] as String
-        : '';
+    reportId =
+        Get.parameters['id'] ??
+        (arguments is Map && arguments['id'] is String
+            ? arguments['id'] as String
+            : '');
     loadReport();
   }
 
