@@ -15,7 +15,13 @@ import 'package:get/get.dart';
 import 'controller.dart';
 
 class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
-  const LostfoundDetailPage({super.key});
+  LostfoundDetailPage({super.key})
+    : _reportId = LostfoundDetailPageController.reportIdFromRoute;
+
+  final String _reportId;
+
+  @override
+  String get tag => _reportId;
 
   @override
   Widget build(BuildContext context) {

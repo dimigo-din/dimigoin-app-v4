@@ -18,6 +18,7 @@ import 'app/core/utils/loader.dart';
 import 'app/routes/pages.dart';
 import 'app/routes/routes.dart';
 import 'app/services/app_update/service.dart';
+import 'app/services/push/navigation.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -106,6 +107,11 @@ class _BootstrapAppState extends State<_BootstrapApp> {
           darkTheme: darkThemeData,
           initialRoute: kReleaseMode ? Routes.MAIN : Routes.TEST,
           getPages: AppPages.pages,
+          routingCallback: (_) {
+            if (Get.isRegistered<PushNavigationService>()) {
+              Get.find<PushNavigationService>().resumePendingNavigation();
+            }
+          },
           builder: (context, child) {
             if (snapshot.connectionState != ConnectionState.done) {
               return const Scaffold(
@@ -116,6 +122,9 @@ class _BootstrapAppState extends State<_BootstrapApp> {
             if (!_didSchedulePostInitChecks) {
               _didSchedulePostInitChecks = true;
               WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (Get.isRegistered<PushNavigationService>()) {
+                  Get.find<PushNavigationService>().markNavigationReady();
+                }
                 if (Get.isRegistered<AppUpdateService>()) {
                   Get.find<AppUpdateService>().checkForUpdate();
                 }

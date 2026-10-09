@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-//import 'package:dimigoin_app_v4/app/routes/routes.dart';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/services/push/model.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
+import 'navigation.dart';
 import 'repository.dart';
 
 class PushService extends GetxController {
@@ -18,6 +18,8 @@ class PushService extends GetxController {
       'stay_apply_reminder_backend_migration_done';
 
   final PushRepository repository;
+  final PushNavigationService navigation = Get.find<PushNavigationService>();
+  final List<StreamSubscription<dynamic>> _subscriptions = [];
 
   AuthService authService = Get.find<AuthService>();
 
@@ -45,11 +47,9 @@ class PushService extends GetxController {
 
     await _initLocalNotification();
 
-    await requestPushPermission();
-    await _cancelLocalStayApplyReminder();
-
-    FirebaseMessaging.instance.onTokenRefresh
-        .listen((fcmToken) async {
+    _subscriptions.add(
+      FirebaseMessaging.instance.onTokenRefresh.listen(
+        (fcmToken) async {
           if (authService.isLoginSuccess) {
             String deviceId = await authService.getDeviceId();
 
@@ -61,78 +61,61 @@ class PushService extends GetxController {
               'FCM Token refreshed but not sent to server (not logged in): $fcmToken',
             );
           }
-        })
-        .onError((err) {
+        },
+        onError: (Object err) {
           log('FCM Token update failed: $err');
-        });
+        },
+      ),
+    );
 
-    if (authService.isLoginSuccess) {
-      await syncTokenToServer();
-    }
+    _subscriptions.add(
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        if (message.notification != null) {
+          _showNotification(message);
+        }
+      }),
+    );
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        _showNotification(message);
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      log('Notification tapped (app in background): ${message.messageId}');
-      _handleNotificationTap(message);
-    });
+    _subscriptions.add(
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        log('Notification tapped (app in background): ${message.messageId}');
+        handleNotificationTap(message);
+      }),
+    );
 
     RemoteMessage? initialMessage = await FirebaseMessaging.instance
         .getInitialMessage();
     if (initialMessage != null) {
       log('Notification tapped (app terminated): ${initialMessage.messageId}');
-      _handleNotificationTap(initialMessage);
+      handleNotificationTap(initialMessage);
+    }
+
+    await requestPushPermission();
+    await _cancelLocalStayApplyReminder();
+    if (authService.isLoginSuccess) {
+      await syncTokenToServer();
     }
   }
 
-  void _handleNotificationTap(RemoteMessage message) {
-    log('Notification data: ${message.data}');
-
-    // Navigation logic based on notification type
-    // Uncomment and customize the code below when you want to enable deep linking
-    /*
-    final data = message.data;
-    final type = data['type'] as String?;
-
-    if (type == null) return;
-
-    switch (type) {
-      case 'stay':
-        // Navigate to stay application page
-        Get.toNamed(Routes.STAY);
-        break;
-
-      case 'wakeup':
-        // Navigate to wakeup song page
-        Get.toNamed(Routes.WAKEUP);
-        break;
-
-      case 'washer':
-        // Navigate to washer page
-        Get.toNamed(Routes.WASHER);
-        break;
-
-      case 'notice':
-        // Navigate to specific notice if ID is provided
-        // final noticeId = data['noticeId'] as String?;
-        // if (noticeId != null) {
-        //   Get.toNamed(Routes.MAIN, arguments: {'noticeId': noticeId});
-        // } else {
-        //   Get.toNamed(Routes.MAIN);
-        // }
-        Get.toNamed(Routes.MAIN);
-        break;
-
-      default:
-        // Default: navigate to main page
-        Get.toNamed(Routes.MAIN);
-        break;
+  void handleNotificationTap(RemoteMessage message) {
+    if (!navigation.handleUrl(message.data['url'])) {
+      log(
+        'FCM notification tap ignored: data.url is missing or invalid. '
+        'Data keys: ${message.data.keys.join(', ')}',
+      );
     }
-    */
+  }
+
+  void handleLocalNotificationTap(NotificationResponse response) {
+    navigation.handleUrl(response.payload);
+  }
+
+  @override
+  void onClose() {
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
+    super.onClose();
   }
 
   Future<void> _initLocalNotification() async {
@@ -154,7 +137,15 @@ class PushService extends GetxController {
 
     await flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
+      onDidReceiveNotificationResponse: handleLocalNotificationTap,
     );
+
+    final launchDetails = await flutterLocalNotificationsPlugin
+        .getNotificationAppLaunchDetails();
+    if (launchDetails?.didNotificationLaunchApp == true) {
+      final response = launchDetails?.notificationResponse;
+      if (response != null) handleLocalNotificationTap(response);
+    }
 
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'dimigoin_v4_noti',
@@ -198,6 +189,7 @@ class PushService extends GetxController {
       title: message.notification?.title ?? '알림',
       body: message.notification?.body ?? '메시지가 도착했습니다.',
       notificationDetails: notificationDetails,
+      payload: PushNavigationService.resolveUrl(message.data['url']),
     );
   }
 

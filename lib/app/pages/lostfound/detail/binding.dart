@@ -5,6 +5,10 @@ import 'controller.dart';
 class LostfoundDetailPageBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => LostfoundDetailPageController());
+    final reportId = LostfoundDetailPageController.reportIdFromRoute;
+    Get.lazyPut(
+      () => LostfoundDetailPageController(reportId: reportId),
+      tag: reportId,
+    );
   }
 }
