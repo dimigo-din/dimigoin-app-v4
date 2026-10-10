@@ -10,6 +10,8 @@ import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFDivider.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFInputField.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFHeader.dart';
+import 'package:dimigoin_app_v4/app/widgets/image_bottom_sheet.dart';
+import 'package:dimigoin_app_v4/app/widgets/network_image.dart';
 import '../widgets/report_status_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -291,26 +293,25 @@ class _ImageStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorTheme = Theme.of(context).extension<DFColors>()!;
-
     return SizedBox(
       height: 160,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: images.length,
         separatorBuilder: (_, _) => const SizedBox(width: DFSpacing.spacing200),
-        itemBuilder: (context, index) => ClipRRect(
-          borderRadius: BorderRadius.circular(DFRadius.radius300),
-          child: Image.network(
-            images[index].url,
-            webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
-            width: 160,
-            height: 160,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => Container(
+        itemBuilder: (context, index) => Semantics(
+          button: true,
+          label: '사진 ${index + 1} 크게 보기',
+          child: InkWell(
+            borderRadius: BorderRadius.circular(DFRadius.radius300),
+            onTap: () => DFImageBottomSheet.show(
+              context: context,
+              url: images[index].url,
+            ),
+            child: DFNetworkImage(
+              url: images[index].url,
               width: 160,
               height: 160,
-              color: colorTheme.backgroundStandardSecondary,
             ),
           ),
         ),

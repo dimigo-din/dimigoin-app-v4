@@ -3,6 +3,7 @@ import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:dimigoin_app_v4/app/services/lostfound/model.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
+import 'package:dimigoin_app_v4/app/widgets/network_image.dart';
 import 'package:flutter/material.dart';
 import '../utils/lostfound_format.dart';
 import 'report_status_badge.dart';
@@ -44,25 +45,7 @@ class LostfoundReportCard extends StatelessWidget {
       ),
       trailing: thumbnail == null
           ? null
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(DFRadius.radius300),
-              child: Image.network(
-                thumbnail,
-                webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
-                width: 56,
-                height: 56,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => Container(
-                  width: 56,
-                  height: 56,
-                  color: colors.backgroundStandardSecondary,
-                  child: Icon(
-                    Icons.image_not_supported_outlined,
-                    color: colors.contentStandardTertiary,
-                  ),
-                ),
-              ),
-            ),
+          : DFNetworkImage(url: thumbnail, width: 56, height: 56),
     );
   }
 }
