@@ -192,10 +192,7 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
                   controller: controller.commentTEC,
                   minLines: 1,
                   maxLines: 4,
-                  placeholder:
-                      controller.isMine || report.status == LostfoundStatus.lost
-                      ? '댓글을 입력하세요'
-                      : '내 물건이라면 댓글로 알려주세요',
+                  placeholder: '댓글을 입력하세요',
                 ),
               ),
               const SizedBox(width: DFSpacing.spacing200),
