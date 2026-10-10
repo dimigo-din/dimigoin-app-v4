@@ -1,6 +1,8 @@
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:dimigoin_app_v4/app/widgets/marqueeText.dart';
+import 'package:dimigoin_app_v4/app/widgets/gestureDetector.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 
@@ -14,6 +16,9 @@ class DFValueList extends StatelessWidget {
   final String title;
   final String? subTitle;
   final String? content;
+  final Widget? header;
+  final Widget? trailing;
+  final VoidCallback? onTap;
 
   const DFValueList({
     super.key,
@@ -22,144 +27,214 @@ class DFValueList extends StatelessWidget {
     required this.title,
     this.subTitle,
     this.content,
+    this.header,
+    this.trailing,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final colorTheme = Theme.of(context).extension<DFColors>()!;
-    final textTheme = Theme.of(context).extension<DFTypography>()!;
+    final colors = Theme.of(context).extension<DFColors>()!;
+    final typography = Theme.of(context).extension<DFTypography>()!;
+    final isActive = theme == DFValueListTheme.active;
+    final isDisabled = theme == DFValueListTheme.disabled;
+    final titleColor = isActive
+        ? colors.solidWhite
+        : colors.contentStandardPrimary;
+    final secondaryColor = isActive
+        ? colors.solidWhite
+        : isDisabled
+        ? colors.contentStandardQuaternary
+        : colors.contentStandardSecondary;
+    final tertiaryColor = isActive
+        ? colors.solidWhite
+        : isDisabled
+        ? colors.contentStandardQuaternary
+        : colors.contentStandardTertiary;
 
-    return Container(
+    final horizontal = type == DFValueListType.horizontal;
+    final heading = _DFValueListTitleRow(
+      title: title,
+      titleStyle: (horizontal ? typography.body : typography.headline).copyWith(
+        color: titleColor,
+        fontWeight: FontWeight.w700,
+      ),
+      leadingValue: horizontal ? subTitle : null,
+      leadingStyle: typography.callout.copyWith(
+        color: tertiaryColor,
+        fontWeight: FontWeight.w400,
+      ),
+      trailingValue: horizontal ? content : subTitle,
+      trailingStyle: horizontal
+          ? typography.callout.copyWith(
+              color: isActive ? colors.contentStandardTertiary : tertiaryColor,
+              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+            )
+          : typography.footnote.copyWith(
+              color: tertiaryColor,
+              fontWeight: FontWeight.w400,
+            ),
+    );
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (header != null) ...[
+          header!,
+          const SizedBox(height: DFSpacing.spacing200),
+        ],
+        heading,
+        if (!horizontal && content != null) ...[
+          const SizedBox(height: DFSpacing.spacing150),
+          Text(
+            content!,
+            style: typography.paragraphSmall.copyWith(
+              color: secondaryColor,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ],
+    );
+    final card = Container(
       padding: const EdgeInsets.symmetric(
         horizontal: DFSpacing.spacing500,
         vertical: DFSpacing.spacing400,
       ),
       decoration: BoxDecoration(
         color: switch (theme) {
-          DFValueListTheme.disabled => colorTheme.componentsTranslucentTertiary,
-          DFValueListTheme.outlined => colorTheme.componentsFillStandardPrimary,
-          DFValueListTheme.active => colorTheme.coreBrandPrimary,
+          DFValueListTheme.disabled => colors.componentsTranslucentTertiary,
+          DFValueListTheme.outlined => colors.componentsFillStandardPrimary,
+          DFValueListTheme.active => colors.coreBrandPrimary,
         },
         borderRadius: BorderRadius.circular(DFRadius.radius500),
-        border: Border.all(color: colorTheme.lineOutline, width: 1),
+        border: Border.all(color: colors.lineOutline),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (type == DFValueListType.horizontal) ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: trailing == null
+          ? body
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (subTitle != null) ...[
-                  Text(
-                    subTitle!,
-                    style: textTheme.callout.copyWith(
-                      color: switch (theme) {
-                        DFValueListTheme.disabled =>
-                          colorTheme.contentStandardQuaternary,
-                        DFValueListTheme.outlined =>
-                          colorTheme.contentStandardTertiary,
-                        DFValueListTheme.active => colorTheme.solidWhite,
-                      },
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  const SizedBox(width: DFSpacing.spacing300),
-                ],
-                Expanded(
-                  child: Text(
-                    title,
-                    style: textTheme.body.copyWith(
-                      color: switch (theme) {
-                        DFValueListTheme.disabled =>
-                          colorTheme.contentStandardPrimary,
-                        DFValueListTheme.outlined =>
-                          colorTheme.contentStandardPrimary,
-                        DFValueListTheme.active => colorTheme.solidWhite,
-                      },
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                if (content != null) ...[
-                  const SizedBox(width: DFSpacing.spacing300),
-                  Text(
-                    content!,
-                    style: textTheme.callout.copyWith(
-                      color: switch (theme) {
-                        DFValueListTheme.disabled =>
-                          colorTheme.contentStandardQuaternary,
-                        DFValueListTheme.outlined =>
-                          colorTheme.contentStandardTertiary,
-                        DFValueListTheme.active =>
-                          colorTheme.contentStandardTertiary,
-                      },
-                      fontWeight: switch (theme) {
-                        DFValueListTheme.disabled => FontWeight.w500,
-                        DFValueListTheme.outlined => FontWeight.w500,
-                        DFValueListTheme.active => FontWeight.w700,
-                      },
-                    ),
-                  ),
-                ],
+                Expanded(child: body),
+                const SizedBox(width: DFSpacing.spacing300),
+                trailing!,
               ],
             ),
-          ] else ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: textTheme.headline.copyWith(
-                      color: switch (theme) {
-                        DFValueListTheme.disabled =>
-                          colorTheme.contentStandardPrimary,
-                        DFValueListTheme.outlined =>
-                          colorTheme.contentStandardPrimary,
-                        DFValueListTheme.active => colorTheme.solidWhite,
-                      },
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+    );
+    if (onTap == null || isDisabled) return card;
+    return Semantics(
+      button: true,
+      child: FocusableActionDetector(
+        mouseCursor: SystemMouseCursors.click,
+        shortcuts: const {
+          SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+        },
+        actions: {
+          ActivateIntent: CallbackAction<ActivateIntent>(
+            onInvoke: (_) {
+              onTap!();
+              return null;
+            },
+          ),
+        },
+        child: DFGestureDetectorWithScaleInteraction(onTap: onTap, child: card),
+      ),
+    );
+  }
+}
+
+class _DFValueListTitleRow extends StatelessWidget {
+  final String title;
+  final TextStyle titleStyle;
+  final String? leadingValue;
+  final TextStyle leadingStyle;
+  final String? trailingValue;
+  final TextStyle trailingStyle;
+
+  const _DFValueListTitleRow({
+    required this.title,
+    required this.titleStyle,
+    required this.leadingValue,
+    required this.leadingStyle,
+    required this.trailingValue,
+    required this.trailingStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final direction = Directionality.of(context);
+    final scaler = MediaQuery.textScalerOf(context);
+    double width(String value, TextStyle style) => TextPainter.computeWidth(
+      text: TextSpan(text: value, style: style),
+      textDirection: direction,
+      textScaler: scaler,
+      locale: Localizations.maybeLocaleOf(context),
+    );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final sideWidth =
+            (leadingValue == null
+                ? 0
+                : width(leadingValue!, leadingStyle) + DFSpacing.spacing300) +
+            (trailingValue == null
+                ? 0
+                : width(trailingValue!, trailingStyle) + DFSpacing.spacing300);
+        final titleWidth = width(title, titleStyle);
+        final minimumTitleWidth = titleWidth.clamp(
+          0.0,
+          constraints.maxWidth / 3,
+        );
+        final titleText = Text(title, style: titleStyle);
+        final leadingText = leadingValue == null
+            ? null
+            : Text(leadingValue!, style: leadingStyle);
+        final trailingText = trailingValue == null
+            ? null
+            : Text(
+                trailingValue!,
+                style: trailingStyle,
+                textAlign: TextAlign.end,
+              );
+
+        // Preserve the natural width of side values in the existing list layout.
+        // Only stack them when the available space would squeeze the title.
+        if (sideWidth + minimumTitleWidth > constraints.maxWidth) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (leadingText == null)
+                titleText
+              else
+                Wrap(
+                  spacing: DFSpacing.spacing300,
+                  runSpacing: DFSpacing.spacing150,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [leadingText, titleText],
                 ),
-                if (subTitle != null) ...[
-                  const SizedBox(width: DFSpacing.spacing300),
-                  Text(
-                    subTitle!,
-                    style: textTheme.footnote.copyWith(
-                      color: switch (theme) {
-                        DFValueListTheme.disabled =>
-                          colorTheme.contentStandardQuaternary,
-                        DFValueListTheme.outlined =>
-                          colorTheme.contentStandardTertiary,
-                        DFValueListTheme.active => colorTheme.solidWhite,
-                      },
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
+              if (trailingText != null) ...[
+                const SizedBox(height: DFSpacing.spacing150),
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: trailingText,
+                ),
               ],
-            ),
-            if (content != null) ...[
-              const SizedBox(height: DFSpacing.spacing150),
-              Text(
-                content!,
-                style: textTheme.paragraphSmall.copyWith(
-                  color: switch (theme) {
-                    DFValueListTheme.disabled =>
-                      colorTheme.contentStandardQuaternary,
-                    DFValueListTheme.outlined =>
-                      colorTheme.contentStandardSecondary,
-                    DFValueListTheme.active => colorTheme.solidWhite,
-                  },
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
+            ],
+          );
+        }
+        return Row(
+          children: [
+            if (leadingText != null) ...[
+              leadingText,
+              const SizedBox(width: DFSpacing.spacing300),
+            ],
+            Expanded(child: titleText),
+            if (trailingText != null) ...[
+              const SizedBox(width: DFSpacing.spacing300),
+              trailingText,
             ],
           ],
-        ],
-      ),
+        );
+      },
     );
   }
 }

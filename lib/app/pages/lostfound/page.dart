@@ -2,6 +2,7 @@ import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:dimigoin_app_v4/app/widgets/appBar.dart';
+import 'package:dimigoin_app_v4/app/widgets/gestureDetector.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFControl.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSegmentControl.dart';
@@ -17,7 +18,6 @@ class LostfoundPage extends GetView<LostfoundPageController> {
   @override
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).extension<DFColors>()!;
-    final textTheme = Theme.of(context).extension<DFTypography>()!;
 
     return Container(
       decoration: BoxDecoration(color: colorTheme.backgroundStandardSecondary),
@@ -33,6 +33,7 @@ class LostfoundPage extends GetView<LostfoundPageController> {
             ),
             child: Obx(() {
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   DFSegmentControl(
                     key: ValueKey(controller.segmentVersion.value),
@@ -48,54 +49,19 @@ class LostfoundPage extends GetView<LostfoundPageController> {
                     padding: const EdgeInsets.symmetric(
                       horizontal: DFSpacing.spacing200,
                     ),
-                    child: Row(
+                    child: Wrap(
+                      spacing: DFSpacing.spacing500,
+                      runSpacing: DFSpacing.spacing200,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            controller.toggleMine();
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: Row(
-                            children: [
-                              Obx(
-                                () => DFControl(
-                                  type: DFControlType.checkfill,
-                                  status: controller.showMine.value,
-                                ),
-                              ),
-                              const SizedBox(width: DFSpacing.spacing200),
-                              Text(
-                                "내 글 보기",
-                                style: textTheme.callout.copyWith(
-                                  color: colorTheme.contentStandardPrimary,
-                                ),
-                              ),
-                            ],
-                          ),
+                        _LostfoundFilter(
+                          label: '내 글 보기',
+                          selected: controller.showMine.value,
+                          onTap: controller.toggleMine,
                         ),
-                        const SizedBox(width: DFSpacing.spacing500),
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            controller.toggleConcluded();
-                          },
-                          child: Row(
-                            children: [
-                              Obx(
-                                () => DFControl(
-                                  type: DFControlType.checkfill,
-                                  status: controller.showConcluded.value,
-                                ),
-                              ),
-                              const SizedBox(width: DFSpacing.spacing200),
-                              Text(
-                                "회수됨 표시하기",
-                                style: textTheme.callout.copyWith(
-                                  color: colorTheme.contentStandardPrimary,
-                                ),
-                              ),
-                            ],
-                          ),
+                        _LostfoundFilter(
+                          label: '회수됨 표시하기',
+                          selected: controller.showConcluded.value,
+                          onTap: controller.toggleConcluded,
                         ),
                       ],
                     ),
@@ -118,6 +84,40 @@ class LostfoundPage extends GetView<LostfoundPageController> {
               );
             }),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LostfoundFilter extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _LostfoundFilter({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final typography = Theme.of(context).extension<DFTypography>()!;
+    return MergeSemantics(
+      child: DFGestureDetectorWithOpacityInteraction(
+        onTap: onTap,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DFControl(
+              type: DFControlType.checkfill,
+              status: selected,
+              onTap: onTap,
+            ),
+            const SizedBox(width: DFSpacing.spacing200),
+            Text(label, style: typography.callout),
+          ],
         ),
       ),
     );

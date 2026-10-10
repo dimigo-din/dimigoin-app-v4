@@ -8,12 +8,14 @@ class ReportImagePickerField extends StatelessWidget {
   final List<XFile> images;
   final VoidCallback onPick;
   final VoidCallback onClear;
+  final bool enabled;
 
   const ReportImagePickerField({
     super.key,
     required this.images,
     required this.onPick,
     required this.onClear,
+    this.enabled = true,
   });
 
   @override
@@ -28,11 +30,12 @@ class ReportImagePickerField extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: IgnorePointer(
-                child: DFInput(
-                  content: images.isEmpty ? null : imageText,
-                  placeholder: '이미지를 업로드 하세요.',
-                ),
+              child: DFInput(
+                readOnly: true,
+                enabled: enabled,
+                onTap: onPick,
+                content: images.isEmpty ? null : imageText,
+                placeholder: '이미지를 업로드 하세요.',
               ),
             ),
             const SizedBox(width: DFSpacing.spacing200),
@@ -40,6 +43,7 @@ class ReportImagePickerField extends StatelessWidget {
               label: images.isEmpty ? '파일찾기' : '선택 취소',
               theme: DFButtonTheme.grayscale,
               style: DFButtonStyle.secondary,
+              disabled: !enabled,
               onPressed: images.isEmpty ? onPick : onClear,
             ),
           ],
