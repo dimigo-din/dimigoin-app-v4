@@ -146,9 +146,18 @@ class _DFNetworkImageState extends State<DFNetworkImage>
         color: colors.backgroundStandardSecondary,
         alignment: Alignment.center,
         child: widget.height != null
-            ? Icon(
-                Icons.image_not_supported_outlined,
-                color: colors.contentStandardTertiary,
+            ? Padding(
+                padding: const EdgeInsets.all(DFSpacing.spacing100),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    '로딩 실패',
+                    textAlign: TextAlign.center,
+                    style: typography.footnote.copyWith(
+                      color: colors.contentStandardTertiary,
+                    ),
+                  ),
+                ),
               )
             : Padding(
                 padding: const EdgeInsets.all(DFSpacing.spacing400),
