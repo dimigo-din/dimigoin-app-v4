@@ -45,6 +45,16 @@ class UserService extends GetxController {
     }
   }
 
+  // Refresh shared application state even when the home page is not mounted.
+  // A refresh failure must not turn a successful application into an error.
+  Future<void> refreshUserApply() async {
+    try {
+      await getUserApply();
+    } catch (e) {
+      log('Error refreshing user apply: $e');
+    }
+  }
+
   Future<void> getUserApply() async {
     _userApplyState.value = UserApplyLoading();
     try {

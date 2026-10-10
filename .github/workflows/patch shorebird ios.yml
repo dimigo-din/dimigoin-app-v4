@@ -39,6 +39,13 @@ jobs:
 
       - run: flutter pub get
 
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: ios
+
       - name: Read version from pubspec.yaml
         id: app_version
         run: |
@@ -47,6 +54,7 @@ jobs:
           echo "Patch target version: $VERSION"
 
       - name: Create Shorebird iOS patch
-        run: shorebird patch ios --release-version=${{ steps.app_version.outputs.version }} --no-codesign
+        run: bundle exec shorebird patch ios --release-version=${{ steps.app_version.outputs.version }} --no-codesign
         env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/ios/Gemfile
           SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}

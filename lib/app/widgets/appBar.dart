@@ -1,6 +1,8 @@
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../routes/routes.dart';
 import '../core/theme/colors.dart';
 import '../core/theme/typography.dart';
 
@@ -37,8 +39,11 @@ class DFAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               onPressed:
                   onBackPressed ??
-                  () {
-                    Navigator.of(context).maybePop();
+                  () async {
+                    final handled = await Navigator.of(context).maybePop();
+                    if (!handled && context.mounted) {
+                      Get.offAllNamed(Routes.MAIN);
+                    }
                   },
             )
           : const SizedBox(width: kToolbarHeight),

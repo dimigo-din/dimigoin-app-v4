@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:dimigoin_app_v4/app/core/utils/errors.dart';
-import 'package:dimigoin_app_v4/app/pages/home/controller.dart';
+import 'package:dimigoin_app_v4/app/services/user/service.dart';
 import 'package:dimigoin_app_v4/app/pages/stay/stay_outing/utils/outing_date_utils.dart';
 import 'package:dimigoin_app_v4/app/services/stay/model.dart';
 import 'package:dimigoin_app_v4/app/services/stay/service.dart';
@@ -222,7 +222,7 @@ class StayPageController extends GetxController {
       );
       await fetchStayApply();
       await fetchStayList(selectedStay.value?.id);
-      Get.find<HomePageController>().getUserApply();
+      Get.find<UserService>().refreshUserApply();
       DFSnackBar.success("잔류 신청이 완료되었습니다.");
     } on StayNotInApplyPeriodException {
       DFSnackBar.error("해당 잔류 신청 기간이 아닙니다.");
@@ -260,7 +260,7 @@ class StayPageController extends GetxController {
       await fetchStayApply();
       await fetchStayList(selectedStay.value?.id);
       await fetchCurrentStayOutings();
-      Get.find<HomePageController>().getUserApply();
+      Get.find<UserService>().refreshUserApply();
       DFSnackBar.success("잔류 신청이 취소되었습니다.");
     } on ResourceNotFoundException {
       DFSnackBar.error("잔류 신청 정보를 찾을 수 없습니다.");
@@ -320,7 +320,7 @@ class StayPageController extends GetxController {
       await stayService.addStayOuting(currentStayApply.id, outing);
 
       await fetchCurrentStayOutings();
-      Get.find<HomePageController>().getUserApply();
+      Get.find<UserService>().refreshUserApply();
       DFSnackBar.success("외출 신청이 완료되었습니다.");
     } on StayNotInApplyPeriodException {
       DFSnackBar.error("해당 잔류 신청 기간이 아닙니다.");
@@ -344,7 +344,7 @@ class StayPageController extends GetxController {
       await stayService.updateStayOuting(outing.id!, outing);
 
       await fetchCurrentStayOutings();
-      Get.find<HomePageController>().getUserApply();
+      Get.find<UserService>().refreshUserApply();
       DFSnackBar.success("외출 수정이 완료되었습니다.");
     } on StayNotInApplyPeriodException {
       DFSnackBar.error("해당 잔류 신청 기간이 아닙니다.");
@@ -366,7 +366,7 @@ class StayPageController extends GetxController {
       DFSnackBar.info("외출 삭제 중입니다...");
       await stayService.deleteStayOuting(outingId);
       await fetchCurrentStayOutings();
-      Get.find<HomePageController>().getUserApply();
+      Get.find<UserService>().refreshUserApply();
       DFSnackBar.success("외출 삭제가 완료되었습니다.");
     } on PermissionDeniedResourceException {
       DFSnackBar.error("외출 삭제 권한이 없습니다.");

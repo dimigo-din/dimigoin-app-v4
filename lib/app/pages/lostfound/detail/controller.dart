@@ -12,13 +12,24 @@ import 'package:get/get.dart';
 class LostfoundDetailPageController extends GetxController {
   final LostfoundService lostfoundService;
 
-  LostfoundDetailPageController({LostfoundService? lostfoundService})
-    : lostfoundService = lostfoundService ?? LostfoundService();
+  LostfoundDetailPageController({
+    LostfoundService? lostfoundService,
+    String? reportId,
+  }) : lostfoundService = lostfoundService ?? LostfoundService(),
+       reportId = reportId ?? reportIdFromRoute;
+
+  static String get reportIdFromRoute {
+    final arguments = Get.arguments;
+    return Get.parameters['id'] ??
+        (arguments is Map && arguments['id'] is String
+            ? arguments['id'] as String
+            : '');
+  }
 
   final commentTEC = TextEditingController();
   final RxBool isSubmittingComment = false.obs;
   final RxBool isMarkingFound = false.obs;
-  late final String reportId;
+  final String reportId;
 
   LostfoundReport? get report {
     final state = lostfoundService.lostfoundDetailState;
@@ -50,10 +61,6 @@ class LostfoundDetailPageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    final arguments = Get.arguments;
-    reportId = arguments is Map && arguments['id'] is String
-        ? arguments['id'] as String
-        : '';
     loadReport();
   }
 

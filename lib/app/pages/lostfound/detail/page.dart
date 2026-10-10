@@ -9,13 +9,23 @@ import 'package:dimigoin_app_v4/app/widgets/factory94/DFBadge.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFDivider.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFInputField.dart';
+import 'package:dimigoin_app_v4/app/widgets/factory94/DFHeader.dart';
+import 'package:dimigoin_app_v4/app/widgets/image_bottom_sheet.dart';
+import 'package:dimigoin_app_v4/app/widgets/network_image.dart';
+import '../widgets/report_status_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'controller.dart';
 
 class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
-  const LostfoundDetailPage({super.key});
+  LostfoundDetailPage({super.key})
+    : _reportId = LostfoundDetailPageController.reportIdFromRoute;
+
+  final String _reportId;
+
+  @override
+  String get tag => _reportId;
 
   @override
   Widget build(BuildContext context) {
@@ -85,37 +95,22 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  spacing: DFSpacing.spacing200,
+                  runSpacing: DFSpacing.spacing100,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    DFBadge(
-                      type: DFBadgeType.normal,
-                      size: DFBadgeSize.small,
-                      theme: report.status == LostfoundStatus.lost
-                          ? DFBadgeTheme.negative
-                          : DFBadgeTheme.grayscale,
-                      label: report.isConcluded == false
-                          ? report.status == LostfoundStatus.lost
-                                ? '분실'
-                                : '습득'
-                          : '회수됨',
-                    ),
-                    const SizedBox(width: DFSpacing.spacing200),
+                    LostfoundReportStatusBadge(report: report),
                     Text(
                       formatLostfoundDate(report.createdAt),
-                      style: textTheme.caption.copyWith(
+                      style: textTheme.footnote.copyWith(
                         color: colorTheme.contentStandardTertiary,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: DFSpacing.spacing300),
-                Text(
-                  report.objectName,
-                  style: textTheme.title.copyWith(
-                    color: colorTheme.contentStandardPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                DFHeader(title: report.objectName),
                 const SizedBox(height: DFSpacing.spacing200),
                 _LabeledRow(label: '마지막 위치', value: report.lastSeenPlace),
                 if (report.user?.name != null) ...[
@@ -125,7 +120,7 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
                 const SizedBox(height: DFSpacing.spacing400),
                 Text(
                   report.body,
-                  style: textTheme.body.copyWith(
+                  style: textTheme.paragraphLarge.copyWith(
                     color: colorTheme.contentStandardPrimary,
                   ),
                 ),
@@ -154,15 +149,12 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
                 const SizedBox(height: DFSpacing.spacing500),
                 const DFDivider(),
                 const SizedBox(height: DFSpacing.spacing400),
-                Text(
-                  '댓글 ${report.comment?.length}',
-                  style: textTheme.headline.copyWith(
-                    color: colorTheme.contentStandardPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                DFSectionHeader(
+                  size: DFSectionHeaderSize.medium,
+                  title: '댓글 ${report.comment?.length ?? 0}',
                 ),
                 const SizedBox(height: DFSpacing.spacing300),
-                if (report.comment!.isEmpty)
+                if ((report.comment ?? const <LostfoundComment>[]).isEmpty)
                   Text(
                     '아직 댓글이 없어요.',
                     style: textTheme.footnote.copyWith(
@@ -170,7 +162,7 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
                     ),
                   )
                 else
-                  ...report.comment!.map(
+                  ...(report.comment ?? const <LostfoundComment>[]).map(
                     (comment) => Padding(
                       padding: const EdgeInsets.only(
                         bottom: DFSpacing.spacing300,
@@ -190,17 +182,17 @@ class LostfoundDetailPage extends GetView<LostfoundDetailPageController> {
             DFSpacing.spacing400,
             0,
             DFSpacing.spacing400,
-            DFSpacing.spacing300,
+            DFSpacing.spacing500,
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Expanded(
                 child: DFInput(
                   controller: controller.commentTEC,
-                  placeholder:
-                      controller.isMine || report.status == LostfoundStatus.lost
-                      ? '댓글을 입력하세요'
-                      : '물건을 주웠다면 댓글로 알려주세요',
+                  minLines: 1,
+                  maxLines: 4,
+                  placeholder: '댓글을 입력하세요',
                 ),
               ),
               const SizedBox(width: DFSpacing.spacing200),
@@ -222,9 +214,6 @@ void _confirmMarkFound(
   BuildContext context,
   LostfoundDetailPageController controller,
 ) {
-  final colorTheme = Theme.of(context).extension<DFColors>()!;
-  final textTheme = Theme.of(context).extension<DFTypography>()!;
-
   DFAnimatedBottomSheet.show(
     context: context,
     children: [
@@ -236,13 +225,9 @@ void _confirmMarkFound(
         ),
         child: Column(
           children: [
-            Text(
-              '물건을 찾으셨나요?\n회수로 표시하면 되돌릴 수 없습니다.',
-              style: textTheme.callout.copyWith(
-                color: colorTheme.contentStandardPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
+            const DFHeader(
+              title: '물건을 찾으셨나요?',
+              content: '회수로 표시하면 되돌릴 수 없습니다.',
             ),
             const SizedBox(height: DFSpacing.spacing500),
             SizedBox(
@@ -305,25 +290,25 @@ class _ImageStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorTheme = Theme.of(context).extension<DFColors>()!;
-
     return SizedBox(
       height: 160,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: images.length,
         separatorBuilder: (_, _) => const SizedBox(width: DFSpacing.spacing200),
-        itemBuilder: (context, index) => ClipRRect(
-          borderRadius: BorderRadius.circular(DFRadius.radius300),
-          child: Image.network(
-            images[index].url,
-            width: 160,
-            height: 160,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => Container(
+        itemBuilder: (context, index) => Semantics(
+          button: true,
+          label: '사진 ${index + 1} 크게 보기',
+          child: InkWell(
+            borderRadius: BorderRadius.circular(DFRadius.radius300),
+            onTap: () => DFImageBottomSheet.show(
+              context: context,
+              url: images[index].url,
+            ),
+            child: DFNetworkImage(
+              url: images[index].url,
               width: 160,
               height: 160,
-              color: colorTheme.backgroundStandardSecondary,
             ),
           ),
         ),
@@ -345,42 +330,39 @@ class _CommentTile extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DFSpacing.spacing300),
+      padding: const EdgeInsets.all(DFSpacing.spacing400),
       decoration: BoxDecoration(
-        color: colorTheme.backgroundStandardPrimary,
-        borderRadius: BorderRadius.circular(DFRadius.radius300),
+        color: colorTheme.componentsFillStandardPrimary,
+        borderRadius: BorderRadius.circular(DFRadius.radius400),
+        border: Border.all(color: colorTheme.lineOutline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            spacing: DFSpacing.spacing200,
+            runSpacing: DFSpacing.spacing100,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              if (comment.user?.name != null) ...[
-                Flexible(
-                  child: Text(
-                    comment.user!.name!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.footnote.copyWith(
-                      color: colorTheme.contentStandardPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
+              if (comment.user?.name != null)
+                Text(
+                  comment.user!.name!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.callout.copyWith(
+                    color: colorTheme.contentStandardPrimary,
                   ),
                 ),
-                const SizedBox(width: DFSpacing.spacing200),
-              ],
-              if (isByPoster) ...[
+              if (isByPoster)
                 const DFBadge(
                   type: DFBadgeType.normal,
                   size: DFBadgeSize.small,
                   theme: DFBadgeTheme.grayscale,
                   label: '작성자',
                 ),
-                const SizedBox(width: DFSpacing.spacing200),
-              ],
               Text(
                 formatLostfoundDate(comment.createdAt),
-                style: textTheme.caption.copyWith(
+                style: textTheme.footnote.copyWith(
                   color: colorTheme.contentStandardTertiary,
                 ),
               ),
@@ -389,7 +371,7 @@ class _CommentTile extends StatelessWidget {
           const SizedBox(height: DFSpacing.spacing100),
           Text(
             comment.text,
-            style: textTheme.footnote.copyWith(
+            style: textTheme.paragraphSmall.copyWith(
               color: colorTheme.contentStandardPrimary,
             ),
           ),

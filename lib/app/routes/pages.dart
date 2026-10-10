@@ -80,7 +80,7 @@ class AppPages {
     ),
     GetPage(
       name: Routes.LOSTFOUND_DETAIL,
-      page: () => const LostfoundDetailPage(),
+      page: () => LostfoundDetailPage(),
       binding: LostfoundDetailPageBinding(),
       middlewares: [LoginMiddleware()],
       transition: Transition.cupertino,

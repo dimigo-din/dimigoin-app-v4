@@ -1,7 +1,6 @@
 import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/pages/lostfound/widgets/report_image_picker.dart';
-import 'package:dimigoin_app_v4/app/pages/lostfound/widgets/report_multiline_input.dart';
 import 'package:dimigoin_app_v4/app/widgets/appBar.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFButton.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFInputField.dart';
@@ -47,6 +46,8 @@ class LostfoundReportPage extends GetView<LostfoundReportPageController> {
                               DFInput(
                                 controller: controller.objectNameTEC,
                                 placeholder: '예: 검정 무선 이어폰',
+                                textInputAction: TextInputAction.next,
+                                enabled: !controller.isSubmitting.value,
                               ),
                             ],
                           ),
@@ -57,6 +58,8 @@ class LostfoundReportPage extends GetView<LostfoundReportPageController> {
                               DFInput(
                                 controller: controller.lastSeenPlaceTEC,
                                 placeholder: '예: 우정학사 2층 세탁실',
+                                textInputAction: TextInputAction.next,
+                                enabled: !controller.isSubmitting.value,
                               ),
                             ],
                           ),
@@ -66,13 +69,17 @@ class LostfoundReportPage extends GetView<LostfoundReportPageController> {
                               images: controller.images.toList(growable: false),
                               onPick: controller.pickImages,
                               onClear: controller.clearImages,
+                              enabled: !controller.isSubmitting.value,
                             ),
                           ),
                           const SizedBox(height: DFSpacing.spacing500),
                           DFInputField(
                             title: '상세 내용',
                             inputs: [
-                              ReportMultilineInput(
+                              DFInput(
+                                minLines: 6,
+                                maxLines: 12,
+                                enabled: !controller.isSubmitting.value,
                                 controller: controller.bodyTEC,
                                 placeholder: '물건의 특징이나 상황을 자세히 적어주세요.',
                               ),
@@ -82,6 +89,7 @@ class LostfoundReportPage extends GetView<LostfoundReportPageController> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: DFSpacing.spacing300),
                   SizedBox(
                     width: double.infinity,
                     child: DFButton(

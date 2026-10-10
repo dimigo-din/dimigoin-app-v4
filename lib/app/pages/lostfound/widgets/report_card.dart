@@ -2,9 +2,11 @@ import 'package:dimigoin_app_v4/app/core/theme/colors.dart';
 import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/core/theme/typography.dart';
 import 'package:dimigoin_app_v4/app/services/lostfound/model.dart';
-import 'package:dimigoin_app_v4/app/widgets/factory94/DFBadge.dart';
+import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
+import 'package:dimigoin_app_v4/app/widgets/network_image.dart';
 import 'package:flutter/material.dart';
 import '../utils/lostfound_format.dart';
+import 'report_status_badge.dart';
 
 class LostfoundReportCard extends StatelessWidget {
   final LostfoundReport report;
@@ -18,90 +20,40 @@ class LostfoundReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorTheme = Theme.of(context).extension<DFColors>()!;
-    final textTheme = Theme.of(context).extension<DFTypography>()!;
+    final colors = Theme.of(context).extension<DFColors>()!;
+    final typography = Theme.of(context).extension<DFTypography>()!;
     final thumbnail = report.img.isNotEmpty ? report.img.first.url : null;
-
-    return GestureDetector(
+    final date = formatLostfoundDate(report.createdAt, includeTime: false);
+    return DFValueList(
+      type: DFValueListType.vertical,
+      theme: DFValueListTheme.outlined,
+      title: report.objectName,
+      titleMaxLines: 2,
+      content: report.lastSeenPlace,
+      contentMaxLines: 1,
       onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.all(DFSpacing.spacing400),
-        decoration: BoxDecoration(
-          color: colorTheme.backgroundStandardPrimary,
-          borderRadius: BorderRadius.circular(DFRadius.radius500),
-          border: Border.all(color: colorTheme.lineOutline),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      titleLeading: Padding(
+        padding: const EdgeInsets.only(top: DFSpacing.spacing50),
+        child: LostfoundReportStatusBadge(report: report),
+      ),
+      trailingAlignment: CrossAxisAlignment.end,
+      trailing: SizedBox(
+        width: 56,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      DFBadge(
-                        type: DFBadgeType.normal,
-                        size: DFBadgeSize.small,
-                        // 분실 제보만 강조하고, 회수된 제보는 뉴트럴로 톤다운합니다.
-                        theme: report.isConcluded == false
-                            ? DFBadgeTheme.negative
-                            : DFBadgeTheme.grayscale,
-                        label: report.isConcluded == false
-                            ? report.status == LostfoundStatus.lost
-                                  ? '분실'
-                                  : '습득'
-                            : '회수됨',
-                      ),
-                      const SizedBox(width: DFSpacing.spacing200),
-                      Text(
-                        formatLostfoundDate(report.createdAt),
-                        style: textTheme.caption.copyWith(
-                          color: colorTheme.contentStandardTertiary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: DFSpacing.spacing200),
-                  Text(
-                    report.objectName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.headline.copyWith(
-                      color: colorTheme.contentStandardPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: DFSpacing.spacing100),
-                  Text(
-                    report.lastSeenPlace,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.footnote.copyWith(
-                      color: colorTheme.contentStandardSecondary,
-                    ),
-                  ),
-                ],
+            if (thumbnail != null) ...[
+              DFNetworkImage(url: thumbnail, width: 48, height: 48),
+              const SizedBox(height: DFSpacing.spacing100),
+            ],
+            Text(
+              date.isEmpty ? '날짜 미상' : date,
+              textAlign: TextAlign.end,
+              style: typography.footnote.copyWith(
+                color: colors.contentStandardTertiary,
               ),
             ),
-            if (thumbnail != null) ...[
-              const SizedBox(width: DFSpacing.spacing300),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(DFRadius.radius300),
-                child: Image.network(
-                  thumbnail,
-                  width: 56,
-                  height: 56,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => Container(
-                    width: 56,
-                    height: 56,
-                    color: colorTheme.backgroundStandardSecondary,
-                  ),
-                ),
-              ),
-            ],
           ],
         ),
       ),

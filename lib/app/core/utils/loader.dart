@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dimigoin_app_v4/app/services/auth/service.dart';
 import 'package:dimigoin_app_v4/app/services/app_update/service.dart';
 import 'package:dimigoin_app_v4/app/services/push/service.dart';
+import 'package:dimigoin_app_v4/app/services/push/navigation.dart';
 import 'package:dimigoin_app_v4/app/services/user/service.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart';
@@ -53,8 +54,9 @@ class AppLoader {
       final authService = Get.put(AuthService());
       await authService.initComplete;
       Get.put(AppUpdateService());
-      Get.put(PushService());
       Get.put(UserService());
+      Get.put(PushNavigationService());
+      Get.put(PushService());
 
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 

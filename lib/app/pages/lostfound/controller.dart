@@ -106,7 +106,7 @@ class LostfoundPageController extends GetxController {
   }
 
   Future<void> openReport(String id) async {
-    await Get.toNamed(Routes.LOSTFOUND_DETAIL, arguments: {'id': id});
+    await Get.toNamed(Routes.LOSTFOUND_DETAIL, parameters: {'id': id});
     if (isClosed) return;
     try {
       await lostfoundService.refreshReport(

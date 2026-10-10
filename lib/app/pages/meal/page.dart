@@ -3,10 +3,10 @@ import 'package:dimigoin_app_v4/app/core/theme/static.dart';
 import 'package:dimigoin_app_v4/app/services/meal/model.dart';
 import 'package:dimigoin_app_v4/app/services/meal/state.dart';
 import 'package:dimigoin_app_v4/app/widgets/animated_cross_fade.dart';
-import 'package:dimigoin_app_v4/app/widgets/factory94/DFAnimatedBottomSheet.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFList.dart';
 import 'package:dimigoin_app_v4/app/widgets/factory94/DFSegmentControl.dart';
 import 'package:dimigoin_app_v4/app/widgets/gestureDetector.dart';
+import 'package:dimigoin_app_v4/app/widgets/image_bottom_sheet.dart';
 import 'package:dimigoin_app_v4/app/widgets/shimmer_loading_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -158,36 +158,11 @@ class MealImageBottomSheet extends StatelessWidget {
   const MealImageBottomSheet({super.key, required this.imgUrl});
 
   static void show({required BuildContext context, required String imgUrl}) {
-    DFAnimatedBottomSheet.show(
-      context: context,
-      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24),
-      children: [MealImageBottomSheet(imgUrl: imgUrl)],
-    );
+    DFImageBottomSheet.show(context: context, url: imgUrl);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (imgUrl.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 520),
-        child: Image.network(
-          imgUrl,
-          webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
-          width: double.infinity,
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(vertical: 24),
-              child: Center(child: Text('이미지를 불러오지 못했습니다.')),
-            );
-          },
-        ),
-      ),
-    );
+    return DFImageBottomSheet(url: imgUrl);
   }
 }
