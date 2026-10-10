@@ -23,29 +23,40 @@ class LostfoundReportCard extends StatelessWidget {
     final colors = Theme.of(context).extension<DFColors>()!;
     final typography = Theme.of(context).extension<DFTypography>()!;
     final thumbnail = report.img.isNotEmpty ? report.img.first.url : null;
+    final date = formatLostfoundDate(report.createdAt, includeTime: false);
     return DFValueList(
       type: DFValueListType.vertical,
       theme: DFValueListTheme.outlined,
       title: report.objectName,
+      titleMaxLines: 2,
       content: report.lastSeenPlace,
+      contentMaxLines: 1,
       onTap: onTap,
-      header: Wrap(
-        spacing: DFSpacing.spacing200,
-        runSpacing: DFSpacing.spacing100,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          LostfoundReportStatusBadge(report: report),
-          Text(
-            formatLostfoundDate(report.createdAt),
-            style: typography.footnote.copyWith(
-              color: colors.contentStandardTertiary,
-            ),
-          ),
-        ],
+      titleLeading: Padding(
+        padding: const EdgeInsets.only(top: DFSpacing.spacing50),
+        child: LostfoundReportStatusBadge(report: report),
       ),
-      trailing: thumbnail == null
-          ? null
-          : DFNetworkImage(url: thumbnail, width: 56, height: 56),
+      trailingAlignment: CrossAxisAlignment.end,
+      trailing: SizedBox(
+        width: 56,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (thumbnail != null) ...[
+              DFNetworkImage(url: thumbnail, width: 48, height: 48),
+              const SizedBox(height: DFSpacing.spacing100),
+            ],
+            Text(
+              date.isEmpty ? '날짜 미상' : date,
+              textAlign: TextAlign.end,
+              style: typography.footnote.copyWith(
+                color: colors.contentStandardTertiary,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -17,7 +17,11 @@ class DFValueList extends StatelessWidget {
   final String? subTitle;
   final String? content;
   final Widget? header;
+  final Widget? titleLeading;
+  final int? titleMaxLines;
+  final int? contentMaxLines;
   final Widget? trailing;
+  final CrossAxisAlignment trailingAlignment;
   final VoidCallback? onTap;
 
   const DFValueList({
@@ -28,9 +32,14 @@ class DFValueList extends StatelessWidget {
     this.subTitle,
     this.content,
     this.header,
+    this.titleLeading,
+    this.titleMaxLines,
+    this.contentMaxLines,
     this.trailing,
+    this.trailingAlignment = CrossAxisAlignment.start,
     this.onTap,
-  });
+  }) : assert(titleMaxLines == null || titleMaxLines > 0),
+       assert(contentMaxLines == null || contentMaxLines > 0);
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +62,9 @@ class DFValueList extends StatelessWidget {
         : colors.contentStandardTertiary;
 
     final horizontal = type == DFValueListType.horizontal;
-    final heading = _DFValueListTitleRow(
+    final headingText = _DFValueListTitleRow(
       title: title,
+      titleMaxLines: titleMaxLines,
       titleStyle: (horizontal ? typography.body : typography.headline).copyWith(
         color: titleColor,
         fontWeight: FontWeight.w700,
@@ -75,6 +85,28 @@ class DFValueList extends StatelessWidget {
               fontWeight: FontWeight.w400,
             ),
     );
+    final heading = titleLeading == null
+        ? headingText
+        : Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleLeading!,
+              const SizedBox(width: DFSpacing.spacing200),
+              Expanded(child: headingText),
+            ],
+          );
+    final contentStyle = typography.paragraphSmall.copyWith(
+      color: secondaryColor,
+      fontWeight: FontWeight.w400,
+    );
+    final contentRow = Text(
+      content ?? '',
+      style: contentStyle,
+      maxLines: contentMaxLines,
+      overflow: contentMaxLines == null
+          ? TextOverflow.clip
+          : TextOverflow.ellipsis,
+    );
     final body = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -85,13 +117,7 @@ class DFValueList extends StatelessWidget {
         heading,
         if (!horizontal && content != null) ...[
           const SizedBox(height: DFSpacing.spacing150),
-          Text(
-            content!,
-            style: typography.paragraphSmall.copyWith(
-              color: secondaryColor,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
+          contentRow,
         ],
       ],
     );
@@ -112,7 +138,7 @@ class DFValueList extends StatelessWidget {
       child: trailing == null
           ? body
           : Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: trailingAlignment,
               children: [
                 Expanded(child: body),
                 const SizedBox(width: DFSpacing.spacing300),
@@ -146,6 +172,7 @@ class DFValueList extends StatelessWidget {
 class _DFValueListTitleRow extends StatelessWidget {
   final String title;
   final TextStyle titleStyle;
+  final int? titleMaxLines;
   final String? leadingValue;
   final TextStyle leadingStyle;
   final String? trailingValue;
@@ -154,6 +181,7 @@ class _DFValueListTitleRow extends StatelessWidget {
   const _DFValueListTitleRow({
     required this.title,
     required this.titleStyle,
+    this.titleMaxLines,
     required this.leadingValue,
     required this.leadingStyle,
     required this.trailingValue,
@@ -184,7 +212,14 @@ class _DFValueListTitleRow extends StatelessWidget {
           0.0,
           constraints.maxWidth / 3,
         );
-        final titleText = Text(title, style: titleStyle);
+        final titleText = Text(
+          title,
+          style: titleStyle,
+          maxLines: titleMaxLines,
+          overflow: titleMaxLines == null
+              ? TextOverflow.clip
+              : TextOverflow.ellipsis,
+        );
         final leadingText = leadingValue == null
             ? null
             : Text(leadingValue!, style: leadingStyle);
